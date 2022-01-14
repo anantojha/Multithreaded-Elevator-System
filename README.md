@@ -2,7 +2,7 @@
 <h2>Lab 2: Group #6</h2>
 <b>Each Iteration will be in a separate branch.</b>
 <br><br>
-Team Members:
+<b>Team Members:</b>
 <br>
   Amuwala Meesthrige, Lasitha <br>
   Hout, Bonita  <br>

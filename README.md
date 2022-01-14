@@ -1,7 +1,9 @@
-# SYSC3303-Elevator-Project
-SYSC 3303A  Lab 2: Group #6 Project Repository. Each Iteration will be in a separate branch. 
-
-Team Members: <br>
+<h1>SYSC3303A-Elevator-Project</h1>
+<h2>Lab 2: Group #6</h2>
+<b>Each Iteration will be in a separate branch.</b>
+<br><br>
+Team Members:
+<br>
   Amuwala Meesthrige, Lasitha <br>
   Hout, Bonita  <br>
   Khara, Navaty <br>

@@ -12,9 +12,10 @@ public class Main {
 
         Scheduler scheduler = new Scheduler();
 
-        Thread floorOne = new Thread(new Floor(scheduler, 1), "Elevator.Floor 1");
+        Thread floorOne = new Thread(new Floor(scheduler, 1), "Floor 1");
+        Thread elevatorOne = new Thread(new Elevator(scheduler, 1), "Elevator 1");
         floorOne.start();
-
+        elevatorOne.start();
     }
 
 
@@ -22,13 +23,13 @@ public class Main {
         for(int i = 1; i <= floors; i++){
             FileWriter csv = new FileWriter("FloorCSV/floor_" + i + ".csv");
             for(int j = 0; j < 2; j++){
-                csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*10).toString());
+                csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*5).toString());
                 csv.append(",");
                 csv.append(String.valueOf(i));
                 csv.append(",");
                 csv.append("UP");
                 csv.append(",");
-                csv.append("2");
+                csv.append("5");
                 csv.append("\n");
             }
             csv.flush();

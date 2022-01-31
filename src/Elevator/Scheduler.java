@@ -5,7 +5,7 @@ public class Scheduler {
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
 
-    public synchronized Request[] getRequest() {
+    public synchronized Request getRequest() {
         while(!requestIsAvailable) {
             try {
                 // make elevator wait while table is empty
@@ -17,7 +17,7 @@ public class Scheduler {
 
         // notify all threads of change to active requests list
         notifyAll();
-        return requests;
+        return requests[0];
     }
 
     // synchronized function for agent to add new request
@@ -41,11 +41,11 @@ public class Scheduler {
         notifyAll();
     }
 
-    public synchronized void serviceRequest() {
-            requestsCompleted++;
-            System.out.println("Elevator.Elevator has completed request #: " + requestsCompleted + "");
-            requestIsAvailable = false;             // clear requests
-            notifyAll();                            // notify all threads of change
+    public synchronized void serviceRequest(Request request) throws InterruptedException {
+        requestsCompleted++;
+        System.out.println("Elevator has completed request #: " + requestsCompleted + "");
+        requestIsAvailable = false;             // clear requests
+        notifyAll();                            // notify all threads of change
     }
 
 

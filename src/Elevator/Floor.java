@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
 public class Floor implements Runnable{
@@ -40,8 +42,14 @@ public class Floor implements Runnable{
 
         synchronized (scheduler){
             while (true) {
-                scheduler.putRequest(new Request[]{incomingRequests.get(currentRequestIndex)});
-                currentRequestIndex++;
+                //System.out.println(LocalDateTime.now());
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                if(currentRequestIndex <= incomingRequests.size()) {
+                    if (incomingRequests.get(currentRequestIndex).getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
+                        scheduler.putRequest(new Request[]{incomingRequests.get(currentRequestIndex)});
+                        currentRequestIndex++;
+                    }
+                }
             }
         }
     }

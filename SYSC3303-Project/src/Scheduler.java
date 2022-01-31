@@ -6,7 +6,7 @@ public class Scheduler {
     public synchronized Request[] getRequest() {
         while(!requestIsAvailable) {
             try {
-                // make elevator wait while table is empty
+                // make elevator wait till request is available
                 wait();
             } catch (InterruptedException e) {
                 System.out.println("Cannot WAIT on "+ this.getClass().getName() + " Thread to get available requests");

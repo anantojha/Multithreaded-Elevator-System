@@ -1,3 +1,5 @@
+package Elevator;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class Floor implements Runnable{
     @Override
     public void run() {
 
-        try (BufferedReader br = new BufferedReader(new FileReader("FloorCSV/floor_" + myFloor + ".csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("SYSC3303-Project/FloorCSV/floor_" + myFloor + ".csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] requestContents = line.split(",");

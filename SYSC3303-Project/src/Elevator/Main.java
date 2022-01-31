@@ -1,7 +1,8 @@
+package Elevator;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Main {
 
@@ -11,15 +12,16 @@ public class Main {
 
         Scheduler scheduler = new Scheduler();
 
-        Thread floorOne = new Thread(new Floor(scheduler, 1), "Floor 1");
+        Thread floorOne = new Thread(new Floor(scheduler, 1), "Elevator.Floor 1");
         floorOne.start();
 
     }
 
 
     private static void createFloorCSV(int floors) throws IOException {
+        System.out.println(System.getProperty("user.dir"));
         for(int i = 1; i <= floors; i++){
-            FileWriter csv = new FileWriter("FloorCSV/floor_" + i + ".csv");
+            FileWriter csv = new FileWriter("SYSC3303-Project/FloorCSV/floor_" + i + ".csv");
             for(int j = 0; j < 2; j++){
                 csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*10).toString());
                 csv.append(",");

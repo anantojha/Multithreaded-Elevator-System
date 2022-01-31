@@ -1,3 +1,5 @@
+package Elevator;
+
 public class Scheduler {
     private Request[] requests = null;
     private boolean requestIsAvailable = false;
@@ -6,7 +8,7 @@ public class Scheduler {
     public synchronized Request[] getRequest() {
         while(!requestIsAvailable) {
             try {
-                // make elevator wait till request is available
+                // make elevator wait while table is empty
                 wait();
             } catch (InterruptedException e) {
                 System.out.println("Cannot WAIT on "+ this.getClass().getName() + " Thread to get available requests");
@@ -41,7 +43,7 @@ public class Scheduler {
 
     public synchronized void serviceRequest() {
             requestsCompleted++;
-            System.out.println("Elevator has completed request #: " + requestsCompleted + ".");
+            System.out.println("Elevator.Elevator has completed request #: " + requestsCompleted + ".");
             requestIsAvailable = false;             // clear requests
             notifyAll();                            // notify all threads of change
     }

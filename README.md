@@ -1,4 +1,4 @@
-<h1>SYSC3303A-Elevator-Project</h1>
+<h1>SYSC3303A-Elevator.Elevator-Project</h1>
 <h2>Lab 2: Group #6</h2>
 <b>Each Iteration will be in a separate branch.</b>
 <br><br>

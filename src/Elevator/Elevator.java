@@ -32,6 +32,7 @@ public class Elevator implements Runnable{
                         e.printStackTrace();
                     }
                 }
+                
             }
         }
     }

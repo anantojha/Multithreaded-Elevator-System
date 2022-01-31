@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
 public class Floor implements Runnable{
+	
     private Scheduler scheduler;
     private int myFloor;
     private ArrayList<Request> incomingRequests;
@@ -24,8 +25,10 @@ public class Floor implements Runnable{
     @Override
     public void run() {
 
+    	//Process csv files into incoming requests
         try (BufferedReader br = new BufferedReader(new FileReader("FloorCSV/floor_" + myFloor + ".csv"))) {
             String line;
+            //For each line in the csv, find the appropriate Direction, and add it to the request
             while ((line = br.readLine()) != null) {
                 String[] requestContents = line.split(",");
                 for(Direction d: Direction.values()){
@@ -40,11 +43,12 @@ public class Floor implements Runnable{
             e.printStackTrace();
         }
 
+        //Synchronize with scheduler
         synchronized (scheduler){
             while (true) {
-                //System.out.println(LocalDateTime.now());
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                if(currentRequestIndex <= incomingRequests.size()) {
+                //If the incoming request time equals the current time, send a request to the scheduler
+                if(currentRequestIndex < incomingRequests.size()) {
                     if (incomingRequests.get(currentRequestIndex).getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
                         scheduler.putRequest(new Request[]{incomingRequests.get(currentRequestIndex)});
                         currentRequestIndex++;
@@ -52,5 +56,6 @@ public class Floor implements Runnable{
                 }
             }
         }
+        
     }
 }

@@ -43,7 +43,7 @@ public class Scheduler {
 
     public synchronized void serviceRequest() {
             requestsCompleted++;
-            System.out.println("Elevator.Elevator has completed request #: " + requestsCompleted + ".");
+            System.out.println("Elevator.Elevator has completed request #: " + requestsCompleted + "");
             requestIsAvailable = false;             // clear requests
             notifyAll();                            // notify all threads of change
     }

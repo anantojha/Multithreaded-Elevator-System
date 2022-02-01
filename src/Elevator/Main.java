@@ -11,7 +11,8 @@ public class Main {
         Thread.sleep(100);
 
         Scheduler scheduler = new Scheduler();
-
+        
+        //Create and start threads
         Thread floorOne = new Thread(new Floor(scheduler, 1), "Floor 1");
         Thread elevatorOne = new Thread(new Elevator(scheduler, 1), "Elevator 1");
         floorOne.start();
@@ -20,6 +21,7 @@ public class Main {
 
 
     private static void createFloorCSV(int floors) throws IOException {
+        //Create CSV file for each floor (currently 2 requests with static values are input in CSV file)
         for(int i = 1; i <= floors; i++){
             FileWriter csv = new FileWriter("FloorCSV/floor_" + i + ".csv");
             for(int j = 0; j < 2; j++){

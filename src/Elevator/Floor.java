@@ -48,11 +48,9 @@ public class Floor implements Runnable{
             while (true) {
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 //If the incoming request time equals the current time, send a request to the scheduler
-                if(currentRequestIndex < incomingRequests.size()) {
-                    if (incomingRequests.get(currentRequestIndex).getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
-                        scheduler.putRequest(new Request[]{incomingRequests.get(currentRequestIndex)});
-                        currentRequestIndex++;
-                    }
+                if (incomingRequests.get(currentRequestIndex).getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
+                    scheduler.putRequest(new Request[]{incomingRequests.get(currentRequestIndex)});
+                    currentRequestIndex++;
                 }
             }
         }

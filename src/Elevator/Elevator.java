@@ -22,7 +22,7 @@ public class Elevator implements Runnable{
                 // get request from table
                 Request serviceRequest = scheduler.getRequest();
 
-                // validate if pizza can be made
+                // validate if source floor of request is the thread's floor
                 if (serviceRequest.getSourceFloor() == currentFloor) {
                     System.out.println(Thread.currentThread().getName() +" in servicing "+ serviceRequest);
                     try {

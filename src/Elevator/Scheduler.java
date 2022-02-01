@@ -4,7 +4,8 @@ public class Scheduler {
     private Request[] requests = null;
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
-
+    
+    // synchronized function for Elevator to retrieve a request
     public synchronized Request getRequest() {
         while(!requestIsAvailable) {
             try {
@@ -20,7 +21,7 @@ public class Scheduler {
         return requests[0];
     }
 
-    // synchronized function for agent to add new request
+    // synchronized function for Floor to add new request
     public synchronized void putRequest(Request[] requestsToAdd){
         while (requestIsAvailable) {
             try {
@@ -40,7 +41,8 @@ public class Scheduler {
         // notify all threads of change
         notifyAll();
     }
-
+    
+    // synchronized function for Elevator to set request as complete
     public synchronized void serviceRequest(Request request) throws InterruptedException {
         requestsCompleted++;
         System.out.println("Elevator has completed request #: " + requestsCompleted + "");

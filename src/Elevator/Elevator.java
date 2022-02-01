@@ -17,7 +17,7 @@ public class Elevator implements Runnable{
     @Override
     public void run() {
         while(true) {
-            // synchronize table object
+            // synchronize with scheduler
             synchronized (scheduler) {
                 // get request from table
                 Request serviceRequest = scheduler.getRequest();

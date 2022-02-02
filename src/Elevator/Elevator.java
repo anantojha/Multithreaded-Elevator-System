@@ -1,5 +1,7 @@
 package Elevator;
 
+import java.io.Serializable;
+
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
  * and fulfilling them given that the correct conditions are met.
@@ -10,6 +12,11 @@ public class Elevator implements Runnable{
     private Scheduler scheduler;
     private int Id;
     private int currentFloor;
+    private boolean testEnabled = false;
+
+    public void setTestEnabled(boolean testEnabled) {
+        this.testEnabled = testEnabled;
+    }
 
 	/*
 	 * A constructor for the Elevator class. The constructor initializes the shared data structure and sets the id
@@ -25,8 +32,15 @@ public class Elevator implements Runnable{
         this.currentFloor = 1;
     }
 
+    public int getId() {
+        return Id;
+    }
 
-	/*
+    public int getCurrentFloor() {
+        return currentFloor;
+    }
+
+    /*
 	 * The run() method is the primary sequence that is run when a thread is active. In this case, the Elevator class will
 	 * attempt to receive requests from the scheduler and fulfill them if the request floor is the same as the thread floor.
 	 * 
@@ -59,6 +73,11 @@ public class Elevator implements Runnable{
                         currentFloor = serviceRequest.getDestinationFloor();
                         // complete request
                         scheduler.serviceRequest(serviceRequest, Id);
+
+                        // *end test*
+                        if(testEnabled)
+                            break;
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -86,6 +105,11 @@ public class Elevator implements Runnable{
 
                         // complete request
                         scheduler.serviceRequest(serviceRequest, Id);
+
+                        // *end test*
+                        if(testEnabled)
+                            break;
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

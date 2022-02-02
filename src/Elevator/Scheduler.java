@@ -8,8 +8,11 @@ public class Scheduler {
     private Request[] requests = null;
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
-    
-    
+
+    public int getRequestsCompleted() {
+        return requestsCompleted;
+    }
+
     /*
 	 * getRequest() is a method that retrieves a request for the Elevator if some request is available. If none are available,
 	 * the Elevator must wait until a request is present.

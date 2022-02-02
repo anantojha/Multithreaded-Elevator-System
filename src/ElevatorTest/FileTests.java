@@ -1,5 +1,7 @@
 package ElevatorTest;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -7,14 +9,13 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public class ElevatorTest {
+public class FileTests {
 
+    File TestFolder;
 
-    // Test input csv file generation
-    @Test
-    public void inputCsvGeneration() throws IOException {
-        File TestFolder = new File("CSV/TestFloorCSV");
-
+    @Before
+    public void setup(){
+        TestFolder = new File("CSV/TestFloorCSV");
         // create test csv folder if one doesn't exist
         if(!TestFolder.exists()){
             TestFolder.mkdir();
@@ -24,19 +25,25 @@ public class ElevatorTest {
                 if (!f.isDirectory())
                     f.delete();
         }
+    }
 
+    // Test input csv file generation
+    @Test
+    public void inputCsvGeneration() throws IOException{
         // generate test csv
-        Elevator.Main.createFloorCSV(1, "TestFloorCSV");
+        Elevator.Main.createFloorCSV(1, "TestFloorCSV", 1);
         File file = new File("CSV/TestFloorCSV/floor_1.csv");
 
         // assert file exists and is not a directory
         assertTrue(file.exists());
         assertFalse(file.isDirectory());
-
-        // delete after when test is complete
-        // file.delete();
     }
 
-
-
+    @After
+    public void tearDown(){
+        // delete after when test is complete
+        for(File f: TestFolder.listFiles())
+            if (!f.isDirectory())
+                f.delete();
+    }
 }

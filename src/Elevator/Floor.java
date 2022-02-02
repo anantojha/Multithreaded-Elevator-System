@@ -9,6 +9,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
+/*
+ * The Floor class represents the producer side of the algorithm. It is responsible for processing the csv files into incoming requests
+ * These requests are then sent to the Scheduler if the time of the request matches the current time.
+ * 
+ */
+
+
 public class Floor implements Runnable{
 	
     private Scheduler scheduler;
@@ -16,11 +23,29 @@ public class Floor implements Runnable{
     private ArrayList<Request> incomingRequests;
     private int currentRequestIndex = 0;
 
+    /*
+	 * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
+	 * the thread is. 
+	 * 
+	 * Input: Schedule, int
+	 * Output: none
+	 * 
+	 */
     public Floor(Scheduler scheduler, int myFloor){
         this.scheduler = scheduler;
         this.myFloor = myFloor;
         this.incomingRequests = new ArrayList<>();
     }
+
+    /*
+	 * The run() method is the primary sequence that is run when a thread is active. In this case, the Floor class will
+	 * attempt to process all local csv files into incoming requests. These requests are then later sent to the Scheduler
+	 * if the given conditions are correct (time).
+	 * 
+	 * Input: none
+	 * Output: none
+	 * 
+	 */
 
     @Override
     public void run() {

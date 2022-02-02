@@ -1,11 +1,23 @@
 package Elevator;
 
+/*
+ * The Scheduler class is a shared data structure between the Elevator and the Floor. It serves to facilitate communicate between both threads.
+ * 
+ */
 public class Scheduler {
     private Request[] requests = null;
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
     
-    // synchronized function for Elevator to retrieve a request
+    
+    /*
+	 * getRequest() is a method that retrieves a request for the Elevator if some request is available. If none are available,
+	 * the Elevator must wait until a request is present.
+	 * 
+	 * Input: none
+	 * Output: Request requests[0] 
+	 * 
+	 */
     public synchronized Request getRequest() {
         while(!requestIsAvailable) {
             try {
@@ -20,8 +32,15 @@ public class Scheduler {
         notifyAll();
         return requests[0];
     }
-
-    // synchronized function for Floor to add new request
+    
+    /*
+	 * putRequest() is a method that adds a request for the Elevator if no request is available. If some are available,
+	 * the Floor must wait until no request is present.
+	 * 
+	 * Input: Request[] requestsToAdd
+	 * Output: none
+	 * 
+	 */
     public synchronized void putRequest(Request[] requestsToAdd){
         while (requestIsAvailable) {
             try {
@@ -42,6 +61,13 @@ public class Scheduler {
         notifyAll();
     }
     
+    /*
+	 * serviceRequest() is a method that sets a request for the Elevator as complete. It is the Elevator's consume function.
+	 * 
+	 * Input: Request request
+	 * Output: none
+	 * 
+	 */
     // synchronized function for Elevator to set request as complete
     public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
         requestsCompleted++;

@@ -31,7 +31,8 @@ Lasitha Amuwala Meesthrige:
 Bonita Hout:
 
 Navaty Khara: 
-
+	Fixed out-of-bounds issue.
+	In-code comments for documentation
 Tyler Mak: 
 
 Anant Ojha: 

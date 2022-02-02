@@ -40,41 +40,51 @@ public class Elevator implements Runnable{
         while(true) {
             // synchronize with scheduler
             synchronized (scheduler) {
-                // get request from table
+                // get request from scheduler
                 Request serviceRequest = scheduler.getRequest();
 
                 // validate if source floor of request is the thread's floor
                 if (serviceRequest.getSourceFloor() == currentFloor) {
+
+                    // elevator is currently on request's source floor
                     System.out.println(Thread.currentThread().getName() +" is servicing "+ serviceRequest);
                     try {
+                        // go from source floor to destination floor
                         for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
                             Thread.sleep(1000);
                             System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                         }
+
+                        // update current floor
                         currentFloor = serviceRequest.getDestinationFloor();
+                        // complete request
                         scheduler.serviceRequest(serviceRequest, Id);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 } else {
+                    // elevator is not on request's source floor
                     System.out.println(Thread.currentThread().getName() +" is servicing "+ serviceRequest);
                     try {
-                        System.out.println(Thread.currentThread().getName() +" is at floor: "+ currentFloor);
-
+                        // go to source floor
                         if(currentFloor > serviceRequest.getSourceFloor()){
                             for(int i = Math.abs(serviceRequest.getSourceFloor() - currentFloor); i >= 1 ; i--){
                                 Thread.sleep(1000);
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i));
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                             }
                         }
 
-
-                        for(int i = 0; i <= Math.abs(serviceRequest.getSourceFloor() - currentFloor); i++){
+                        // go from source floor to destination floor
+                        for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
                             Thread.sleep(1000);
                             System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                         }
-                        currentFloor = serviceRequest.getSourceFloor();
+
+
+                        // update current floor to destination
                         currentFloor = serviceRequest.getDestinationFloor();
+
+                        // complete request
                         scheduler.serviceRequest(serviceRequest, Id);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

@@ -36,9 +36,10 @@ Navaty Khara:
 Tyler Mak: 
 
 Anant Ojha: 
-	Implemented Floor, Elevator & Scheduler
+	Implemented Floor, Elevator & Scheduler subsystems
 	Implemented JUnit Tests:
 					1. inputCsvGeneration()
+					2. completeRequest()
 	
 	
 	

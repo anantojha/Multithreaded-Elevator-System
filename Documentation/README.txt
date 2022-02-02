@@ -36,3 +36,8 @@ Navaty Khara:
 Tyler Mak: 
 
 Anant Ojha: 
+	Implemented Floor, Elevator & Scheduler subsystems 
+	Implemented generation of input CSV file containing incoming requests 
+	
+	
+	

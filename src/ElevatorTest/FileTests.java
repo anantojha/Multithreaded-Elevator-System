@@ -4,7 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -31,12 +33,21 @@ public class FileTests {
     @Test
     public void inputCsvGeneration() throws IOException{
         // generate test csv
-        Elevator.Main.createFloorCSV(1, "TestFloorCSV", 1);
+        Elevator.Main.createFloorCSV(1, "TestFloorCSV", 5);
         File file = new File("CSV/TestFloorCSV/floor_1.csv");
 
         // assert file exists and is not a directory
         assertTrue(file.exists());
         assertFalse(file.isDirectory());
+        System.out.println("Generated CSV Data: ");
+
+        // print CSV data
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
     }
 
     @After

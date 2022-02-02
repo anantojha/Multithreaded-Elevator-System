@@ -3,6 +3,7 @@ package Elevator;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 /*
  * The Main class represents the main program that all threads are initialized from.
@@ -19,7 +20,7 @@ public class Main {
 	 * 
 	 */
     public static void main(String[] args) throws IOException, InterruptedException {
-        createFloorCSV(1 , "FloorCSV", 2);
+        createFloorCSV(1 , "FloorCSV", 10);
         Thread.sleep(100);
 
         Scheduler scheduler = new Scheduler();
@@ -44,14 +45,15 @@ public class Main {
         //Create CSV file for each floor
         for(int i = 1; i <= floors; i++){
             FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + i + ".csv");
+            Random random = new Random();
             for(int j = 0; j < numRequests; j++){
-                csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*5).toString());
+                csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*4).toString());
                 csv.append(",");
                 csv.append(String.valueOf(i));
                 csv.append(",");
                 csv.append("UP");
                 csv.append(",");
-                csv.append("5");
+                csv.append((random.nextInt((5 - 2) + 1) + 2) + "");
                 csv.append("\n");
             }
             csv.flush();

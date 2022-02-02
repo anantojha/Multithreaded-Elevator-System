@@ -65,7 +65,7 @@ public class Elevator implements Runnable{
                     try {
                         // go from source floor to destination floor
                         for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                             System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                         }
 
@@ -88,14 +88,14 @@ public class Elevator implements Runnable{
                         // go to source floor
                         if(currentFloor > serviceRequest.getSourceFloor()){
                             for(int i = Math.abs(serviceRequest.getSourceFloor() - currentFloor); i >= 1 ; i--){
-                                Thread.sleep(1000);
+                                Thread.sleep(500);
                                 System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                             }
                         }
 
                         // go from source floor to destination floor
                         for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                             System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                         }
 

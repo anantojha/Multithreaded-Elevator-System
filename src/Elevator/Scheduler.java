@@ -1,11 +1,15 @@
 package Elevator;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
 /*
  * The Scheduler class is a shared data structure between the Elevator and the Floor. It serves to facilitate communicate between both threads.
  * 
  */
 public class Scheduler {
-    private Request[] requests = null;
+    private Queue<Request> requests = new LinkedList<>();
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
 
@@ -33,7 +37,7 @@ public class Scheduler {
 
         // notify all threads of change to active requests list
         notifyAll();
-        return requests[0];
+        return requests.peek();
     }
     
     /*
@@ -44,7 +48,7 @@ public class Scheduler {
 	 * Output: none
 	 * 
 	 */
-    public synchronized void putRequest(Request[] requestsToAdd){
+    public synchronized void putRequest(Request requestToAdd){
         while (requestIsAvailable) {
             try {
                 // make floor wait while a request available
@@ -55,10 +59,10 @@ public class Scheduler {
         }
 
         // request is added
-        requests = requestsToAdd;
+        requests.add(requestToAdd);
         requestIsAvailable = true;
 
-        System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + requests[0].toString());
+        System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + requests.peek().toString());
 
         // notify all threads of change
         notifyAll();
@@ -75,10 +79,11 @@ public class Scheduler {
     public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
         requestsCompleted++;
         System.out.println("Scheduler: Elevator " + id + " has completed request #: " + requestsCompleted + "");
-        requestIsAvailable = false;             // clear requests
+
+        requests.poll();
+
+        if(requests.size() == 0)
+            requestIsAvailable = false;             // clear requests
         notifyAll();                            // notify all threads of change
     }
-
-
-
 }

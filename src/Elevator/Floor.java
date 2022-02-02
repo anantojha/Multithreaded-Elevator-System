@@ -22,7 +22,6 @@ public class Floor implements Runnable{
     private Scheduler scheduler;
     private int myFloor;
     private ArrayList<Request> incomingRequests;
-    private int currentRequestIndex = 0;
 
     /*
 	 * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
@@ -74,14 +73,14 @@ public class Floor implements Runnable{
             for (Request r: incomingRequests) {
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 //If the incoming request time equals the current time, send a request to the scheduler
-                while (!incomingRequests.get(currentRequestIndex).getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
+                while (!r.getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                scheduler.putRequest(new Request[]{r});
+                scheduler.putRequest(r);
             }
         }
         

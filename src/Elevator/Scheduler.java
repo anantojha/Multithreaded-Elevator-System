@@ -79,7 +79,7 @@ public class Scheduler {
     public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
         requestsCompleted++;
         System.out.println("Scheduler: Elevator " + id + " has completed request #: " + requestsCompleted + "");
-
+        System.out.println();
         requests.poll();
 
         if(requests.size() == 0)

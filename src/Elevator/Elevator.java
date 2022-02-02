@@ -65,8 +65,13 @@ public class Elevator implements Runnable{
                     try {
                         // go from source floor to destination floor
                         for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
-                            Thread.sleep(500);
-                            System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
+                            Thread.sleep(600);
+                            if ((i+1) == 1)
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - pickup");
+                            else if ((i+1) == serviceRequest.getDestinationFloor())
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - dropoff");
+                            else
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                         }
 
                         // update current floor
@@ -88,15 +93,20 @@ public class Elevator implements Runnable{
                         // go to source floor
                         if(currentFloor > serviceRequest.getSourceFloor()){
                             for(int i = Math.abs(serviceRequest.getSourceFloor() - currentFloor); i >= 1 ; i--){
-                                Thread.sleep(500);
+                                Thread.sleep(600);
                                 System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                             }
                         }
 
                         // go from source floor to destination floor
                         for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
-                            Thread.sleep(500);
-                            System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
+                            Thread.sleep(600);
+                            if ((i+1) == 1)
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - pickup");
+                            else if ((i+1) == serviceRequest.getDestinationFloor())
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - dropoff");
+                            else
+                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                         }
 
 

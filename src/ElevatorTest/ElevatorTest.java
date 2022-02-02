@@ -10,14 +10,14 @@ import static org.junit.Assert.*;
 public class ElevatorTest {
 
 
-    // Test input csv generation
+    // Test input csv file generation
     @Test
-    public void testInputCsvGeneration() throws IOException {
+    public void inputCsvGeneration() throws IOException {
         File TestFolder = new File("CSV/TestFloorCSV");
 
         // create test csv folder if one doesn't exist
         if(!TestFolder.exists()){
-            TestFolder.createNewFile();
+            TestFolder.mkdir();
         } else {
             // if folder exists, delete all files from folder
             for(File f: TestFolder.listFiles())

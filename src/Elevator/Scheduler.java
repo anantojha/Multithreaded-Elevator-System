@@ -28,7 +28,7 @@ public class Scheduler {
                 // make floor wait while a request available
                 wait();
             } catch (InterruptedException e) {
-                System.out.println("Cannot WAIT on " + this.getClass().getName() + " Thread to place ingredients on Table.");
+                System.out.println("Cannot WAIT on " + this.getClass().getName() + " Thread to put new requests.");
             }
         }
 
@@ -36,16 +36,16 @@ public class Scheduler {
         requests = requestsToAdd;
         requestIsAvailable = true;
 
-        System.out.println(Thread.currentThread().getName() + " added request: " + requests[0].toString());
+        System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + requests[0].toString());
 
         // notify all threads of change
         notifyAll();
     }
     
     // synchronized function for Elevator to set request as complete
-    public synchronized void serviceRequest(Request request) throws InterruptedException {
+    public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
         requestsCompleted++;
-        System.out.println("Elevator has completed request #: " + requestsCompleted + "");
+        System.out.println("Scheduler: Elevator " + id + " has completed request #: " + requestsCompleted + "");
         requestIsAvailable = false;             // clear requests
         notifyAll();                            // notify all threads of change
     }

@@ -1,5 +1,9 @@
 package Elevator;
-
+/*
+ * Direction is a collection of constants representing the cardinal direction 
+ * an elevator can take.
+ * 
+ */
 public enum Direction {
     UP {
         @Override

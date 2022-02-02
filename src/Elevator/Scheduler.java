@@ -64,7 +64,7 @@ public class Scheduler {
     /*
 	 * serviceRequest() is a method that sets a request for the Elevator as complete. It is the Elevator's consume function.
 	 * 
-	 * Input: Request request
+	 * Input: Request request, int id
 	 * Output: none
 	 * 
 	 */

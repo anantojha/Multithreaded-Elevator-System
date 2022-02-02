@@ -51,7 +51,7 @@ public class Floor implements Runnable{
     public void run() {
 
     	//Process csv files into incoming requests
-        try (BufferedReader br = new BufferedReader(new FileReader("FloorCSV/floor_" + myFloor + ".csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("CSV/FloorCSV/floor_" + myFloor + ".csv"))) {
             String line;
             //For each line in the csv, find the appropriate Direction, and add it to the request
             while ((line = br.readLine()) != null) {

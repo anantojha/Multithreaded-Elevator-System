@@ -19,7 +19,7 @@ public class Main {
 	 * 
 	 */
     public static void main(String[] args) throws IOException, InterruptedException {
-        createFloorCSV(1);
+        createFloorCSV(1 , "FloorCSV");
         Thread.sleep(100);
 
         Scheduler scheduler = new Scheduler();
@@ -38,12 +38,12 @@ public class Main {
 	 * 
 	 * Input: int
 	 * Output: none
-	 * 
+	 * s
 	 */
-    private static void createFloorCSV(int floors) throws IOException {
+    public static void createFloorCSV(int floors, String folder) throws IOException {
         //Create CSV file for each floor
         for(int i = 1; i <= floors; i++){
-            FileWriter csv = new FileWriter("FloorCSV/floor_" + i + ".csv");
+            FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + i + ".csv");
             for(int j = 0; j < 2; j++){
                 csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*5).toString());
                 csv.append(",");

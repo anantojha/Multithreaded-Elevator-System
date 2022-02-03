@@ -1,7 +1,5 @@
 package Elevator;
 
-import java.io.Serializable;
-
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
  * and fulfilling them given that the correct conditions are met.

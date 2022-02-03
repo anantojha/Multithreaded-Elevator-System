@@ -1,11 +1,9 @@
 package ElevatorTest;
 
 import Elevator.Scheduler;
-import Elevator.Floor;
 import Elevator.Elevator;
 import Elevator.Request;
 import Elevator.Direction;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

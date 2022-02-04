@@ -36,7 +36,7 @@ Navaty Khara:
 	In-code comments for documentation
 	
 Tyler Mak: 
-	Wrote README.md file.
+	Wrote README.txt file.
 	Added more in-code comments,
 
 Anant Ojha: 

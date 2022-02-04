@@ -29,10 +29,12 @@ Groupwork Responsibilities:
 Lasitha Amuwala Meesthrige: 
 
 Bonita Hout:
+	UML Class Diagram
 
 Navaty Khara: 
 	Fixed out-of-bounds issue.
 	In-code comments for documentation
+	
 Tyler Mak: 
 
 Anant Ojha: 

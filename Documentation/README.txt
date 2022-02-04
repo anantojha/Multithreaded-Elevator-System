@@ -36,8 +36,8 @@ Navaty Khara:
 	In-code comments for documentation
 	
 Tyler Mak: 
-	Wrote README.txt file.
-	Added more in-code comments,
+	Wrote README.txt file
+	Added more in-code comments
 
 Anant Ojha: 
 	Implemented Floor, Elevator & Scheduler subsystems

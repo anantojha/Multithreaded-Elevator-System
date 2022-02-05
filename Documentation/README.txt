@@ -27,7 +27,8 @@ Output will be shown on the Console Window.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
-
+	Sequence Diagram
+	
 Bonita Hout:
 	UML Class Diagram
 

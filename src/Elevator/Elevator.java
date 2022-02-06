@@ -54,39 +54,12 @@ public class Elevator implements Runnable{
             synchronized (scheduler) {
                 // get request from scheduler
                 Request serviceRequest = scheduler.getRequest();
+                
+                // elevator is servicing request
+                System.out.println(Thread.currentThread().getName() +" is servicing "+ serviceRequest);
 
-                // validate if source floor of request is the thread's floor
-                if (serviceRequest.getSourceFloor() == currentFloor) {
-
-                    // elevator is currently on request's source floor
-                    System.out.println(Thread.currentThread().getName() +" is servicing "+ serviceRequest);
-                    try {
-                        // go from source floor to destination floor
-                        for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
-                            Thread.sleep(600);
-                            if ((i+1) == 1)
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - pickup");
-                            else if ((i+1) == serviceRequest.getDestinationFloor())
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - dropoff");
-                            else
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
-                        }
-
-                        // update current floor
-                        currentFloor = serviceRequest.getDestinationFloor();
-                        // complete request
-                        scheduler.serviceRequest(serviceRequest, Id);
-
-                        // *end test*
-                        if(testEnabled)
-                            break;
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    // elevator is not on request's source floor
-                    System.out.println(Thread.currentThread().getName() +" is servicing "+ serviceRequest);
+                // Move to source floor if not already on source floor
+                if (serviceRequest.getSourceFloor() != currentFloor) {
                     try {
                         // go to source floor
                         if(currentFloor > serviceRequest.getSourceFloor()){
@@ -95,34 +68,37 @@ public class Elevator implements Runnable{
                                 System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
                             }
                         }
-
-                        // go from source floor to destination floor
-                        for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
-                            Thread.sleep(600);
-                            if ((i+1) == 1)
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - pickup");
-                            else if ((i+1) == serviceRequest.getDestinationFloor())
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - dropoff");
-                            else
-                                System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
-                        }
-
-
-                        // update current floor to destination
-                        currentFloor = serviceRequest.getDestinationFloor();
-
-                        // complete request
-                        scheduler.serviceRequest(serviceRequest, Id);
-
-                        // *end test*
-                        if(testEnabled)
-                            break;
-
+                        
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
                 
+              
+                try {
+                    // go from source floor to destination floor
+                    for(int i = 0; i <= (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i++){
+                        Thread.sleep(600);
+                        if ((i+1) == 1)
+                            System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - pickup");
+                        else if ((i+1) == serviceRequest.getDestinationFloor())
+                            System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1) + " - dropoff");
+                        else
+                            System.out.println(Thread.currentThread().getName() +" is at floor: "+ (i+1));
+                    }
+
+                    // update current floor to destination
+                    currentFloor = serviceRequest.getDestinationFloor();
+                    // complete request
+                    scheduler.serviceRequest(serviceRequest, Id);
+
+                    // *end test*
+                    if(testEnabled)
+                        break;
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

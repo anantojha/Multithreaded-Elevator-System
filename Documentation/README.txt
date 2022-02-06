@@ -25,7 +25,7 @@ Using Eclipse, import the project -> Open Main.java -> Right Click in Code Windo
 Output will be shown on the Console Window.
 
 Running Unit Test:
-Import JUnit library from 'configure project build path' settings. 
+Import JUnit 4 library from 'configure project build path' settings. 
 Right click on test file and run as 'JUnit Test'.
 --------------------------------------------------------------------------------------------------
 Groupwork Responsibilities:

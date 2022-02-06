@@ -23,6 +23,10 @@ Running the program:
 To run the program, invoke the main function in Main.java which will also run the other classes.
 Using Eclipse, import the project -> Open Main.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
 Output will be shown on the Console Window.
+
+Running Unit Test:
+Import JUnit library from 'configure project build path' settings. 
+Right click on test file and run as 'JUnit Test'.
 --------------------------------------------------------------------------------------------------
 Groupwork Responsibilities:
 

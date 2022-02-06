@@ -28,6 +28,7 @@ Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
 	Sequence Diagram
+	Refactored repeated code in Elevator.java
 	
 Bonita Hout:
 	UML Class Diagram

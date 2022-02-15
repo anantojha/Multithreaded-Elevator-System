@@ -11,6 +11,8 @@ import java.util.Random;
  */
 
 public class Main {
+	
+    private State state;
 
 	/*
 	 * main(String[] args) initializes the threads, creates the requests, and begins the program.

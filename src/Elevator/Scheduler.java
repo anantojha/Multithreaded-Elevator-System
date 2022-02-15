@@ -11,6 +11,7 @@ public class Scheduler {
     private Queue<Request> requests = new LinkedList<>();
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
+    private State state;
 
     public int getRequestsCompleted() {
         return requestsCompleted;

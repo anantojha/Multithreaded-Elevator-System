@@ -22,6 +22,7 @@ public class Floor implements Runnable{
     private Scheduler scheduler;
     private int myFloor;
     private ArrayList<Request> incomingRequests;
+    private State state;
 
     /*
 	 * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor

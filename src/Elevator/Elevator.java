@@ -11,6 +11,7 @@ public class Elevator implements Runnable{
     private int Id;
     private int currentFloor;
     private boolean testEnabled = false;
+    private State state;
 
     public void setTestEnabled(boolean testEnabled) {
         this.testEnabled = testEnabled;

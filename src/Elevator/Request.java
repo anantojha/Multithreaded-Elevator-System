@@ -13,6 +13,7 @@ public class Request {
     private final int sourceFloor;
     private final Direction direction;
     private final int destinationFloor;
+    private State state;
 
     
     /*

@@ -50,7 +50,21 @@ public class Floor implements Runnable{
 
     @Override
     public void run() {
+    	//Read CSV file for this floor
+    	readCSV();
 
+        //Send request to scheduler when request time is same as current time
+        sendRequest();
+    }
+    
+    /*
+     * The readCSV() method processes a csv file corresponding to the floor thread that contains the incoming requests.
+     * It will read the csv file and process the incoming requests into the incomingRequests arraylist.
+     * 
+     * Input: None
+     * Output: None
+     */
+    public void readCSV() {
     	//Process csv files into incoming requests
         try (BufferedReader br = new BufferedReader(new FileReader("CSV/FloorCSV/floor_" + myFloor + ".csv"))) {
             String line;
@@ -68,8 +82,17 @@ public class Floor implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        //Synchronize with scheduler
+    }
+    
+    /*
+     * The sendRequest() method iterates through ArrayList of requests gotten from csv file earlier read from
+     * and sends the request to the scheduler when the incoming request time is equal to the current time.
+     * 
+     * Input: None
+     * Output: None
+     */
+    public void sendRequest() {
+    	//Synchronize with scheduler
         synchronized (scheduler){
             for (Request r: incomingRequests) {
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -84,6 +107,5 @@ public class Floor implements Runnable{
                 scheduler.putRequest(r);
             }
         }
-        
     }
 }

@@ -10,10 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 
-import Elevator.Floor;
-import Elevator.Scheduler;
+import Elevator.FloorSubsystem.Floor;
+import Elevator.SchedulerSubsystem.Scheduler;
 import Elevator.Request;
-import Elevator.Direction;
+import Elevator.Enums.Direction;
 import java.util.ArrayList;
 
 public class FloorTest {

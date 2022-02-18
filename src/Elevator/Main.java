@@ -1,5 +1,9 @@
 package Elevator;
 
+import Elevator.ElevatorSubsystem.Elevator;
+import Elevator.FloorSubsystem.Floor;
+import Elevator.SchedulerSubsystem.Scheduler;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -10,9 +14,7 @@ import java.util.Random;
  * 
  */
 
-public class Main {
-	
-    private State state;
+public class    Main {
 
 	/*
 	 * main(String[] args) initializes the threads, creates the requests, and begins the program.
@@ -22,7 +24,7 @@ public class Main {
 	 * 
 	 */
     public static void main(String[] args) throws IOException, InterruptedException {
-        createFloorCSV(1 , "FloorCSV", 10);
+        createFloorCSV(1 , "FloorCSV", 3);
         Thread.sleep(100);
 
         Scheduler scheduler = new Scheduler();

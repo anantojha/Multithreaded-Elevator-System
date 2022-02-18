@@ -1,13 +1,15 @@
-package Elevator;
+package Elevator.FloorSubsystem;
+
+import Elevator.Enums.Direction;
+import Elevator.Request;
+import Elevator.SchedulerSubsystem.Scheduler;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
 /*
@@ -22,7 +24,6 @@ public class Floor implements Runnable{
     private Scheduler scheduler;
     private int myFloor;
     private ArrayList<Request> incomingRequests;
-    private State state;
 
     /*
 	 * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
@@ -95,15 +96,11 @@ public class Floor implements Runnable{
     	//Synchronize with scheduler
         synchronized (scheduler){
             for (Request r: incomingRequests) {
-                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                //If the incoming request time equals the current time, send a request to the scheduler
-                while (!r.getTime().format(myFormatObj).equals(LocalDateTime.now().format(myFormatObj))) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                while(true){
+                    if(r.getTime().isBefore(LocalDateTime.now()))
+                        break;
                 }
+
                 scheduler.putRequest(r);
             }
         }

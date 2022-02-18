@@ -1,4 +1,6 @@
-package Elevator;
+package Elevator.SchedulerSubsystem;
+
+import Elevator.Request;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,7 +13,6 @@ public class Scheduler {
     private Queue<Request> requests = new LinkedList<>();
     private boolean requestIsAvailable = false;
     private int requestsCompleted = 0;
-    private State state;
 
     public int getRequestsCompleted() {
         return requestsCompleted;
@@ -65,7 +66,7 @@ public class Scheduler {
         System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + requests.peek().toString());
 
         // notify all threads of change
-        notifyAll();
+        notify();
     }
     
     /*

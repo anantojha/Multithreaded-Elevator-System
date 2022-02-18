@@ -1,4 +1,4 @@
-package Elevator;
+package Elevator.Enums;
 /*
  * Direction is a collection of constants representing the cardinal direction 
  * an elevator can take.

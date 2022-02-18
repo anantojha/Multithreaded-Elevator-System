@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class Main {
 	
-    private State state = new State();
+    private State state;
 
 	/*
 	 * main(String[] args) initializes the threads, creates the requests, and begins the program.
@@ -22,7 +22,6 @@ public class Main {
 	 * 
 	 */
     public static void main(String[] args) throws IOException, InterruptedException {
-    	state = new State.INITIALIZE;
         createFloorCSV(1 , "FloorCSV", 10);
         Thread.sleep(100);
 

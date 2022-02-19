@@ -80,7 +80,6 @@ public class Scheduler {
 	 * Output: none
 	 * 
 	 */
-    // synchronized function for Elevator to set request as complete
     public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
         state.setRequestsCompleted(state.getRequestsCompleted() + 1);
         System.out.println("Scheduler: Elevator " + id + " has completed request #: " + state.getRequestsCompleted() + "");

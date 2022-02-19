@@ -1,6 +1,8 @@
 package Elevator.FloorSubsystem;
 
+import Elevator.ElevatorSubsystem.FloorState;
 import Elevator.Enums.Direction;
+import Elevator.Enums.FloorStatus;
 import Elevator.SchedulerSubsystem.Scheduler;
 
 import java.io.BufferedReader;
@@ -22,6 +24,7 @@ public class Floor implements Runnable{
     private Scheduler scheduler;
     private int myFloor;
     private ArrayList<Request> incomingRequests;
+    private FloorState state;
 
     /*
 	 * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
@@ -35,6 +38,7 @@ public class Floor implements Runnable{
         this.scheduler = scheduler;
         this.myFloor = myFloor;
         this.incomingRequests = new ArrayList<>();
+        this.state = new FloorState(FloorStatus.INITIALIZE);
     }
 
     /*
@@ -64,6 +68,7 @@ public class Floor implements Runnable{
      * Output: None
      */
     public void readCSV() {
+    	state.setState(FloorStatus.PROCESSING);
     	//Process csv files into incoming requests
         try (BufferedReader br = new BufferedReader(new FileReader("CSV/FloorCSV/floor_" + myFloor + ".csv"))) {
             String line;
@@ -94,7 +99,9 @@ public class Floor implements Runnable{
     	//Synchronize with scheduler
         synchronized (scheduler){
             for (Request r: incomingRequests) {
+            	state.setState(FloorStatus.SENDING);
                 while(true){
+                	state.setState(FloorStatus.WAITING);
                     if(r.getTime().isBefore(LocalDateTime.now()))
                         break;
                 }

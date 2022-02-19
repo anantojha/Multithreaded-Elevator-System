@@ -1,24 +1,27 @@
 package Elevator.Enums;
 
-public enum StateMachineStatus {
-	// Initialize threads
+public enum FloorStatus {
 	INITIALIZE {
 		@Override
 		public String toString() {
 			return "INITIALIZE";
 		}
 	},
-	RUNNING {
+	PROCESSING {
 		@Override
 		public String toString() {
-			return "RUNNING";
+			return "PROCESSING";
 		}
 	},
-	ENDING {
-		@Override
+	SENDING {
 		public String toString() {
-			return "ENDING";
+			return "SENDING";
+		}
+	},
+	WAITING {
+		public String toString() {
+			return "WAITING";
 		}
 	}
-
+	 
 }

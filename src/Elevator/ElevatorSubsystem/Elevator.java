@@ -32,6 +32,7 @@ public class Elevator implements Runnable{
         this.scheduler = scheduler;
         this.Id = id;
         this.state = new ElevatorState(1);
+        scheduler.addElevatorState(this.state);
     }
 
     public int getId() {

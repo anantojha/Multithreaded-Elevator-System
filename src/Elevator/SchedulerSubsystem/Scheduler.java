@@ -1,6 +1,7 @@
 package Elevator.SchedulerSubsystem;
 
 import Elevator.ElevatorSubsystem.ElevatorState;
+import Elevator.Enums.SchedulerStatus;
 import Elevator.FloorSubsystem.Request;
 
 import java.util.LinkedList;
@@ -15,10 +16,12 @@ public class Scheduler {
     private SchedulerState state = new SchedulerState();
 
     public int getRequestsCompleted() {
+    	state.setState(SchedulerStatus.PRINTREQUEST);
         return state.getRequestsCompleted();
     }
 
     public void addElevatorState(ElevatorState elevatorState){
+    	state.setState(SchedulerStatus.INITIALIZE);
         state.addElevator(elevatorState);
     }
 
@@ -31,6 +34,7 @@ public class Scheduler {
 	 * 
 	 */
     public synchronized Request getRequest() {
+    	state.setState(SchedulerStatus.PRINTREQUEST);
         while(!state.isRequestIsAvailable()) {
             try {
                 // make elevator wait while table is empty
@@ -54,6 +58,7 @@ public class Scheduler {
 	 * 
 	 */
     public synchronized void putRequest(Request requestToAdd){
+    	state.setState(SchedulerStatus.ADDINGREQUEST);
         while (state.isRequestIsAvailable()) {
             try {
                 // make floor wait while a request available
@@ -82,6 +87,7 @@ public class Scheduler {
 	 */
     // synchronized function for Elevator to set request as complete
     public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
+    	state.setState(SchedulerStatus.COMPLETEREQUEST);
         state.setRequestsCompleted(state.getRequestsCompleted() + 1);
         System.out.println("Scheduler: Elevator " + id + " has completed request #: " + state.getRequestsCompleted() + "");
         System.out.println();

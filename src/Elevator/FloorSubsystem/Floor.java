@@ -1,6 +1,5 @@
 package Elevator.FloorSubsystem;
 
-import Elevator.ElevatorSubsystem.FloorState;
 import Elevator.Enums.Direction;
 import Elevator.Enums.FloorStatus;
 import Elevator.SchedulerSubsystem.Scheduler;

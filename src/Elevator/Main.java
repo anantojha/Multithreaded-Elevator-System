@@ -1,7 +1,6 @@
 package Elevator;
 
 import Elevator.ElevatorSubsystem.Elevator;
-import Elevator.ElevatorSubsystem.StateMachineState;
 import Elevator.Enums.StateMachineStatus;
 import Elevator.FloorSubsystem.Floor;
 import Elevator.SchedulerSubsystem.Scheduler;

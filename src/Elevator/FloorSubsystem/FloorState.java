@@ -1,4 +1,4 @@
-package Elevator.ElevatorSubsystem;
+package Elevator.FloorSubsystem;
 
 import Elevator.Enums.FloorStatus;
 

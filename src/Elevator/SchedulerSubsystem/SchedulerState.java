@@ -1,6 +1,7 @@
 package Elevator.SchedulerSubsystem;
 
 import Elevator.ElevatorSubsystem.ElevatorState;
+import Elevator.Enums.SchedulerStatus;
 import Elevator.FloorSubsystem.Request;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class SchedulerState extends Observable {
     private Queue<Request> requests;
     private boolean requestIsAvailable;
     private int requestsCompleted;
+    private SchedulerStatus state;
 
     public SchedulerState(){
         this.elevators = new ArrayList<>();
@@ -48,5 +50,8 @@ public class SchedulerState extends Observable {
 
     public void setRequestsCompleted(int requestsCompleted) {
         this.requestsCompleted = requestsCompleted;
+    }
+    public void setState(SchedulerStatus state) {
+    	this.state = state;
     }
 }

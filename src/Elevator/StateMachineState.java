@@ -1,4 +1,4 @@
-package Elevator.ElevatorSubsystem;
+package Elevator;
 
 import Elevator.Enums.StateMachineStatus;
 

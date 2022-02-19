@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /*
  * The Main class represents the main program that all threads are initialized from.
@@ -36,6 +37,10 @@ public class    Main {
         elevatorOne.start();
     }
 
+    public static long randomTimeDiff(){
+        return ThreadLocalRandom.current().nextLong(0,15);
+    }
+
 
 	/*
 	 * createFloorCSV(int floors) creates a csv file for some number of floors specified with the following structure:
@@ -51,7 +56,7 @@ public class    Main {
             FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + i + ".csv");
             Random random = new Random();
             for(int j = 0; j < numRequests; j++){
-                csv.append(LocalDateTime.now().toLocalTime().plusSeconds((j+1)*5).toString());
+                csv.append(LocalDateTime.now().toLocalTime().plusSeconds(randomTimeDiff()).toString());
                 csv.append(",");
                 csv.append(String.valueOf(i));
                 csv.append(",");

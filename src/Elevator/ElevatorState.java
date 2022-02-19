@@ -7,14 +7,12 @@ import java.util.Observable;
 
 public class ElevatorState extends Observable {
 
-    private Integer startFloor;
     private Integer currentFloor;
     private Direction direction;
     private ElevatorStatus status;
     private Integer maxFloor;
 
     public ElevatorState(Integer startFloor){
-        this.startFloor = startFloor;
         this.currentFloor = startFloor;
         this.direction = Direction.UP;
         this.status = ElevatorStatus.IDLE;

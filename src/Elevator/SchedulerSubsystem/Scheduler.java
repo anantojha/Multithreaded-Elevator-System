@@ -66,7 +66,7 @@ public class Scheduler {
         System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + requests.peek().toString());
 
         // notify all threads of change
-        notify();
+        notifyAll();
     }
     
     /*

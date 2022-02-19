@@ -45,7 +45,7 @@ public class FloorTest {
                 		if (!f.isDirectory())
                     			f.delete();
         	}
-        	Assert.assertEquals(FloorStatus.INITIALIZE, floor.getCurrentState());
+        	Assert.assertEquals(FloorStatus.INITIALIZE.toString(), floor.getCurrentState());
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class FloorTest {
 		floorThread.start();
 		for (Request r: Requests) {
 			serviceRequest = scheduler.getRequest();
-			Assert.assertEquals(FloorStatus.WAITING, floor.getCurrentState());
+			Assert.assertEquals(FloorStatus.WAITING.toString(), floor.getCurrentState());
 			Assert.assertEquals(r.toString(), serviceRequest.toString());
 			scheduler.serviceRequest(serviceRequest, 1);
 		}

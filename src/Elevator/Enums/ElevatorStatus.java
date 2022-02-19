@@ -30,5 +30,10 @@ public enum ElevatorStatus {
         public String toString() {
             return "CLOSE DOOR";
         }
+    },
+    TERMINATE {
+    	public String toString() {
+    		return "TERMINATE";
+    	}
     }
 }

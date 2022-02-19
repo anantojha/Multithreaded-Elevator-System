@@ -1,6 +1,8 @@
 package Elevator;
 
 import Elevator.ElevatorSubsystem.Elevator;
+import Elevator.ElevatorSubsystem.StateMachineState;
+import Elevator.Enums.StateMachineStatus;
 import Elevator.FloorSubsystem.Floor;
 import Elevator.SchedulerSubsystem.Scheduler;
 
@@ -24,19 +26,41 @@ public class    Main {
 	 * Output: none
 	 * 
 	 */
+	
+	
     public static void main(String[] args) throws IOException, InterruptedException {
+    	StateMachineState state = new StateMachineState(StateMachineStatus.INITIALIZE);
+    	System.out.println("Program initializing.");
+    	System.out.println("State Machine current state = " + state.getState());
+    	
+    	System.out.println("\n\nInitializing sample floor requests.");
         createFloorCSV(1 , "FloorCSV", 5);
         Thread.sleep(100);
 
+    	state.setState(StateMachineStatus.INITIALIZE);
+
         Scheduler scheduler = new Scheduler();
         
+    	System.out.println("\n\nInitializing floors.");
+
         //Create and start threads
         Thread floorOne = new Thread(new Floor(scheduler, 1), "Floor 1");
+    	System.out.println("Initializing Elevator.");
         Thread elevatorOne = new Thread(new Elevator(scheduler, 1), "Elevator 1");
         Thread elevatorTwo = new Thread(new Elevator(scheduler, 2), "Elevator 2");
+    	state.setState(StateMachineStatus.RUNNING);
+    	System.out.println("\n\nStarting program.");
+    	System.out.println("State Machine current state = " + state.getState());
         floorOne.start();
         elevatorOne.start();
         elevatorTwo.start();
+        
+        elevatorOne.join();
+        elevatorTwo.join();
+        
+    	state.setState(StateMachineStatus.ENDING);
+    	System.out.println("\n\nEnding program.");
+    	System.out.println("State Machine current state = " + state.getState());
     }
 
     public static long randomTimeDiff(){

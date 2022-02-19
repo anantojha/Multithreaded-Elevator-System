@@ -62,6 +62,8 @@ Bonita Hout:
 	
 
 Navaty Khara: 
+	Implemented Floor & Main state machines
+	Expanded on Scheduler state machines
 	
 	
 Tyler Mak: 

@@ -1,8 +1,8 @@
 --------------------------------------------------------------------------------------------------
-Iteration 1
+Iteration 2
 Group: L2-G6
 Members: Lasitha Amuwala Meesthrige, Bonita Hout, Navaty Khara, Tyler Mak, Anant Ojha
-Date: February 5, 2022
+Date: February 19, 2022
 --------------------------------------------------------------------------------------------------
 Files in this project:
 
@@ -31,25 +31,20 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
-	Sequence Diagram
-	Refactored repeated code in Elevator.java
+	
 	
 Bonita Hout:
-	UML Class Diagram
+	
 
 Navaty Khara: 
-	Fixed out-of-bounds issue.
-	In-code comments for documentation
+	
 	
 Tyler Mak: 
-	Wrote README.txt file
-	Added more in-code comments
+	
 
 Anant Ojha: 
-	Implemented Floor, Elevator & Scheduler subsystems
-	Implemented JUnit Tests:
-					1. inputCsvGeneration()
-					2. completeRequest()
+	Implemented Elevator & Scheduler state machines. 
+	
 	
 	
 	

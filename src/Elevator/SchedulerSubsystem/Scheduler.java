@@ -1,5 +1,6 @@
 package Elevator.SchedulerSubsystem;
 
+import Elevator.ElevatorSubsystem.ElevatorState;
 import Elevator.FloorSubsystem.Request;
 
 import java.util.LinkedList;
@@ -10,12 +11,15 @@ import java.util.Queue;
  * 
  */
 public class Scheduler {
-    private Queue<Request> requests = new LinkedList<>();
-    private boolean requestIsAvailable = false;
-    private int requestsCompleted = 0;
+
+    private SchedulerState state = new SchedulerState();
 
     public int getRequestsCompleted() {
-        return requestsCompleted;
+        return state.getRequestsCompleted();
+    }
+
+    public void addElevatorState(ElevatorState elevatorState){
+        state.addElevator(elevatorState);
     }
 
     /*
@@ -27,7 +31,7 @@ public class Scheduler {
 	 * 
 	 */
     public synchronized Request getRequest() {
-        while(!requestIsAvailable) {
+        while(!state.isRequestIsAvailable()) {
             try {
                 // make elevator wait while table is empty
                 wait();
@@ -38,7 +42,7 @@ public class Scheduler {
 
         // notify all threads of change to active requests list
         notifyAll();
-        return requests.peek();
+        return state.getRequests().peek();
     }
     
     /*
@@ -50,7 +54,7 @@ public class Scheduler {
 	 * 
 	 */
     public synchronized void putRequest(Request requestToAdd){
-        while (requestIsAvailable) {
+        while (state.isRequestIsAvailable()) {
             try {
                 // make floor wait while a request available
                 wait();
@@ -60,10 +64,10 @@ public class Scheduler {
         }
 
         // request is added
-        requests.add(requestToAdd);
-        requestIsAvailable = true;
+        state.getRequests().add(requestToAdd);
+        state.setRequestIsAvailable(true);
 
-        System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + requests.peek().toString());
+        System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + state.getRequests().peek().toString());
 
         // notify all threads of change
         notifyAll();
@@ -78,13 +82,13 @@ public class Scheduler {
 	 */
     // synchronized function for Elevator to set request as complete
     public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
-        requestsCompleted++;
-        System.out.println("Scheduler: Elevator " + id + " has completed request #: " + requestsCompleted + "");
+        state.setRequestsCompleted(state.getRequestsCompleted() + 1);
+        System.out.println("Scheduler: Elevator " + id + " has completed request #: " + state.getRequestsCompleted() + "");
         System.out.println();
-        requests.poll();
+        state.getRequests().poll();
 
-        if(requests.size() == 0)
-            requestIsAvailable = false;             // clear requests
+        if(state.getRequests().size() == 0)
+            state.setRequestIsAvailable(false);             // clear requests
         notifyAll();                            // notify all threads of change
     }
 }

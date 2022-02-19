@@ -16,7 +16,7 @@ public class FloorState {
 		this.state = state;
 	}
 
-	public String getState() {
-		return state.toString();
+	public FloorStatus getState() {
+		return state;
 	}
 }

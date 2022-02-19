@@ -25,6 +25,7 @@ public class Floor implements Runnable{
     private int myFloor;
     private ArrayList<Request> incomingRequests;
     private FloorState state;
+    private boolean testEnabled = false;
 
     /*
 	 * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
@@ -41,6 +42,23 @@ public class Floor implements Runnable{
         this.state = new FloorState(FloorStatus.INITIALIZE);
     }
 
+    /*
+     * The setTestEnabled() method is used only by FloorTest.java to test the functionality
+     * of this Floor.java class. It changes the location of where the CSV file is read from.
+     * Changes from CSV/FloorCSV to CSV/TestFloorCSV
+     */
+    public void setTestEnabled(boolean testEnabled) {
+        this.testEnabled = testEnabled;
+    }
+    
+    /*
+     * The getCurrentState() method gets the state the floor is currently in. Either
+     * INITIALIZE, PROCESSING, SENDING or WAITING.
+     */
+    public FloorStatus getCurrentState() {
+    	return state.getState();
+    }
+	
     /*
 	 * The run() method is the primary sequence that is run when a thread is active. In this case, the Floor class will
 	 * attempt to process all local csv files into incoming requests. These requests are then later sent to the Scheduler
@@ -69,8 +87,14 @@ public class Floor implements Runnable{
      */
     public void readCSV() {
     	state.setState(FloorStatus.PROCESSING);
+	String fileToRead;
+    	if (testEnabled) 
+    		fileToRead = "CSV/TestFloorCSV/floor_" + myFloor + ".csv";
+    	else
+    		fileToRead = "CSV/FloorCSV/floor_" + myFloor + ".csv";
+    	
     	//Process csv files into incoming requests
-        try (BufferedReader br = new BufferedReader(new FileReader("CSV/FloorCSV/floor_" + myFloor + ".csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) {
             String line;
             //For each line in the csv, find the appropriate Direction, and add it to the request
             while ((line = br.readLine()) != null) {

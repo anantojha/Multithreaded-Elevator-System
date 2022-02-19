@@ -19,18 +19,6 @@ public enum ElevatorStatus {
             return "IDLE";
         }
     },
-    CLOSING_DOORS {
-        @Override
-        public String toString() {
-            return "CLOSING DOORS";
-        }
-    },
-    OPENING_DOORS {
-        @Override
-        public String toString() {
-            return "OPENING DOORS";
-        }
-    },
     OPEN_DOOR {
         @Override
         public String toString() {

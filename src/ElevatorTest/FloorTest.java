@@ -12,7 +12,7 @@ import org.junit.Assert;
 
 import Elevator.FloorSubsystem.Floor;
 import Elevator.SchedulerSubsystem.Scheduler;
-import Elevator.Request;
+import Elevator.FloorSubsystem.Request;
 import Elevator.Enums.Direction;
 import java.util.ArrayList;
 

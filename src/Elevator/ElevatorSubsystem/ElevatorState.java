@@ -1,4 +1,4 @@
-package Elevator;
+package Elevator.ElevatorSubsystem;
 
 import Elevator.Enums.Direction;
 import Elevator.Enums.ElevatorStatus;

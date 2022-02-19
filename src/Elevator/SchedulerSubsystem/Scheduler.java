@@ -1,6 +1,6 @@
 package Elevator.SchedulerSubsystem;
 
-import Elevator.Request;
+import Elevator.FloorSubsystem.Request;
 
 import java.util.LinkedList;
 import java.util.Queue;

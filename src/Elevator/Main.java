@@ -25,7 +25,7 @@ public class    Main {
 	 * 
 	 */
     public static void main(String[] args) throws IOException, InterruptedException {
-        createFloorCSV(1 , "FloorCSV", 3);
+        createFloorCSV(1 , "FloorCSV", 5);
         Thread.sleep(100);
 
         Scheduler scheduler = new Scheduler();
@@ -33,8 +33,10 @@ public class    Main {
         //Create and start threads
         Thread floorOne = new Thread(new Floor(scheduler, 1), "Floor 1");
         Thread elevatorOne = new Thread(new Elevator(scheduler, 1), "Elevator 1");
+        Thread elevatorTwo = new Thread(new Elevator(scheduler, 2), "Elevator 2");
         floorOne.start();
         elevatorOne.start();
+        elevatorTwo.start();
     }
 
     public static long randomTimeDiff(){

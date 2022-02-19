@@ -1,4 +1,4 @@
-package Elevator;
+package Elevator.FloorSubsystem;
 
 import Elevator.Enums.Direction;
 

@@ -2,7 +2,7 @@ package ElevatorTest;
 
 import Elevator.SchedulerSubsystem.Scheduler;
 import Elevator.ElevatorSubsystem.Elevator;
-import Elevator.Request;
+import Elevator.FloorSubsystem.Request;
 import Elevator.Enums.Direction;
 import org.junit.Assert;
 import org.junit.Before;

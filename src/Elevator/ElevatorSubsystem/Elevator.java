@@ -2,8 +2,7 @@ package Elevator.ElevatorSubsystem;
 import Elevator.Enums.Direction;
 import Elevator.Enums.ElevatorStatus;
 import Elevator.SchedulerSubsystem.Scheduler;
-import Elevator.Request;
-import Elevator.ElevatorState;
+import Elevator.FloorSubsystem.Request;
 
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
@@ -70,6 +69,7 @@ public class Elevator implements Runnable{
         while(true) {
 
             updateState(ElevatorStatus.IDLE);
+            System.out.println();
 
             // synchronize with scheduler
             synchronized (scheduler) {

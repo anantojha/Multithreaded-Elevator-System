@@ -54,7 +54,7 @@ public class Floor implements Runnable{
      * The getCurrentState() method gets the state the floor is currently in. Either
      * INITIALIZE, PROCESSING, SENDING or WAITING.
      */
-    public FloorStatus getCurrentState() {
+    public String getCurrentState() {
     	return state.getState();
     }
 	

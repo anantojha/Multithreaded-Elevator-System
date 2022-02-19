@@ -17,6 +17,8 @@ import Elevator.SchedulerSubsystem.Scheduler;
 import Elevator.FloorSubsystem.Request;
 import Elevator.Enums.Direction;
 import Elevator.Enums.FloorStatus;
+import Elevator.Enums.SchedulerStatus;
+
 import java.util.ArrayList;
 
 public class FloorTest {
@@ -30,20 +32,20 @@ public class FloorTest {
 	@Before
     public void setup(){
 	    	//create scheduler and floor class, thread for floor, and arraylist to hold requests
-		scheduler = new Scheduler();
-		floor = new Floor(scheduler, 1);
+			scheduler = new Scheduler();
+			floor = new Floor(scheduler, 1);
 	    	floor.setTestEnabled(true);
-		floorThread = new Thread(floor, "Floor 1");
-		Requests = new ArrayList<>();
+	    	floorThread = new Thread(floor, "Floor 1");
+	    	Requests = new ArrayList<>();
         	//create test csv folder if one doesn't exist
-		TestFolder = new File("CSV/TestFloorCSV");
+	    	TestFolder = new File("CSV/TestFloorCSV");
         	if(!TestFolder.exists()){
-            		TestFolder.mkdir();
+        		TestFolder.mkdir();
         	} else {
-            		// if folder exists, delete all files from folder
-            		for(File f: TestFolder.listFiles())
-                		if (!f.isDirectory())
-                    			f.delete();
+            	// if folder exists, delete all files from folder
+            	for(File f: TestFolder.listFiles())
+               		if (!f.isDirectory())
+               			f.delete();
         	}
         	Assert.assertEquals(FloorStatus.INITIALIZE.toString(), floor.getCurrentState());
 	}
@@ -76,8 +78,10 @@ public class FloorTest {
 		for (Request r: Requests) {
 			serviceRequest = scheduler.getRequest();
 			Assert.assertEquals(FloorStatus.WAITING.toString(), floor.getCurrentState());
+			Assert.assertTrue(SchedulerStatus.ADDINGREQUEST.toString().equals(scheduler.getCurrentState()) || SchedulerStatus.PRINTREQUEST.toString().equals(scheduler.getCurrentState()));
 			Assert.assertEquals(r.toString(), serviceRequest.toString());
 			scheduler.serviceRequest(serviceRequest, 1);
+			Assert.assertEquals(SchedulerStatus.COMPLETEREQUEST.toString(), scheduler.getCurrentState());
 		}
 	}
 		@After 

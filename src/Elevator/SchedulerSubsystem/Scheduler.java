@@ -24,6 +24,10 @@ public class Scheduler {
     	state.setState(SchedulerStatus.INITIALIZE);
         state.addElevator(elevatorState);
     }
+    
+    public String getCurrentState() {
+    	return state.getState();
+    }
 
     /*
 	 * getRequest() is a method that retrieves a request for the Elevator if some request is available. If none are available,

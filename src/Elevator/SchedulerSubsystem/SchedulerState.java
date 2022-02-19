@@ -54,4 +54,7 @@ public class SchedulerState extends Observable {
     public void setState(SchedulerStatus state) {
     	this.state = state;
     }
+    public String getState() {
+    	return this.state.toString();
+    }
 }

@@ -56,7 +56,7 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
-	
+	State Machine Diagram
 	
 Bonita Hout:
 	UML class diagram

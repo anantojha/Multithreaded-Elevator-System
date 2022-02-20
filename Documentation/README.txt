@@ -56,6 +56,7 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
+	Added states to ElevatorStatus enum
 	State Machine Diagram
 	
 Bonita Hout:

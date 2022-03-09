@@ -1,8 +1,8 @@
 --------------------------------------------------------------------------------------------------
-Iteration 2
+Iteration 3
 Group: L2-G6
 Members: Lasitha Amuwala Meesthrige, Bonita Hout, Navaty Khara, Tyler Mak, Anant Ojha
-Date: February 19, 2022
+Date: March 9th, 2022
 --------------------------------------------------------------------------------------------------
 Files in this project:
 
@@ -56,24 +56,24 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
-	Added states to ElevatorStatus enum
-	State Machine Diagram
+	
 	
 Bonita Hout:
-	UML class diagram
+	
 
 Navaty Khara: 
-	Implemented Floor & Main state machines
-	Expanded on Scheduler state machines
 	
 	
 Tyler Mak: 
-	Implemented Unit Testing for Floor subsystem
-	Updated other unit tests.
-	Updated README.txt
+	
 
 Anant Ojha: 
-	Implemented Elevator & Scheduler state machines. 
+	Implemented Socket Communication for Scheduler (Server);
+	Implemented Socket Communication for Floor (Client);
+	Implemented Socket Communication for Elevator (Client);
+	Refactored state machines for each subsystems;
+	Refactored System to handle 10 Floors, and 2 Elevator connections concurrently; 
+	
 	
 	
 	

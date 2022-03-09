@@ -1,7 +1,8 @@
 package Elevator.FloorSubsystem;
 
-import Elevator.Enums.Direction;
+import Elevator.Enums.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /*
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
  * 
  */
 
-public class Request {
+public class Request implements Serializable {
 
     private final LocalDateTime time;
     private final int sourceFloor;

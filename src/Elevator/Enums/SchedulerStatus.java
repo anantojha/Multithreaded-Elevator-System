@@ -8,20 +8,32 @@ public enum SchedulerStatus {
 			return "INITIALIZE";
 		}
 	},
+	CONNECTELEVATOR {
+		@Override
+		public String toString() {
+			return "CONNECTED ELEVATOR";
+		}
+	},
+	CONNECTFLOOR {
+		@Override
+		public String toString() {
+			return "CONNECTED FLOOR";
+		}
+	},
 	ADDINGREQUEST {
 		@Override
 		public String toString() {
-			return "ADDINGREQUEST";
+			return "ADDING REQUEST";
 		}
 	},
-	PRINTREQUEST {
+	SENDREQUEST {
 		public String toString() {
-			return "PRINTREQUEST";
+			return "SEND REQUEST";
 		}
 	},
 	COMPLETEREQUEST {
 		public String toString() {
-			return "COMPLETEREQUEST";
+			return "COMPLETE REQUEST";
 		}
 	}
 }

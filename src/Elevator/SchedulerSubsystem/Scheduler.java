@@ -1,103 +1,148 @@
 package Elevator.SchedulerSubsystem;
 
-import Elevator.ElevatorSubsystem.ElevatorState;
 import Elevator.Enums.SchedulerStatus;
 import Elevator.FloorSubsystem.Request;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /*
- * The Scheduler class is a shared data structure between the Elevator and the Floor. It serves to facilitate communicate between both threads.
- * 
+    A class to handle the server portion of the app
+
+    Class variables:
+        threads: contains ServerThread objects - one per client that connects
+        ss: ServerSocket object
  */
-public class Scheduler {
-
+public class Scheduler implements Serializable
+{
+    ArrayList<ServerThread> floorThreads;
+    ArrayList<ServerThread> elevatorThreads;
+    ServerSocket ss;
+    Queue<Request> queue;
     private SchedulerState state = new SchedulerState();
+    public static AtomicInteger chosenElevator = new AtomicInteger(1);
 
-    public int getRequestsCompleted() {
-    	state.setState(SchedulerStatus.PRINTREQUEST);
-        return state.getRequestsCompleted();
+    public static void main(String[] args) throws IOException {
+        Scheduler chatSrv = new Scheduler();
+        chatSrv.start();
     }
 
-    public void addElevatorState(ElevatorState elevatorState){
-    	state.setState(SchedulerStatus.INITIALIZE);
-        state.addElevator(elevatorState);
-    }
-    
-    public String getCurrentState() {
-    	return state.getState();
+    public Scheduler() {
+        this.floorThreads = new ArrayList<>();
+        this.elevatorThreads = new ArrayList<>();
+        this.queue = new ConcurrentLinkedQueue<>();
     }
 
-    /*
-	 * getRequest() is a method that retrieves a request for the Elevator if some request is available. If none are available,
-	 * the Elevator must wait until a request is present.
-	 * 
-	 * Input: none
-	 * Output: Request requests[0] 
-	 * 
-	 */
-    public synchronized Request getRequest() {
-    	state.setState(SchedulerStatus.PRINTREQUEST);
-        while(!state.isRequestIsAvailable()) {
+    /* Starts server and accepts new connections */
+    public void start() throws IOException {
+        state.setState(SchedulerStatus.INITIALIZE);
+        ss = new ServerSocket(10008);
+        int counter = 0;
+        try {
+            while (true) {
+                Socket socket = ss.accept();
+                if (counter < 2){
+                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state);
+                    elevatorThreads.add(serverThread);
+                    state.setState(SchedulerStatus.CONNECTELEVATOR);
+                    System.out.println(state.getState());
+                    serverThread.start();
+                } else {
+                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state);
+                    floorThreads.add(serverThread);
+                    state.setState(SchedulerStatus.CONNECTFLOOR);
+                    System.out.println(state.getState());
+                    serverThread.start();
+                }
+                counter = counter + 1;
+            }
+        } catch (Exception e) { }
+    }
+
+    /* Kills all ServerThread sockets and threads, then closes the ServerSocket */
+    public void stop() throws IOException {
+        for (ServerThread sT : this.elevatorThreads) {
+            sT.socket.close();
+            sT.interrupt();
+        }
+        for (ServerThread sT : this.floorThreads) {
+            sT.socket.close();
+            sT.interrupt();
+        }
+        ss.close();
+    }
+
+    public static class ServerThread extends Thread {
+        private Socket socket;
+        private ArrayList<ServerThread> floorThreadList;
+        private ArrayList<ServerThread> elevatorThreadList;
+        Queue<Request> requests;
+        private ObjectInputStream dIn;
+        private ObjectOutputStream dOut;
+        int numRequests=0;
+        SchedulerState state;
+
+        public ServerThread(Socket socket, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state) {
+            this.socket = socket;
+            this.floorThreadList = floorThreads;
+            this.elevatorThreadList = elevatorThreads;
+            this.requests = new ConcurrentLinkedQueue<>();
+            this.state = state;
+        }
+
+        @Override
+        public void run() {
             try {
-                // make elevator wait while table is empty
-                wait();
-            } catch (InterruptedException e) {
-                System.out.println("Cannot WAIT on "+ this.getClass().getName() + " Thread to get available requests");
+                dOut = new ObjectOutputStream(socket.getOutputStream());
+                dIn = new ObjectInputStream(socket.getInputStream());
+                SchedulerLoop();
+            } catch (Exception e) {
+                System.out.println("Error occurred: " + Arrays.toString(e.getStackTrace()));
             }
         }
 
-        // notify all threads of change to active requests list
-        notifyAll();
-        return state.getRequests().peek();
-    }
-    
-    /*
-	 * putRequest() is a method that adds a request for the Elevator if no request is available. If some are available,
-	 * the Floor must wait until no request is present.
-	 * 
-	 * Input: Request[] requestsToAdd
-	 * Output: none
-	 * 
-	 */
-    public synchronized void putRequest(Request requestToAdd){
-    	state.setState(SchedulerStatus.ADDINGREQUEST);
-        while (state.isRequestIsAvailable()) {
-            try {
-                // make floor wait while a request available
-                wait();
-            } catch (InterruptedException e) {
-                System.out.println("Cannot WAIT on " + this.getClass().getName() + " Thread to put new requests.");
+        /* Waits for new messages to arrive, and broadcasts to all clients */
+        private void SchedulerLoop() throws ClassNotFoundException {
+            while (true) {
+
+                try {
+                    Request received = (Request) dIn.readObject();
+
+                    if (received == null)
+                        break;
+
+                    // printToAllClients(outputString);
+                    System.out.println("Server received: " + received);
+                    System.out.println();
+                    state.setState(SchedulerStatus.ADDINGREQUEST);
+                    requests.add(received);
+
+                    // send job to elevator
+                    state.setState(SchedulerStatus.SENDREQUEST);
+                    if(chosenElevator.get() == 1) {
+                        elevatorThreadList.get(0).dOut.writeObject(requests.poll());
+                        elevatorThreadList.get(0).dOut.flush();
+                        chosenElevator.set(2);
+                    } else if (chosenElevator.get() == 2) {
+                        elevatorThreadList.get(1).dOut.writeObject(requests.poll());
+                        elevatorThreadList.get(1).dOut.flush();
+                        chosenElevator.set(1);
+                    }
+                    numRequests = 1 + numRequests;
+                    state.setState(SchedulerStatus.COMPLETEREQUEST);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
-        // request is added
-        state.getRequests().add(requestToAdd);
-        state.setRequestIsAvailable(true);
-
-        System.out.println("Scheduler: " + Thread.currentThread().getName() + " added request: " + state.getRequests().peek().toString());
-
-        // notify all threads of change
-        notifyAll();
-    }
-    
-    /*
-	 * serviceRequest() is a method that sets a request for the Elevator as complete. It is the Elevator's consume function.
-	 * 
-	 * Input: Request request, int id
-	 * Output: none
-	 * 
-	 */
-    public synchronized void serviceRequest(Request request, int id) throws InterruptedException {
-    	state.setState(SchedulerStatus.COMPLETEREQUEST);
-        state.setRequestsCompleted(state.getRequestsCompleted() + 1);
-        System.out.println("Scheduler: Elevator " + id + " has completed request #: " + state.getRequestsCompleted() + "");
-        System.out.println();
-        state.getRequests().poll();
-
-        if(state.getRequests().size() == 0)
-            state.setRequestIsAvailable(false);             // clear requests
-        notifyAll();                            // notify all threads of change
     }
 }

@@ -12,34 +12,36 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /*
- * The Main class represents the main program that all threads are initialized from.
+ * The Main class represents the main program that all threads are initialized from. 
  * 
  */
 
 public class    Main {
 
 	/*
-	 * main(String[] args) initializes the threads, creates the requests, and begins the program.
+	 * main(String[] args) initializes the threads and State Machine, creates the requests, and begins the program.
 	 * 
 	 * Input: none
 	 * Output: none
 	 * 
 	 */
-	
-	
     public static void main(String[] args) throws IOException, InterruptedException {
+    	//Initialize State Machine
     	StateMachineState state = new StateMachineState(StateMachineStatus.INITIALIZE);
     	System.out.println("Program initializing.");
     	System.out.println("State Machine current state = " + state.getState());
     	
+    	//Initialize Requests
     	System.out.println("\n\nInitializing sample floor requests.");
         createFloorCSV(1 , "FloorCSV", 5);
         Thread.sleep(100);
 
+        //Transition State Machine to INITIALIZE state
     	state.setState(StateMachineStatus.INITIALIZE);
 
         Scheduler scheduler = new Scheduler();
         
+        //Initialize Floors
     	System.out.println("\n\nInitializing floors.");
 
         //Create and start threads
@@ -57,11 +59,19 @@ public class    Main {
         elevatorOne.join();
         elevatorTwo.join();
         
+        //Upon completion, transition to the ENDING state and end the program
     	state.setState(StateMachineStatus.ENDING);
     	System.out.println("\n\nEnding program.");
     	System.out.println("State Machine current state = " + state.getState());
     }
-
+    
+	/*
+	 * randomTimeDiff() creates a randomized difference in time and returns it.
+	 * 
+	 * Input: none
+	 * Output: long
+	 * 
+	 */
     public static long randomTimeDiff(){
         return ThreadLocalRandom.current().nextLong(0,15);
     }

@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     Class variables:
         threads: contains ServerThread objects - one per client that connects
         ss: ServerSocket object
+        queue: Queue of requests received from Floor threads
  */
 public class Scheduler implements Serializable
 {
@@ -30,19 +31,41 @@ public class Scheduler implements Serializable
     Queue<Request> queue;
     private SchedulerState state = new SchedulerState();
     public static AtomicInteger chosenElevator = new AtomicInteger(1);
-
+    
+    /*
+     * main(String[] args) initializes and starts scheduler instance.
+     * 
+     * Input: none
+     * Output: none
+     * 
+     */
     public static void main(String[] args) throws IOException {
         Scheduler chatSrv = new Scheduler();
         chatSrv.start();
     }
-
+    
+    /*
+     * A constructor for the Scheduler class. The constructor initializes the ArrrayLists of ServerThreaads for floorThreads
+     * and elevatorThreads. Constructor also initializes the queue for all requests it receives from Floor threads.
+     * 
+     * Input: none
+     * Output: none
+     * 
+     */
     public Scheduler() {
         this.floorThreads = new ArrayList<>();
         this.elevatorThreads = new ArrayList<>();
         this.queue = new ConcurrentLinkedQueue<>();
     }
 
-    /* Starts server and accepts new connections */
+    /* 
+     * The start() method starts the Scheduler instance by accepting 2 elevator thread connections 
+     * and any number of floor thread connections. For each connection a ServerThread is created and started.
+     * 
+     *  Input: none
+     *  Output: none
+     *  
+     */
     public void start() throws IOException {
         state.setState(SchedulerStatus.INITIALIZE);
         ss = new ServerSocket(10008);
@@ -50,13 +73,14 @@ public class Scheduler implements Serializable
         try {
             while (true) {
                 Socket socket = ss.accept();
+                //create and start 2 ServerThreads for the 2 Elevator threads
                 if (counter < 2){
                     ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state);
                     elevatorThreads.add(serverThread);
                     state.setState(SchedulerStatus.CONNECTELEVATOR);
                     System.out.println(state.getState());
                     serverThread.start();
-                } else {
+                } else { //create and start a ServerThread for each Floor thread
                     ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state);
                     floorThreads.add(serverThread);
                     state.setState(SchedulerStatus.CONNECTFLOOR);
@@ -68,19 +92,38 @@ public class Scheduler implements Serializable
         } catch (Exception e) { }
     }
 
-    /* Kills all ServerThread sockets and threads, then closes the ServerSocket */
+    /*
+     *  The stop() method kills all ServerThread sockets and threads created from start() method, 
+     *  then closes the ServerSocket.
+     *  
+     *   Input: none
+     *   Output: none
+     *   
+     */
     public void stop() throws IOException {
+    	//Close all sockets and ServerThreads created for Elevator threads
         for (ServerThread sT : this.elevatorThreads) {
             sT.socket.close();
             sT.interrupt();
         }
+        //Close all sockets and ServerThreads created for Floor threads
         for (ServerThread sT : this.floorThreads) {
             sT.socket.close();
             sT.interrupt();
         }
         ss.close();
     }
-
+    
+    /*
+     * A class used by Scheduler to create a thread for each connection with Elevator and Floor threads.
+     * The ServerThread class will perform the Scheduler's intended operations such as receiving requests from Floor threads,
+     * and sending requests to Elevator threads.
+     * 
+     * 	Class variables:
+     * 		threads: contains ServerThread objects - one per client that connects
+     * 		socket: Socket object 
+     * 		requests: Queue of requests received from Floor threads
+     */
     public static class ServerThread extends Thread {
         private Socket socket;
         private ArrayList<ServerThread> floorThreadList;
@@ -90,7 +133,17 @@ public class Scheduler implements Serializable
         private ObjectOutputStream dOut;
         int numRequests=0;
         SchedulerState state;
-
+        
+        /*
+         * A constructor for the ServerThread class. The constructor initializes the socket object, ArrayLists of ServerThreads
+         * for floorThreads and elevatorThreads, Queue of requests, and the Scheduler's state.
+         * 
+         *  Input:
+         *  socket(Socket): The ServerSocket object passed by Scheduler instance
+         *  floorThreads: Arraylist of Floor threads connected to Scheduler
+         *  elevatorThreads: Arraylist of Elevator threads connected to Scheduler
+         *  state: State of scheduler 
+         */
         public ServerThread(Socket socket, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state) {
             this.socket = socket;
             this.floorThreadList = floorThreads;
@@ -98,7 +151,16 @@ public class Scheduler implements Serializable
             this.requests = new ConcurrentLinkedQueue<>();
             this.state = state;
         }
-
+        
+        /*
+         * The run() method is the primary sequence that is run when a thread is active. For the ServerThread class it will
+         * initialize the input and output streams for the thread, then attempt to receive requests from the socket and send 
+         * the request to a elevator thread through the socket. 
+         * 
+         * Input: none
+         * Output: none
+         * 
+         */
         @Override
         public void run() {
             try {
@@ -110,7 +172,15 @@ public class Scheduler implements Serializable
             }
         }
 
-        /* Waits for new messages to arrive, and broadcasts to all clients */
+        /* 
+         * The SchedulerLoop() method attempts to receive requests from the socket, once a request is received it is 
+         * output to the console and added to the requests queue. After receiving a request, the method sends the 
+         * request to an available elevator. 
+         * 
+         *  Input: none
+         *  Output: none
+         *  
+         */
         private void SchedulerLoop() throws ClassNotFoundException {
             while (true) {
 

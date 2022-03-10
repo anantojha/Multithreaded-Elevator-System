@@ -11,6 +11,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Random;
 
+/*
+ *  The Floor class represents the producer side of the algorithm. It creates requests coming from each floor thread in a csv file
+ *  and reads the requests from the csv files and sends them to the scheduler once the current time is equal to the request time. 
+ */
 public class Floor implements Serializable, Runnable{
 
     private int myFloor;
@@ -22,13 +26,14 @@ public class Floor implements Serializable, Runnable{
     private FloorState state;
 
     /*
-     * main(String[] args) initializes the threads, creates the requests, and begins the program.
+     * main(String[] args) initializes and begins the floor threads.
      *
      * Input: none
      * Output: none
      *
      */
     public static void main(String[] args) throws IOException {
+    	//create and start 10 floor threads
         Thread floorOne = new Thread(new Floor(1), "Floor 1");
         Thread floorTwo = new Thread(new Floor(2),"Floor 2");
         Thread floorThree = new Thread(new Floor(3),"Floor 3");
@@ -53,7 +58,14 @@ public class Floor implements Serializable, Runnable{
         floorNine.start();
         floorTen.start();
     }
-
+    
+    /*
+     * randomTimeDiff() returns a random long value in the range of 5 to 54
+     * 
+     * Input: none
+     * Output: none
+     * 
+     */
     public long randomTimeDiff(){
         return random.nextInt(50) + 5;
     }
@@ -63,9 +75,13 @@ public class Floor implements Serializable, Runnable{
      * createFloorCSV(int floors) creates a csv file for some number of floors specified with the following structure:
      * [Time, floor, floor button, car button]
      *
-     * Input: int
+     * Input: 
+     * floor(int) : The floor request(s) will be generated for
+     * folder(String) : The folder to store the csv file
+     * numRequests(int) : The number of requests to generate for the floor
+     * 
      * Output: none
-     * s
+     * 
      */
     public void createFloorCSV(int floor, String folder, int numRequests) throws IOException {
         FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + floor + ".csv");
@@ -79,13 +95,19 @@ public class Floor implements Serializable, Runnable{
                     break;
                 }
             }
-
+            
+            //Time of request is random number of seconds after current time
             timeCount = timeCount.plusSeconds(randomTimeDiff());
+            
+            //Write all request information into csv file
             csv.append(timeCount.toString());
             csv.append(",");
             csv.append(String.valueOf(floor));
             csv.append(",");
-            csv.append("UP");
+            if (destination > floor) 
+            	csv.append("UP");
+            else 
+            	csv.append("DOWN");
             csv.append(",");
             csv.append(destination + "");
             csv.append("\n");
@@ -99,7 +121,9 @@ public class Floor implements Serializable, Runnable{
      * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
      * the thread is.
      *
-     * Input: Schedule, int
+     * Input: 
+     * myFloor(int): The floor the thread will represent as (1-10).
+     * 
      * Output: none
      *
      */
@@ -125,6 +149,7 @@ public class Floor implements Serializable, Runnable{
     @Override
     public void run() {
         try {
+        	//Create csv file for each floor thread with 1 request
             createFloorCSV(myFloor , "FloorCSV", 1);
 
             //Read CSV file for this floor

@@ -73,6 +73,7 @@ Anant Ojha:
 	Implemented Socket Communication for Elevator (Client);
 	Refactored state machines for each subsystems;
 	Refactored System to handle 10 Floors, and 2 Elevator connections concurrently; 
+	Updated Unit Tests to work with sockets;
 	
 	
 	

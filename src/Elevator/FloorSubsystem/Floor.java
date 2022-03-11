@@ -17,12 +17,12 @@ import java.util.Random;
  */
 public class Floor implements Serializable, Runnable{
 
+    private static Random random = new Random();
     private int myFloor;
     private ArrayList<Request> incomingRequests = new ArrayList<>();
     Socket socket;
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
-    Random random;
     private FloorState state;
 
     /*
@@ -66,7 +66,7 @@ public class Floor implements Serializable, Runnable{
      * Output: none
      * 
      */
-    public long randomTimeDiff(){
+    public static long randomTimeDiff(){
         return random.nextInt(50) + 5;
     }
 
@@ -83,7 +83,7 @@ public class Floor implements Serializable, Runnable{
      * Output: none
      * 
      */
-    public void createFloorCSV(int floor, String folder, int numRequests) throws IOException {
+    public static void createFloorCSV(int floor, String folder, int numRequests) throws IOException {
         FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + floor + ".csv");
         LocalTime timeCount = LocalDateTime.now().toLocalTime();
         for(int j = 0; j < numRequests; j++){
@@ -129,10 +129,10 @@ public class Floor implements Serializable, Runnable{
      */
     public Floor(int myFloor) throws IOException {
         this.myFloor = myFloor;
-        this.socket = new Socket("localhost", 10008);;
+        this.socket = new Socket("localhost", 10008);
         this.dOut = new ObjectOutputStream(socket.getOutputStream());
         this.dIn = new ObjectInputStream(socket.getInputStream());
-        this.random = new Random();
+        //this.random = new Random();
         this.state = new FloorState(FloorStatus.INITIALIZE);
     }
 

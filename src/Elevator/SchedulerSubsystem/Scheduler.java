@@ -40,8 +40,8 @@ public class Scheduler implements Serializable
      * 
      */
     public static void main(String[] args) throws IOException {
-        Scheduler chatSrv = new Scheduler();
-        chatSrv.start();
+        Scheduler Srv = new Scheduler();
+        Srv.start();
     }
     
     /*
@@ -75,13 +75,13 @@ public class Scheduler implements Serializable
                 Socket socket = ss.accept();
                 //create and start 2 ServerThreads for the 2 Elevator threads
                 if (counter < 2){
-                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state);
+                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
                     elevatorThreads.add(serverThread);
                     state.setState(SchedulerStatus.CONNECTELEVATOR);
                     System.out.println(state.getState());
                     serverThread.start();
                 } else { //create and start a ServerThread for each Floor thread
-                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state);
+                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
                     floorThreads.add(serverThread);
                     state.setState(SchedulerStatus.CONNECTFLOOR);
                     System.out.println(state.getState());
@@ -90,6 +90,11 @@ public class Scheduler implements Serializable
                 counter = counter + 1;
             }
         } catch (Exception e) { }
+    }
+
+    // getter for requests queue
+    public Queue<Request> getQueue() {
+        return queue;
     }
 
     /*
@@ -144,11 +149,11 @@ public class Scheduler implements Serializable
          *  elevatorThreads: Arraylist of Elevator threads connected to Scheduler
          *  state: State of scheduler 
          */
-        public ServerThread(Socket socket, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state) {
+        public ServerThread(Socket socket, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state, Queue<Request> queue) {
             this.socket = socket;
             this.floorThreadList = floorThreads;
             this.elevatorThreadList = elevatorThreads;
-            this.requests = new ConcurrentLinkedQueue<>();
+            this.requests = queue;
             this.state = state;
         }
         
@@ -213,6 +218,11 @@ public class Scheduler implements Serializable
                     e.printStackTrace();
                 }
             }
+        }
+
+        // getter for requests queue
+        public Queue<Request> getRequests() {
+            return requests;
         }
     }
 }

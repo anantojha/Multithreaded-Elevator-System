@@ -21,7 +21,7 @@ public class SystemTest {
 
 	@Before
     public void setup() throws IOException {
-        //create scheduler and floor threads
+        //create scheduler instance
         scheduler = new Scheduler();
 
         //create test csv folder if one doesn't exist
@@ -35,7 +35,7 @@ public class SystemTest {
                     f.delete();
         }
 
-
+        //create and start scheduler thread using scheduler instance
         schedulerThread = new Thread(() -> {
             try {
                 scheduler.start();
@@ -46,11 +46,13 @@ public class SystemTest {
 
         schedulerThread.start();
 
+        //create and start 2 elevator threads
         elevatorOne = new Thread(new Elevator("1"), "Elevator 1");
         elevatorTwo = new Thread(new Elevator("2"), "Elevator 2");
         elevatorOne.start();
         elevatorTwo.start();
 
+        //create 10 floor threads
         floorOne = new Thread(new Floor(1), "Floor 1");
         floorTwo = new Thread(new Floor(2),"Floor 2");
         floorThree = new Thread(new Floor(3),"Floor 3");
@@ -66,6 +68,7 @@ public class SystemTest {
 
 	@Test
     public void receiveAndSendRequests() throws InterruptedException {
+		//start and join 10 floor threads
         floorOne.start();
         floorTwo.start();
         floorThree.start();
@@ -88,11 +91,12 @@ public class SystemTest {
         floorNine.join();
         floorTen.join();
 
+        //assert queue of requests is empty after system finishes executing
         Assert.assertTrue(scheduler.getQueue().isEmpty());
 	}
 		@After
 	public void tearDown() {
-		//delete files made for FloorTest.java
+		//delete files made for SystemTest.java
 		for (File f: TestFolder.listFiles()) {
 			if (!f.isDirectory()) {
 				f.delete();

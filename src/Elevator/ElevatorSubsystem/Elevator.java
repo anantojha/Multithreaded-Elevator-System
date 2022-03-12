@@ -144,6 +144,12 @@ public class Elevator implements Runnable {
 
     /*
      * service(Request serviceRequest) method services the request received from the socket
+     * 
+     * Input: 
+     * serviceRequest(Request): Request that the elevator will be completing.
+     * 
+     * Output: none
+     * 
      */
     private void service(Request serviceRequest) {
 

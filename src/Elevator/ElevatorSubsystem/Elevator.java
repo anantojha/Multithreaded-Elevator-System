@@ -142,6 +142,7 @@ public class Elevator implements Runnable {
         }
     }
 
+    
     /*
      * service(Request serviceRequest) method services the request received from the socket
      * 
@@ -168,7 +169,7 @@ public class Elevator implements Runnable {
                     }
                     state.setCurrentFloor(serviceRequest.getSourceFloor());
                 //If Elevator is below Request floor
-                } else if (state.getCurrentFloor() < serviceRequest.getSourceFloor()) {
+                } else {
                     state.setDirection(Direction.UP);
                     for (int i = (serviceRequest.getSourceFloor() - state.getCurrentFloor()); i > 0; i--) {
                         Thread.sleep(1000);
@@ -184,71 +185,52 @@ public class Elevator implements Runnable {
 
         //Move from Request source floor to destination floor
         try {
-        	//If source floor is below destination floor
-            if (serviceRequest.getDestinationFloor() > serviceRequest.getSourceFloor()) {
-                state.setDirection(Direction.UP);
-                for (int i = (serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i > 0; i--) {
-                	//If elevator is at source floor
-                    if (state.getCurrentFloor() == serviceRequest.getSourceFloor()){
-                        System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()) + " - pickup");
-                        Thread.sleep(1000);
-                        updateState(ElevatorStatus.ARRIVED);
-                        Thread.sleep(600);
-                        updateState(ElevatorStatus.OPEN_DOOR);
-                        Thread.sleep(600);
-                        updateState(ElevatorStatus.CLOSE_DOOR);
-                        updateState(ElevatorStatus.RUNNING);
-                        Thread.sleep(1400);
+        	// Determine which direction the elevator needs to go
+        	boolean isDirectionUp = (serviceRequest.getDestinationFloor() > serviceRequest.getSourceFloor());
+        	
+        	// Set the direction state based on direction boolean above
+        	if (isDirectionUp) {
+        		state.setDirection(Direction.UP);
+        	} else {
+        		state.setDirection(Direction.DOWN);
+        	}
+        	
+        	// Move to destination floor
+            for (int i = Math.abs(serviceRequest.getDestinationFloor() - serviceRequest.getSourceFloor()); i > 0; i--) {
+            	// If elevator is at source floor
+                if (state.getCurrentFloor() == serviceRequest.getSourceFloor()){
+                    System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()) + " - pickup");
+                    Thread.sleep(1000);
+                    updateState(ElevatorStatus.ARRIVED);
+                    Thread.sleep(600);
+                    updateState(ElevatorStatus.OPEN_DOOR);
+                    Thread.sleep(600);
+                    updateState(ElevatorStatus.CLOSE_DOOR);
+                    updateState(ElevatorStatus.RUNNING);
+                    Thread.sleep(1400);
 
-                    } else { //If elevator is moving towards destination floor
-                        System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()));
-                        Thread.sleep(1000);
-                    }
-                    state.setCurrentFloor(state.getCurrentFloor() + 1);
+                } else { //If elevator is moving towards destination floor
+                    System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()));
+                    Thread.sleep(1000);
                 }
-                //Output once elevator is at destination floor 
-                System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()) + " - dropoff");
-                updateState(ElevatorStatus.ARRIVED);
-                Thread.sleep(600);
-                updateState(ElevatorStatus.OPEN_DOOR);
-                Thread.sleep(600);
-                updateState(ElevatorStatus.CLOSE_DOOR);
-                state.setCurrentFloor(serviceRequest.getSourceFloor());
-            //If source floor is above destination floor 
-            } else {
-                state.setDirection(Direction.DOWN);
-                for (int i = (serviceRequest.getSourceFloor() - serviceRequest.getDestinationFloor()); i > 0; i--) {
-                	//If elevator is at source floor
-                    if(state.getCurrentFloor() == serviceRequest.getSourceFloor()){
-                        System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()) + " - pickup");
-                        Thread.sleep(1000);
-                        updateState(ElevatorStatus.ARRIVED);
-                        Thread.sleep(600);
-                        updateState(ElevatorStatus.OPEN_DOOR);
-                        Thread.sleep(600);
-                        updateState(ElevatorStatus.CLOSE_DOOR);
-                        updateState(ElevatorStatus.RUNNING);
-                        Thread.sleep(1400);
-                    } else { //If elevator is moving towards destination floor 
-                        System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()));
-                        Thread.sleep(1000);
-                    }
-                    state.setCurrentFloor(state.getCurrentFloor() - 1);
-                }
-                //Output once elevator is at destination floor
-                System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()) + " - dropoff");
-                updateState(ElevatorStatus.ARRIVED);
-                Thread.sleep(600);
-                updateState(ElevatorStatus.OPEN_DOOR);
-                Thread.sleep(600);
-                updateState(ElevatorStatus.CLOSE_DOOR);
+                // If direction UP, increment current floor, else decrement
+            	int x = isDirectionUp? 1 : -1;
+            	state.setCurrentFloor(state.getCurrentFloor() + x);
 
-                //Update current floor to destination
-                state.setCurrentFloor(serviceRequest.getDestinationFloor());
             }
+            //Output once elevator is at destination floor 
+            System.out.println(Thread.currentThread().getName() + " is at floor: " + (state.getCurrentFloor()) + " - dropoff");
+            updateState(ElevatorStatus.ARRIVED);
+            Thread.sleep(600);
+            updateState(ElevatorStatus.OPEN_DOOR);
+            Thread.sleep(600);
+            updateState(ElevatorStatus.CLOSE_DOOR);
+            
+            // Update current floor to destination
+           	state.setCurrentFloor(serviceRequest.getDestinationFloor());
+                
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }        
     }
 }
-

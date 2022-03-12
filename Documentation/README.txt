@@ -62,7 +62,8 @@ Bonita Hout:
 	
 
 Navaty Khara: 
-	
+	Added comments to State enums and System configuration
+	Updated Sequence Diagram
 	
 Tyler Mak: 
 	Added comments to Elevator.java, Floor.java, Scheduler.java, and SystemTest.java.

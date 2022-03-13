@@ -56,7 +56,8 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige: 
-	
+	Refactored and simplified Elevator.java, Added move() method and comments
+	Updated State Machine Diagram
 	
 Bonita Hout:
 	Updated UML Class Diagram

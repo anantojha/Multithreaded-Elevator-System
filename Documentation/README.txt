@@ -35,8 +35,8 @@ SystemTest.java: UnitTest for entire system.
 Documentation:
 README.txt: Describes files in the project, setup instructions, how to run the program, and each group member's work contribution. 
 Class_Diagram_Iteration3.pdf: The UML class diagram for Iteration 3 of Elevator Project.
-Sequence_Diagram.png: The UML sequence diagram for Iteration 3 of Elevator Project.
-StateMachine_Diagram.png: The UML state machine diagram for Iteration 3 of Elevator Project.
+Sequence_Diagram.pdf: The UML sequence diagram for Iteration 3 of Elevator Project.
+StateMachine_Diagram.pdf: The UML state machine diagram for Iteration 3 of Elevator Project.
 --------------------------------------------------------------------------------------------------
 Running the program: To run the program, invoke the main function in the following programs in the order: Scheduler.java -> Elevator.java -> Elevator.java -> Floor.java. Each invocation of a program will have a separate output meaning a total of 4 Console Windows will be needed.
 Using Eclipse, import the project -> Open Scheduler.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.

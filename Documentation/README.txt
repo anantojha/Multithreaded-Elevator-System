@@ -38,8 +38,6 @@ Class_Diagram_Iteration3.pdf: The UML class diagram for Iteration 3 of Elevator 
 Sequence_Diagram.pdf: The UML sequence diagram for Iteration 3 of Elevator Project.
 Scheduler_State_Machine_Diagram-Iteration3.pdf: The UML state machine diagram for Iteration 3 of Elevator Project.
 State_Machine_Diagram-Iteration3.pdf: The UML state machine diagram for Iteration 3 of Elevator Project.
-Scheduler_State_Machine_Diagram-Iteration2.pdf: The UML state machine diagram for Iteration 2 of Elevator Project.
-State_Machine_Diagram-Iteration2.pdf: The UML state machine diagram for Iteration 2 of Elevator Project.
 --------------------------------------------------------------------------------------------------
 Running the program: To run the program, invoke the main function in the following programs in the order: Scheduler.java -> Elevator.java -> Elevator.java -> Floor.java. Each invocation of a program will have a separate output meaning a total of 4 Console Windows will be needed.
 Using Eclipse, import the project -> Open Scheduler.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
@@ -61,6 +59,7 @@ Groupwork Responsibilities:
 Lasitha Amuwala Meesthrige: 
 	Refactored and simplified Elevator.java, Added move() method and comments
 	Updated State Machine Diagram
+	Updated Scheduler State Machine Diagram
 	
 Bonita Hout:
 	Updated UML Class Diagram

@@ -34,7 +34,7 @@ SystemTest.java: UnitTest for entire system.
 
 Documentation:
 README.txt: Describes files in the project, setup instructions, how to run the program, and each group member's work contribution. 
-Class_Diagram_Iteration2.png: The UML class diagram for Iteration 2 of Elevator Project.
+Class_Diagram_Iteration3.png: The UML class diagram for Iteration 2 of Elevator Project.
 Sequence_Diagram.png: The UML sequence diagram for Iteration 2 of Elevator Project.
 StateMachine_Diagram.png: The UML state machine diagram for Iteration 2 of Elevator Project.
 --------------------------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ Lasitha Amuwala Meesthrige:
 	
 	
 Bonita Hout:
+	Updated UML Class Diagram
 	
 
 Navaty Khara: 

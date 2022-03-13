@@ -149,8 +149,8 @@ public class Floor implements Serializable, Runnable{
     @Override
     public void run() {
         try {
-        	//Create csv file for each floor thread with 1 request
-            createFloorCSV(myFloor , "FloorCSV", 1);
+        	//Create csv file for each floor thread with 2 request
+            createFloorCSV(myFloor , "FloorCSV", 2);
 
             //Read CSV file for this floor
             readCSV();

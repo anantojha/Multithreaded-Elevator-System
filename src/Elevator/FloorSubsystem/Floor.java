@@ -4,7 +4,7 @@ import Elevator.Enums.Direction;
 import Elevator.Enums.FloorStatus;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -84,8 +84,9 @@ public class Floor implements Serializable, Runnable{
      * 
      */
     public static void createFloorCSV(int floor, String folder, int numRequests) throws IOException {
-        FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + floor + ".csv");
+        FileWriter csv = new FileWriter("CSV/" + folder + "/input.csv", true); //need to clear this file after program ends
         LocalTime timeCount = LocalDateTime.now().toLocalTime();
+        String message;
         for(int j = 0; j < numRequests; j++){
             int destination;
             while (true){
@@ -99,8 +100,14 @@ public class Floor implements Serializable, Runnable{
             //Time of request is random number of seconds after current time
             timeCount = timeCount.plusSeconds(randomTimeDiff());
             
+            if (destination > floor)
+            	message = (timeCount.toString() + "," + String.valueOf(floor) + ",UP," + String.valueOf(destination) + "\n");
+			else
+				message = (timeCount.toString() + "," + String.valueOf(floor) + ",DOWN," + String.valueOf(destination) + "\n");
+            
             //Write all request information into csv file
-            csv.append(timeCount.toString());
+            csv.write(message);
+            /*csv.append(timeCount.toString());
             csv.append(",");
             csv.append(String.valueOf(floor));
             csv.append(",");
@@ -110,7 +117,7 @@ public class Floor implements Serializable, Runnable{
             	csv.append("DOWN");
             csv.append(",");
             csv.append(destination + "");
-            csv.append("\n");
+            csv.append("\n");*/
         }
         csv.flush();
         csv.close();
@@ -184,7 +191,8 @@ public class Floor implements Serializable, Runnable{
             while ((line = br.readLine()) != null) {
                 String[] requestContents = line.split(",");
                 for(Direction d: Direction.values()){
-                    if(d.toString().equals(requestContents[2])){
+                	//Direction is either UP or DOWN and request is for this floor thread
+                    if(d.toString().equals(requestContents[2]) && myFloor == Integer.parseInt(requestContents[1])){
                         LocalDate date = LocalDateTime.now().toLocalDate();
                         incomingRequests.add(new Request(LocalDateTime.parse(date.toString() + "T" + requestContents[0]), Integer.parseInt(requestContents[1]),
                                 d, Integer.parseInt(requestContents[3])));

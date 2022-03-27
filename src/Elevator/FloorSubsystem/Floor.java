@@ -230,7 +230,7 @@ public class Floor implements Serializable, Runnable{
             byte msg[] = r.toString().getBytes();
             request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), schedulerPortNum);
             state.setState(FloorStatus.SENDING);
-            System.out.println(Thread.currentThread().getName() + " sent request: " + r);
+            System.out.println(Thread.currentThread().getName() + " sent request: " + request.getData().toString());
             /*dOut.writeObject(r);
             dOut.flush();*/
             try {
@@ -256,7 +256,7 @@ public class Floor implements Serializable, Runnable{
         System.arraycopy(received, 0, data, 0, request.getLength());
         String data1 = new String(data);
         //return port number of Scheduler ServerThread connected to this Floor thread
-        if (data1 == "Connection Confirmed")
+        if (data1.equals("Connection Confirmed"))
         	return request.getPort();
         return 0;
     }

@@ -64,7 +64,7 @@ public class Scheduler implements Serializable
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-    }
+    }			
 
     /* 
      * The start() method starts the Scheduler instance by accepting 2 elevator thread connections 
@@ -89,7 +89,6 @@ public class Scheduler implements Serializable
                 System.arraycopy(received, 0, data, 0, connection.getLength());
                 String data1 = new String(data);
                 ServerThread serverThread = null;
-                System.out.println(data1);
                 if (!data1.equals(null)) 
                 	serverThread = new ServerThread(connection.getPort(), floorThreads, elevatorThreads, state, queue);
                 if (counter < 2 ){
@@ -232,14 +231,16 @@ public class Scheduler implements Serializable
                     Request received = null; 
                     byte [] receivedData = new byte[1000];
                     request = new DatagramPacket(receivedData, receivedData.length);
-                	System.out.println("Debug Request!");
-
                     socket.receive(request);
-                	System.out.println("Receive Request!");
-
+                    
+                    System.out.println(request.getData().toString());
+                    
                     byte data[] = new byte[request.getLength()];
-                    System.arraycopy(received, 0, data, 0, request.getLength());
+                    System.arraycopy(receivedData, 0, data, 0, request.getLength());
                     String data1 = new String(data);
+                    
+                    System.out.println(data1);
+                    
                     String dataContents[] = data1.split(" ");
                     LocalDateTime datetime = LocalDateTime.parse(dataContents[2]);
                     for (Direction d: Direction.values()) {
@@ -260,7 +261,6 @@ public class Scheduler implements Serializable
                     byte msg[] = requests.poll().toString().getBytes();
                     // send job to elevator
                     state.setState(SchedulerStatus.SENDREQUEST);
-                	System.out.println("Sending Request!");
                 	
                     if(chosenElevator.get() == 1) {
                     	job = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), elevatorThreadList.get(0).socketPort);

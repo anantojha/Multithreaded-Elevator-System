@@ -238,7 +238,7 @@ public class Elevator implements Runnable {
     	//Send message to connect to scheduler
     	String message = "Connecting Elevator " + Id;
     	byte msg[] = message.getBytes();
-    	request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), 10010);
+    	request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), 201);
     	socket.send(request);
     	//Receive response from Scheduler's ServerThread
     	byte received[] = new byte[10000];
@@ -248,7 +248,7 @@ public class Elevator implements Runnable {
         System.arraycopy(received, 0, data, 0, request.getLength());
         String data1 = new String(data);
         //return port number of Scheduler ServerThread connected to this Elevator thread
-        if (data1 == "Connection Confirmed")
+        if (data1.equals("Connection Confirmed"))
         	return request.getPort();
         return 0;
     }

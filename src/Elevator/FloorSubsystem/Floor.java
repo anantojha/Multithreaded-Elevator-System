@@ -20,7 +20,10 @@ public class Floor implements Serializable, Runnable{
     private static Random random = new Random();
     private int myFloor;
     private ArrayList<Request> incomingRequests = new ArrayList<>();
-    Socket socket;
+    //Socket socket;
+    DatagramSocket socket;
+    DatagramPacket request;
+    private int schedulerPortNum;
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
     private FloorState state;
@@ -100,13 +103,13 @@ public class Floor implements Serializable, Runnable{
             //Time of request is random number of seconds after current time
             timeCount = timeCount.plusSeconds(randomTimeDiff());
             
-            if (destination > floor)
+			if (destination > floor)
             	message = (timeCount.toString() + "," + String.valueOf(floor) + ",UP," + String.valueOf(destination) + "\n");
 			else
 				message = (timeCount.toString() + "," + String.valueOf(floor) + ",DOWN," + String.valueOf(destination) + "\n");
             
             //Write all request information into csv file
-            csv.write(message);
+			csv.write(message);
             /*csv.append(timeCount.toString());
             csv.append(",");
             csv.append(String.valueOf(floor));
@@ -136,10 +139,11 @@ public class Floor implements Serializable, Runnable{
      */
     public Floor(int myFloor) throws IOException {
         this.myFloor = myFloor;
-        this.socket = new Socket("localhost", 10008);
+        this.socket = new DatagramSocket();
+        /*this.socket = new Socket("localhost", 10008);
         this.dOut = new ObjectOutputStream(socket.getOutputStream());
         this.dIn = new ObjectInputStream(socket.getInputStream());
-        //this.random = new Random();
+        //this.random = new Random();*/
         this.state = new FloorState(FloorStatus.INITIALIZE);
     }
 
@@ -156,16 +160,19 @@ public class Floor implements Serializable, Runnable{
     @Override
     public void run() {
         try {
-        	//Create csv file for each floor thread with 2 request
+        	//Create 2 requests for each floor thread and add them to input.csv file
             createFloorCSV(myFloor , "FloorCSV", 2);
 
             //Read CSV file for this floor
             readCSV();
-
+            
+            //Connect floor thread to scheduler
+            schedulerPortNum = connectScheduler();
+            
             //Send request to scheduler when request time is same as current time
             sendRequest();
-            dIn.close();
-            dOut.close();
+            /*dIn.close();
+            dOut.close();*/
             socket.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -182,20 +189,21 @@ public class Floor implements Serializable, Runnable{
      */
     public void readCSV() {
         state.setState(FloorStatus.PROCESSING);
-        String fileToRead = "CSV/FloorCSV/floor_" + myFloor + ".csv";
+        String fileToRead = "CSV/FloorCSV/input.csv";
 
         //Process csv files into incoming requests
         try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) {
             String line;
+            Request request;
             //For each line in the csv, find the appropriate Direction, and add it to the request
             while ((line = br.readLine()) != null) {
                 String[] requestContents = line.split(",");
                 for(Direction d: Direction.values()){
-                	//Direction is either UP or DOWN and request is for this floor thread
-                    if(d.toString().equals(requestContents[2]) && myFloor == Integer.parseInt(requestContents[1])){
-                        LocalDate date = LocalDateTime.now().toLocalDate();
-                        incomingRequests.add(new Request(LocalDateTime.parse(date.toString() + "T" + requestContents[0]), Integer.parseInt(requestContents[1]),
-                                d, Integer.parseInt(requestContents[3])));
+                    if(d.toString().equals(requestContents[2]) && myFloor == Integer.parseInt(requestContents[1])){ //Direction is appropriate and request is for this floor thread
+                    	LocalDate date = LocalDateTime.now().toLocalDate(); 
+                        request = new Request(LocalDateTime.parse(date.toString() + "T" + requestContents[0]), Integer.parseInt(requestContents[1]),
+                                d, Integer.parseInt(requestContents[3]));
+                        incomingRequests.add(request);
                     }
                 }
             }
@@ -218,11 +226,37 @@ public class Floor implements Serializable, Runnable{
                 if(r.getTime().isBefore(LocalDateTime.now()))
                     break;
             }
+            byte msg[] = r.toString().getBytes();
+            request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), schedulerPortNum);
             state.setState(FloorStatus.SENDING);
             System.out.println(Thread.currentThread().getName() + " sent request: " + r);
-            dOut.writeObject(r);
-            dOut.flush();
+            /*dOut.writeObject(r);
+            dOut.flush();*/
+            try {
+            	socket.send(request);
+            } catch (IOException e) {
+            	e.printStackTrace();
+            }
         }
-        dOut.writeObject(null);
+        //dOut.writeObject(null);
+    }
+    
+    private int connectScheduler() throws IOException {
+    	//Send message to connect to scheduler
+    	String message = "Connecting Floor " + myFloor;
+    	byte msg[] = message.getBytes();
+    	request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), 10010);
+    	socket.send(request);
+    	//Receive response from Scheduler's ServerThread
+    	byte received[] = new byte[10000];
+    	request = new DatagramPacket(received, received.length);
+    	socket.receive(request);
+    	byte data[] = new byte[request.getLength()];
+        System.arraycopy(received, 0, data, 0, request.getLength());
+        String data1 = new String(data);
+        //return port number of Scheduler ServerThread connected to this Floor thread
+        if (data1 == "Connection Confirmed")
+        	return request.getPort();
+        return 0;
     }
 }

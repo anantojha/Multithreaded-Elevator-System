@@ -7,7 +7,8 @@ import Elevator.FloorSubsystem.Request;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.time.*;
+import java.net.*;
 import java.util.Scanner;
 
 /*
@@ -18,11 +19,11 @@ import java.util.Scanner;
 public class Elevator implements Runnable {
 
     private String Id;
-    Socket socket;
-    private ObjectInputStream dIn;
-    private ObjectOutputStream dOut;
     int initialFloor;
     private ElevatorState state;
+    DatagramSocket socket;
+    DatagramPacket request;
+    int schedulerPortNum;
     
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
@@ -66,9 +67,10 @@ public class Elevator implements Runnable {
         this.initialFloor = 1;
         this.Id = id;
         this.state = new ElevatorState(this.initialFloor);
-        this.socket = new Socket("localhost", 10008);
+        this.socket = new DatagramSocket();
+        /*this.socket = new Socket("localhost", 10008);
         this.dOut = new ObjectOutputStream(socket.getOutputStream());
-        this.dIn = new ObjectInputStream(socket.getInputStream());
+        this.dIn = new ObjectInputStream(socket.getInputStream());*/
     }
 
     /*
@@ -123,11 +125,26 @@ public class Elevator implements Runnable {
     @Override
     public void run() {
         try {
-
+        	//connect Elevator thread to scheduler
+        	schedulerPortNum = connectScheduler();
+        	
             while (true) {
             	//Attempt to read request from Socket
-                Object job = dIn.readObject();
-
+            	//Object job = dIn.readObject();
+            	Request job = null;
+                byte [] received = new byte[10000];
+                request = new DatagramPacket(received, received.length);
+                socket.receive(request);
+                byte data[] = new byte[request.getLength()];
+                System.arraycopy(received, 0, data, 0, request.getLength());
+                String data1 = new String(data);
+                String dataContents[] = data1.split(" ");
+                LocalDateTime datetime = LocalDateTime.parse(dataContents[2]);
+                for (Direction d: Direction.values()) {
+                	if (d.toString().equals(dataContents[8]))
+                		job = new Request(datetime, Integer.parseInt(dataContents[5]), d, Integer.parseInt(dataContents[11]));
+                }
+                
                 if (job == null)
                     continue;
 
@@ -135,10 +152,10 @@ public class Elevator implements Runnable {
                 System.out.println();
                 
                 //Service the request read from Socket
-                service((Request) job);
+                service(job);
             }
             // updateState(ElevatorStatus.TERMINATE);
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) { /*| ClassNotFoundException e) {*/
             e.printStackTrace();
         }
     }
@@ -214,5 +231,25 @@ public class Elevator implements Runnable {
     	} catch (InterruptedException e) {
             e.printStackTrace();
         }   
+    }
+    
+
+	private int connectScheduler() throws IOException {
+    	//Send message to connect to scheduler
+    	String message = "Connecting Elevator " + Id;
+    	byte msg[] = message.getBytes();
+    	request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), 10010);
+    	socket.send(request);
+    	//Receive response from Scheduler's ServerThread
+    	byte received[] = new byte[10000];
+    	request = new DatagramPacket(received, received.length);
+    	socket.receive(request);
+    	byte data[] = new byte[request.getLength()];
+        System.arraycopy(received, 0, data, 0, request.getLength());
+        String data1 = new String(data);
+        //return port number of Scheduler ServerThread connected to this Elevator thread
+        if (data1 == "Connection Confirmed")
+        	return request.getPort();
+        return 0;
     }
 }

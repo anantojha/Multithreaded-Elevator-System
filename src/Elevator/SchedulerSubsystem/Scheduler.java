@@ -1,5 +1,6 @@
 package Elevator.SchedulerSubsystem;
 
+import Elevator.Enums.Direction;
 import Elevator.Enums.SchedulerStatus;
 import Elevator.FloorSubsystem.Request;
 
@@ -7,8 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
@@ -27,7 +28,9 @@ public class Scheduler implements Serializable
 {
     ArrayList<ServerThread> floorThreads;
     ArrayList<ServerThread> elevatorThreads;
-    ServerSocket ss;
+    DatagramSocket socket;
+    DatagramPacket connection;
+    //ServerSocket ss;
     Queue<Request> queue;
     private SchedulerState state = new SchedulerState();
     public static AtomicInteger chosenElevator = new AtomicInteger(1);
@@ -56,6 +59,11 @@ public class Scheduler implements Serializable
         this.floorThreads = new ArrayList<>();
         this.elevatorThreads = new ArrayList<>();
         this.queue = new ConcurrentLinkedQueue<>();
+        try {
+			this.socket = new DatagramSocket(10010);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
     }
 
     /* 
@@ -68,20 +76,30 @@ public class Scheduler implements Serializable
      */
     public void start() throws IOException {
         state.setState(SchedulerStatus.INITIALIZE);
-        ss = new ServerSocket(10008);
+        //ss = new ServerSocket(10008);
         int counter = 0;
         try {
             while (true) {
-                Socket socket = ss.accept();
+                //Socket socket = ss.accept();
                 //create and start 2 ServerThreads for the 2 Elevator threads
-                if (counter < 2){
-                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
+            	byte [] received = new byte[10000];
+                connection = new DatagramPacket(received, received.length);
+                socket.receive(connection);
+                byte data[] = new byte[connection.getLength()];
+                System.arraycopy(received, 0, data, 0, connection.getLength());
+                String data1 = new String(data);
+                ServerThread serverThread = null;
+                System.out.println(data1);
+                if (!data1.equals(null)) 
+                	serverThread = new ServerThread(connection.getPort(), floorThreads, elevatorThreads, state, queue);
+                if (counter < 2 ){
+                    //ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
                     elevatorThreads.add(serverThread);
                     state.setState(SchedulerStatus.CONNECTELEVATOR);
                     System.out.println(state.getState());
                     serverThread.start();
                 } else { //create and start a ServerThread for each Floor thread
-                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
+                    //ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
                     floorThreads.add(serverThread);
                     state.setState(SchedulerStatus.CONNECTFLOOR);
                     System.out.println(state.getState());
@@ -116,7 +134,8 @@ public class Scheduler implements Serializable
             sT.socket.close();
             sT.interrupt();
         }
-        ss.close();
+        socket.close();
+        //ss.close();
     }
     
     /*
@@ -130,7 +149,10 @@ public class Scheduler implements Serializable
      * 		requests: Queue of requests received from Floor threads
      */
     public static class ServerThread extends Thread {
-        private Socket socket;
+        //private Socket socket;
+    	private DatagramSocket socket;
+    	private DatagramPacket request;
+    	private int socketPort;
         private ArrayList<ServerThread> floorThreadList;
         private ArrayList<ServerThread> elevatorThreadList;
         Queue<Request> requests;
@@ -149,8 +171,13 @@ public class Scheduler implements Serializable
          *  elevatorThreads: Arraylist of Elevator threads connected to Scheduler
          *  state: State of scheduler 
          */
-        public ServerThread(Socket socket, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state, Queue<Request> queue) {
-            this.socket = socket;
+        public ServerThread(int socketPort, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state, Queue<Request> queue) {
+            try {
+				this.socket = new DatagramSocket();
+			} catch (SocketException e) {
+				e.printStackTrace();
+			}
+            this.socketPort = socketPort;
             this.floorThreadList = floorThreads;
             this.elevatorThreadList = elevatorThreads;
             this.requests = queue;
@@ -169,14 +196,25 @@ public class Scheduler implements Serializable
         @Override
         public void run() {
             try {
-                dOut = new ObjectOutputStream(socket.getOutputStream());
-                dIn = new ObjectInputStream(socket.getInputStream());
+                /*dOut = new ObjectOutputStream(socket.getOutputStream());
+                dIn = new ObjectInputStream(socket.getInputStream());*/
+            	confirmConnection();
                 SchedulerLoop();
             } catch (Exception e) {
                 System.out.println("Error occurred: " + Arrays.toString(e.getStackTrace()));
             }
         }
-
+        
+        private void confirmConnection() {
+        	try {
+        		String message = "Connection Confirmed";
+        		byte msg[] = message.getBytes();
+        		request = new DatagramPacket(msg, msg.length, socketPort);
+        		socket.send(request);
+        	} catch (IOException e) {
+        		e.printStackTrace();
+        	}
+        }
         /* 
          * The SchedulerLoop() method attempts to receive requests from the socket, once a request is received it is 
          * output to the console and added to the requests queue. After receiving a request, the method sends the 
@@ -190,26 +228,45 @@ public class Scheduler implements Serializable
             while (true) {
 
                 try {
-                    Request received = (Request) dIn.readObject();
-
+                	//Request received = (Request) dIn.readObject();
+                    Request received = null; 
+                    byte [] receivedData = new byte[1000];
+                    request = new DatagramPacket(receivedData, receivedData.length);
+                    socket.receive(request);
+                    byte data[] = new byte[request.getLength()];
+                    System.arraycopy(received, 0, data, 0, request.getLength());
+                    String data1 = new String(data);
+                    String dataContents[] = data1.split(" ");
+                    LocalDateTime datetime = LocalDateTime.parse(dataContents[2]);
+                    for (Direction d: Direction.values()) {
+                    	if (d.toString().equals(dataContents[8]))
+                    		received = new Request(datetime, Integer.parseInt(dataContents[5]), d, Integer.parseInt(dataContents[11]));
+                    }
+                    
                     if (received == null)
                         break;
-
+                    
                     // printToAllClients(outputString);
                     System.out.println("Server received: " + received);
                     System.out.println();
                     state.setState(SchedulerStatus.ADDINGREQUEST);
                     requests.add(received);
 
+                    DatagramPacket job;
+                    byte msg[] = requests.poll().toString().getBytes();
                     // send job to elevator
                     state.setState(SchedulerStatus.SENDREQUEST);
                     if(chosenElevator.get() == 1) {
-                        elevatorThreadList.get(0).dOut.writeObject(requests.poll());
-                        elevatorThreadList.get(0).dOut.flush();
+                    	job = new DatagramPacket(msg, msg.length, elevatorThreadList.get(0).socketPort);
+                    	socket.send(job);
+                        /*elevatorThreadList.get(0).dOut.writeObject(requests.poll());
+                        elevatorThreadList.get(0).dOut.flush();*/
                         chosenElevator.set(2);
                     } else if (chosenElevator.get() == 2) {
-                        elevatorThreadList.get(1).dOut.writeObject(requests.poll());
-                        elevatorThreadList.get(1).dOut.flush();
+                    	job = new DatagramPacket(msg, msg.length, elevatorThreadList.get(1).socketPort);
+                    	socket.send(job);
+                        /*elevatorThreadList.get(1).dOut.writeObject(requests.poll());
+                        elevatorThreadList.get(1).dOut.flush();*/
                         chosenElevator.set(1);
                     }
                     numRequests = 1 + numRequests;

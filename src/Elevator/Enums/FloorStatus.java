@@ -9,7 +9,6 @@ public enum FloorStatus {
 	 * INITIALIZE represents the state a floor takes when currently initializing its variables.
 	 */
 	INITIALIZE {
-		@Override
 		public String toString() {
 			return "INITIALIZE";
 		}
@@ -18,7 +17,6 @@ public enum FloorStatus {
 	 * PROCESSING represents the state a floor takes when processing the CSV file of requests.
 	 */
 	PROCESSING {
-		@Override
 		public String toString() {
 			return "PROCESSING";
 		}
@@ -32,12 +30,27 @@ public enum FloorStatus {
 		}
 	},
 	/*
+	 * RECEIVING represents the state a floor takes when receiving a response from the Scheduler.
+	 */
+	RECEIVING {
+		public String toString() {
+			return "RECEIVING";
+		}
+	},
+	/*
 	 * WAITING represents the state a floor takes when waiting on a request to be completed.
 	 */
 	WAITING {
 		public String toString() {
 			return "WAITING";
 		}
+	},
+	/*
+	 * ERROR represents the state a floor takes when an exception occurs.
+	 */
+	ERROR {
+		public String toString() {
+			return "ERROR";
+		}
 	}
-	 
 }

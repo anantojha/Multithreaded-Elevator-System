@@ -1,228 +1,124 @@
 package Elevator.SchedulerSubsystem;
 
-import Elevator.Enums.SchedulerStatus;
-import Elevator.FloorSubsystem.Request;
-
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
-/*
-    A class to handle the server portion of the app
+public class Scheduler implements Runnable {
 
-    Class variables:
-        threads: contains ServerThread objects - one per client that connects
-        ss: ServerSocket object
-        queue: Queue of requests received from Floor threads
- */
-public class Scheduler implements Serializable
-{
-    ArrayList<ServerThread> floorThreads;
-    ArrayList<ServerThread> elevatorThreads;
-    ServerSocket ss;
-    Queue<Request> queue;
-    private SchedulerState state = new SchedulerState();
-    public static AtomicInteger chosenElevator = new AtomicInteger(1);
-    
-    /*
-     * main(String[] args) initializes and starts scheduler instance.
-     * 
-     * Input: none
-     * Output: none
-     * 
-     */
-    public static void main(String[] args) throws IOException {
-        Scheduler Srv = new Scheduler();
-        Srv.start();
-    }
-    
-    /*
-     * A constructor for the Scheduler class. The constructor initializes the ArrrayLists of ServerThreaads for floorThreads
-     * and elevatorThreads. Constructor also initializes the queue for all requests it receives from Floor threads.
-     * 
-     * Input: none
-     * Output: none
-     * 
+    DatagramPacket receiveFloorPacket, receiveServerPacket, sendReplyPacket;
+    DatagramSocket elevatorSocket, floorSocket;
+    private byte[] acknowledgementSignal = {1};
+    private Queue<byte[]> tasks;
+
+    /**
+     * IntermediateHost Constructor for the class.
      */
     public Scheduler() {
-        this.floorThreads = new ArrayList<>();
-        this.elevatorThreads = new ArrayList<>();
-        this.queue = new ConcurrentLinkedQueue<>();
-    }
-
-    /* 
-     * The start() method starts the Scheduler instance by accepting 2 elevator thread connections 
-     * and any number of floor thread connections. For each connection a ServerThread is created and started.
-     * 
-     *  Input: none
-     *  Output: none
-     *  
-     */
-    public void start() throws IOException {
-        state.setState(SchedulerStatus.INITIALIZE);
-        ss = new ServerSocket(10008);
-        int counter = 0;
         try {
-            while (true) {
-                Socket socket = ss.accept();
-                //create and start 2 ServerThreads for the 2 Elevator threads
-                if (counter < 2){
-                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
-                    elevatorThreads.add(serverThread);
-                    state.setState(SchedulerStatus.CONNECTELEVATOR);
-                    System.out.println(state.getState());
-                    serverThread.start();
-                } else { //create and start a ServerThread for each Floor thread
-                    ServerThread serverThread = new ServerThread(socket, floorThreads, elevatorThreads, state, queue);
-                    floorThreads.add(serverThread);
-                    state.setState(SchedulerStatus.CONNECTFLOOR);
-                    System.out.println(state.getState());
-                    serverThread.start();
-                }
-                counter = counter + 1;
-            }
-        } catch (Exception e) { }
-    }
-
-    // getter for requests queue
-    public Queue<Request> getQueue() {
-        return queue;
+            tasks = new ConcurrentLinkedQueue<>();
+            floorSocket = new DatagramSocket(2505);
+            elevatorSocket = new DatagramSocket(2506);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /*
-     *  The stop() method kills all ServerThread sockets and threads created from start() method, 
-     *  then closes the ServerSocket.
-     *  
-     *   Input: none
-     *   Output: none
-     *   
+     * The elevatorHandle() method is for handling communication with elevators.
+     *
+     * Input: none
+     * Output: none
+     *
      */
-    public void stop() throws IOException {
-    	//Close all sockets and ServerThreads created for Elevator threads
-        for (ServerThread sT : this.elevatorThreads) {
-            sT.socket.close();
-            sT.interrupt();
-        }
-        //Close all sockets and ServerThreads created for Floor threads
-        for (ServerThread sT : this.floorThreads) {
-            sT.socket.close();
-            sT.interrupt();
-        }
-        ss.close();
-    }
-    
-    /*
-     * A class used by Scheduler to create a thread for each connection with Elevator and Floor threads.
-     * The ServerThread class will perform the Scheduler's intended operations such as receiving requests from Floor threads,
-     * and sending requests to Elevator threads.
-     * 
-     * 	Class variables:
-     * 		threads: contains ServerThread objects - one per client that connects
-     * 		socket: Socket object 
-     * 		requests: Queue of requests received from Floor threads
-     */
-    public static class ServerThread extends Thread {
-        private Socket socket;
-        private ArrayList<ServerThread> floorThreadList;
-        private ArrayList<ServerThread> elevatorThreadList;
-        Queue<Request> requests;
-        private ObjectInputStream dIn;
-        private ObjectOutputStream dOut;
-        int numRequests=0;
-        SchedulerState state;
-        
-        /*
-         * A constructor for the ServerThread class. The constructor initializes the socket object, ArrayLists of ServerThreads
-         * for floorThreads and elevatorThreads, Queue of requests, and the Scheduler's state.
-         * 
-         *  Input:
-         *  socket(Socket): The ServerSocket object passed by Scheduler instance
-         *  floorThreads: Arraylist of Floor threads connected to Scheduler
-         *  elevatorThreads: Arraylist of Elevator threads connected to Scheduler
-         *  state: State of scheduler 
-         */
-        public ServerThread(Socket socket, ArrayList<ServerThread> floorThreads, ArrayList<ServerThread> elevatorThreads, SchedulerState state, Queue<Request> queue) {
-            this.socket = socket;
-            this.floorThreadList = floorThreads;
-            this.elevatorThreadList = elevatorThreads;
-            this.requests = queue;
-            this.state = state;
-        }
-        
-        /*
-         * The run() method is the primary sequence that is run when a thread is active. For the ServerThread class it will
-         * initialize the input and output streams for the thread, then attempt to receive requests from the socket and send 
-         * the request to a elevator thread through the socket. 
-         * 
-         * Input: none
-         * Output: none
-         * 
-         */
-        @Override
-        public void run() {
+    public void elevatorHandle(){
+
+        byte data[] = new byte[50];
+        receiveServerPacket = new DatagramPacket(data, data.length);
+
+        while (true) {
+            System.out.println("Scheduler: Waiting for Elevator Request...\n");
             try {
-                dOut = new ObjectOutputStream(socket.getOutputStream());
-                dIn = new ObjectInputStream(socket.getInputStream());
-                SchedulerLoop();
-            } catch (Exception e) {
-                System.out.println("Error occurred: " + Arrays.toString(e.getStackTrace()));
+                elevatorSocket.receive(receiveServerPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
             }
-        }
 
-        /* 
-         * The SchedulerLoop() method attempts to receive requests from the socket, once a request is received it is 
-         * output to the console and added to the requests queue. After receiving a request, the method sends the 
-         * request to an available elevator. 
-         * 
-         *  Input: none
-         *  Output: none
-         *  
-         */
-        private void SchedulerLoop() throws ClassNotFoundException {
-            while (true) {
-
+            int elevatorId = receiveServerPacket.getData()[1];
+            if(!tasks.isEmpty()){
+                System.out.println("Scheduler: sending task to Elevator "+ elevatorId + " (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
                 try {
-                    Request received = (Request) dIn.readObject();
-
-                    if (received == null)
-                        break;
-
-                    // printToAllClients(outputString);
-                    System.out.println("Server received: " + received);
-                    System.out.println();
-                    state.setState(SchedulerStatus.ADDINGREQUEST);
-                    requests.add(received);
-
-                    // send job to elevator
-                    state.setState(SchedulerStatus.SENDREQUEST);
-                    if(chosenElevator.get() == 1) {
-                        elevatorThreadList.get(0).dOut.writeObject(requests.poll());
-                        elevatorThreadList.get(0).dOut.flush();
-                        chosenElevator.set(2);
-                    } else if (chosenElevator.get() == 2) {
-                        elevatorThreadList.get(1).dOut.writeObject(requests.poll());
-                        elevatorThreadList.get(1).dOut.flush();
-                        chosenElevator.set(1);
-                    }
-                    numRequests = 1 + numRequests;
-                    state.setState(SchedulerStatus.COMPLETEREQUEST);
+                    byte[] taskToSend = tasks.poll();
+                    sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
+                            InetAddress.getLocalHost(), receiveServerPacket.getPort());
+                    elevatorSocket.send(sendReplyPacket);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
 
-        // getter for requests queue
-        public Queue<Request> getRequests() {
-            return requests;
+    /*
+     * The floorHandle() method is for handling communication with floors.
+     *
+     * Input: none
+     * Output: none
+     *
+     */
+    public void floorHandle(){
+        byte data[] = new byte[50];
+        receiveFloorPacket = new DatagramPacket(data, data.length);
+
+        while (true) {
+            System.out.println("Scheduler: Waiting for Floor Request...\n");
+            try {
+                floorSocket.receive(receiveFloorPacket);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+
+            System.out.println("Scheduler: adding new task to Queue: " + Arrays.toString(receiveFloorPacket.getData()));
+            tasks.add(receiveFloorPacket.getData());
+
+            System.out.println("Scheduler: sending acknowledgement to Floor ("+ receiveFloorPacket.getAddress() + ":" + receiveFloorPacket.getPort() + ")...\n");
+            try {
+                sendReplyPacket = new DatagramPacket(acknowledgementSignal, acknowledgementSignal.length,
+                        InetAddress.getLocalHost(), receiveFloorPacket.getPort());
+                floorSocket.send(sendReplyPacket);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            floorHandle();
+        }
+    }
+
+    public static void main(String args[]) {
+        Scheduler c = new Scheduler();
+        Thread client = new Thread(c, "Client Thread");
+        client.start();
+
+        while (true) {
+            c.elevatorHandle();
         }
     }
 }
+

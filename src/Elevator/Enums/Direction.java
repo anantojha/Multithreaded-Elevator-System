@@ -5,16 +5,34 @@ package Elevator.Enums;
  * 
  */
 public enum Direction {
-    UP {
+    UP(1) {
         @Override
         public String toString() {
             return "UP";
         }
     },
-    DOWN {
+    DOWN(2) {
         @Override
         public String toString() {
             return "DOWN";
+        }
+    };
+
+    private final int directionId;
+
+    Direction(int value) {
+        this.directionId = value;
+    }
+
+    public int getDirectionId() {
+        return directionId;
+    }
+
+    public static Direction getDirectionFromId(int id){
+        if(id == 1){
+            return Direction.UP;
+        } else {
+            return Direction.DOWN;
         }
     }
 }

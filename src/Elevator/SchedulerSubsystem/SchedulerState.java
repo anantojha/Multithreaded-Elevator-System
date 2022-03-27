@@ -13,10 +13,9 @@ import java.util.Queue;
  * SchedulerState represents the State class of the Scheduler
  * 
  */
-public class SchedulerState extends Observable {
+public class SchedulerState {
 
     private ArrayList<ElevatorState> elevators;
-    private Queue<Request> requests;
     private boolean requestIsAvailable;
     private int requestsCompleted;
     private SchedulerStatus state;
@@ -31,10 +30,10 @@ public class SchedulerState extends Observable {
 	 */
     public SchedulerState(){
         this.elevators = new ArrayList<>();
-        this.requests = new LinkedList<>();
         this.requestIsAvailable = false;
         this.requestsCompleted = 0;
     }
+
 
 	/*
 	 * addElevator(ElevatorState) adds an elevator to the Scheduler
@@ -47,6 +46,7 @@ public class SchedulerState extends Observable {
         elevators.add(elevatorState);
     }
 
+
 	/*
 	 * getElevators() gets a list of all elevators.
 	 * 
@@ -58,16 +58,6 @@ public class SchedulerState extends Observable {
         return elevators;
     }
 
-	/*
-	 * getElevators() gets a queue of all requests.
-	 * 
-	 * Input: none
-	 * Output: Queue<Request> requests
-	 * 
-	 */
-    public Queue<Request> getRequests() {
-        return requests;
-    }
 
 	/*
 	 * isRequestIsAvaiable() returns a boolean value depending on if a request is available or not.
@@ -79,6 +69,7 @@ public class SchedulerState extends Observable {
     public boolean isRequestIsAvailable() {
         return requestIsAvailable;
     }
+
 
 	/*
 	 * setRequestIsAvaiable() sets a boolean value depending on if a request is available or not.
@@ -102,6 +93,7 @@ public class SchedulerState extends Observable {
         return requestsCompleted;
     }
 
+
 	/*
 	 * setRequestsCompleted() sets a count of all requests completed thus far.
 	 * 
@@ -112,6 +104,7 @@ public class SchedulerState extends Observable {
     public void setRequestsCompleted(int requestsCompleted) {
         this.requestsCompleted = requestsCompleted;
     }
+
 
 	/*
 	 * setState() sets the current State equal to the parameter

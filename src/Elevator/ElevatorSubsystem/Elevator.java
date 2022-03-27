@@ -3,12 +3,15 @@ package Elevator.ElevatorSubsystem;
 import Elevator.Enums.Direction;
 import Elevator.Enums.ElevatorStatus;
 import Elevator.FloorSubsystem.Request;
+import Elevator.Global.PacketHelper;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.net.*;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.TimeoutException;
 
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
@@ -18,12 +21,14 @@ import java.util.Scanner;
 public class Elevator implements Runnable {
 
     private String Id;
-    Socket socket;
-    private ObjectInputStream dIn;
-    private ObjectOutputStream dOut;
+    private DatagramSocket socket;
+    private DatagramPacket sendPacket;
+    private DatagramPacket receivePacket;
+    private InetAddress localHostVar;
     int initialFloor;
     private ElevatorState state;
-    
+    byte[] taskRequest = {95, 1, 95};
+
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
      * 
@@ -66,9 +71,9 @@ public class Elevator implements Runnable {
         this.initialFloor = 1;
         this.Id = id;
         this.state = new ElevatorState(this.initialFloor);
-        this.socket = new Socket("localhost", 10008);
-        this.dOut = new ObjectOutputStream(socket.getOutputStream());
-        this.dIn = new ObjectInputStream(socket.getInputStream());
+        this.socket = new DatagramSocket(2950);
+        socket.setSoTimeout(3000);
+        localHostVar = InetAddress.getLocalHost();
     }
 
     /*
@@ -112,34 +117,66 @@ public class Elevator implements Runnable {
     }
 
     /*
-     * The run() method is the primary sequence that is run when a thread is active. In this case, the Elevator class will
-     * attempt to receive requests from the scheduler and fulfill them if the request floor is the same as the thread floor.
+     * The receiveSchedulerTaskPacket() method is for send a request to the scheduler for a task.
      *
      * Input: none
      * Output: none
      *
      */
+    public void sendSchedulerRequestPacket() throws IOException {
+        System.out.println("Elevator " + getId() + ": sending task request: " + Arrays.toString(taskRequest));
+        sendPacket = new DatagramPacket(taskRequest, taskRequest.length, localHostVar, 2506);
+        socket.send(sendPacket);
+        System.out.println("Elevator " + getId() + ": Packet Sent.");
+    }
 
+    /*
+     * The receiveSchedulerTaskPacket() method is for receiving a Task from the scheduler.
+     *
+     * Input: none
+     * Output: none
+     *
+     */
+    public void receiveSchedulerTaskPacket() throws IOException {
+        byte[] data = new byte[50];
+        receivePacket = new DatagramPacket(data, data.length);
+        socket.receive(receivePacket);
+    }
+
+    /*
+     * The run() method is the primary sequence that is run when a thread is active. In this case, the Elevator class will
+     * attempt to send requests to the scheduler for a Task and then receive a response from the scheduler.
+     *
+     * Input: none
+     * Output: none
+     *
+     */
     @Override
     public void run() {
-        try {
 
-            while (true) {
-            	//Attempt to read request from Socket
-                Object job = dIn.readObject();
+        while (true) {
+            updateState(ElevatorStatus.IDLE);
+            System.out.println();
 
-                if (job == null)
-                    continue;
-
-                updateState(ElevatorStatus.IDLE);
-                System.out.println();
-                
-                //Service the request read from Socket
-                service((Request) job);
+            try {
+                sendSchedulerRequestPacket();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
             }
-            // updateState(ElevatorStatus.TERMINATE);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+
+            try {
+                receiveSchedulerTaskPacket();
+            } catch (SocketTimeoutException e) {
+                System.out.println("Elevator: Send timed out.");
+                continue;
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+
+            Request task = PacketHelper.convertPacketToRequest(receivePacket);
+            service(task);
         }
     }
     
@@ -154,6 +191,11 @@ public class Elevator implements Runnable {
      */
     private void move(int targetFloor) {
     	try {
+            // Check if elevator is already at target floor
+            if (state.getCurrentFloor() == targetFloor){
+                return;
+            }
+
     		// Determine the direction the elevator will need to move 
         	boolean isDirectionUp = (state.getCurrentFloor() < targetFloor);
         	
@@ -182,8 +224,7 @@ public class Elevator implements Runnable {
         	
        	} catch (InterruptedException e) {
             e.printStackTrace();
-        }   
-
+        }
     }
     
     /*
@@ -205,7 +246,7 @@ public class Elevator implements Runnable {
 	        updateState(ElevatorStatus.CLOSE_DOOR);
 	        Thread.sleep(1400);
 	        
-	        // Move to destination floor floor
+	        // Move to destination floor
 	        move(serviceRequest.getDestinationFloor());
 	        System.out.println(Thread.currentThread().getName() + " Drop off passengers");
 	        updateState(ElevatorStatus.CLOSE_DOOR);

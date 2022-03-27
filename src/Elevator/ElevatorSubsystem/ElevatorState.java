@@ -3,13 +3,14 @@ package Elevator.ElevatorSubsystem;
 import Elevator.Enums.Direction;
 import Elevator.Enums.ElevatorStatus;
 import Elevator.Global.SystemConfiguration;
+
 import java.util.Observable;
 
 /*
  * ElevatorState represents the State class of the Elevator
  * 
  */
-public class ElevatorState extends Observable {
+public class ElevatorState {
 
     private Integer currentFloor;
     private Direction direction;
@@ -19,7 +20,7 @@ public class ElevatorState extends Observable {
 	/*
 	 * ElevatorState(Integer) is the constructor of the ElevatorState class. It initializes all necessary variables.
 	 * 
-	 * Input: Integer startfloor
+	 * Input: Integer startFloor
 	 * Output: none
 	 * 
 	 */

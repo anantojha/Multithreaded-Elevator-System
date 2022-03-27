@@ -2,13 +2,16 @@ package Elevator.FloorSubsystem;
 
 import Elevator.Enums.Direction;
 import Elevator.Enums.FloorStatus;
+import Elevator.Enums.SubSystemMapping;
+import Elevator.Global.PacketHelper;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -20,10 +23,11 @@ public class Floor implements Serializable, Runnable{
     private static Random random = new Random();
     private int myFloor;
     private ArrayList<Request> incomingRequests = new ArrayList<>();
-    Socket socket;
-    private ObjectInputStream dIn;
-    private ObjectOutputStream dOut;
+    private DatagramSocket socket;
     private FloorState state;
+    private DatagramPacket sendPacket;
+    private InetAddress localHostVar;
+
 
     /*
      * main(String[] args) initializes and begins the floor threads.
@@ -34,31 +38,13 @@ public class Floor implements Serializable, Runnable{
      */
     public static void main(String[] args) throws IOException {
     	//create and start 10 floor threads
-        Thread floorOne = new Thread(new Floor(1), "Floor 1");
-        Thread floorTwo = new Thread(new Floor(2),"Floor 2");
-        Thread floorThree = new Thread(new Floor(3),"Floor 3");
-        Thread floorFour = new Thread(new Floor(4),"Floor 4");
-        Thread floorFive = new Thread(new Floor(5),"Floor 5");
-
-        Thread floorSix = new Thread(new Floor(6), "Floor 6");
-        Thread floorSeven = new Thread(new Floor(7),"Floor 7");
-        Thread floorEight = new Thread(new Floor(8),"Floor 8");
-        Thread floorNine = new Thread(new Floor(9),"Floor 9");
-        Thread floorTen = new Thread(new Floor(10),"Floor 10");
-
-        floorOne.start();
-        floorTwo.start();
-        floorThree.start();
-        floorFour.start();
-        floorFive.start();
-
-        floorSix.start();
-        floorSeven.start();
-        floorEight.start();
-        floorNine.start();
-        floorTen.start();
+        for(int i = 1; i < 11; i++){
+            Thread floor = new Thread(new Floor(i), "Floor " + i);
+            floor.start();
+        }
     }
-    
+
+
     /*
      * randomTimeDiff() returns a random long value in the range of 5 to 54
      * 
@@ -67,7 +53,7 @@ public class Floor implements Serializable, Runnable{
      * 
      */
     public static long randomTimeDiff(){
-        return random.nextInt(50) + 5;
+        return random.nextInt(25) + 5;
     }
 
 
@@ -129,11 +115,9 @@ public class Floor implements Serializable, Runnable{
      */
     public Floor(int myFloor) throws IOException {
         this.myFloor = myFloor;
-        this.socket = new Socket("localhost", 10008);
-        this.dOut = new ObjectOutputStream(socket.getOutputStream());
-        this.dIn = new ObjectInputStream(socket.getInputStream());
-        //this.random = new Random();
-        this.state = new FloorState(FloorStatus.INITIALIZE);
+        this.socket = new DatagramSocket(3080 + myFloor);
+        localHostVar = InetAddress.getLocalHost();
+        this.state = new FloorState();
     }
 
 
@@ -149,16 +133,9 @@ public class Floor implements Serializable, Runnable{
     @Override
     public void run() {
         try {
-        	//Create csv file for each floor thread with 2 request
             createFloorCSV(myFloor , "FloorCSV", 2);
-
-            //Read CSV file for this floor
             readCSV();
-
-            //Send request to scheduler when request time is same as current time
-            sendRequest();
-            dIn.close();
-            dOut.close();
+            sendReceiveRequest();
             socket.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -174,13 +151,11 @@ public class Floor implements Serializable, Runnable{
      * Output: None
      */
     public void readCSV() {
-        state.setState(FloorStatus.PROCESSING);
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
         String fileToRead = "CSV/FloorCSV/floor_" + myFloor + ".csv";
 
-        //Process csv files into incoming requests
         try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) {
             String line;
-            //For each line in the csv, find the appropriate Direction, and add it to the request
             while ((line = br.readLine()) != null) {
                 String[] requestContents = line.split(",");
                 for(Direction d: Direction.values()){
@@ -196,25 +171,73 @@ public class Floor implements Serializable, Runnable{
         }
     }
 
+
     /*
-     * The sendRequest() method iterates through ArrayList of requests gotten from csv file earlier read from
-     * and sends the request to the scheduler when the incoming request time is equal to the current time.
+     * The sendRequestToScheduler() method sends the request to the scheduler via. UDP
+     *
+     * Input: Request
+     * Output: None
+     */
+    public void sendRequestToScheduler(Request r) throws IOException {
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
+        byte[] packet = PacketHelper.buildRequestPacket(r);
+        System.out.println(Thread.currentThread().getName() + ": sending request: " + r);
+        System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
+        sendPacket = new DatagramPacket(packet, packet.length, localHostVar, 2505);
+        socket.send(sendPacket);
+        System.out.println(Thread.currentThread().getName() + ": Packet Sent.");
+    }
+
+
+    /*
+     * The receiveResponseFromScheduler() method receives acknowledgement from the scheduler via. UDP
      *
      * Input: None
      * Output: None
      */
-    public void sendRequest() throws IOException, ClassNotFoundException {
+    public void receiveResponseFromScheduler() throws IOException {
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
+        byte[] packet = new byte[1];
+        sendPacket = new DatagramPacket(packet, packet.length);
+        socket.receive(sendPacket);
+        System.out.println(Thread.currentThread().getName() + ": Acknowledgement received: " + Arrays.toString(sendPacket.getData()));
+        System.out.println();
+    }
+
+
+    /*
+     * The sendReceiveRequest() method iterates through ArrayList of requests gotten from csv file earlier read from
+     * and sends the request to the scheduler when the incoming request time is equal to the current time. Once
+     * request is send, an acknowledgement response is received from scheduler.
+     *
+     * Input: None
+     * Output: None
+     */
+    public void sendReceiveRequest() throws IOException, ClassNotFoundException {
         for (Request r: incomingRequests) {
+            System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
             while(true){
-                state.setState(FloorStatus.WAITING);
                 if(r.getTime().isBefore(LocalDateTime.now()))
                     break;
             }
-            state.setState(FloorStatus.SENDING);
-            System.out.println(Thread.currentThread().getName() + " sent request: " + r);
-            dOut.writeObject(r);
-            dOut.flush();
+
+            try {
+                sendRequestToScheduler(r);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+
+            try {
+                receiveResponseFromScheduler();
+            } catch (SocketTimeoutException e) {
+                System.out.println("Client: Receive acknowledgement timed out.");
+                System.out.println();
+                continue;
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
-        dOut.writeObject(null);
     }
 }

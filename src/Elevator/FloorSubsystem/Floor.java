@@ -230,7 +230,7 @@ public class Floor implements Serializable, Runnable{
             byte msg[] = r.toString().getBytes();
             request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), schedulerPortNum);
             state.setState(FloorStatus.SENDING);
-            System.out.println(Thread.currentThread().getName() + " sent request: " + request.getData().toString());
+            System.out.println(Thread.currentThread().getName() + " sent request: " + r);
             /*dOut.writeObject(r);
             dOut.flush();*/
             try {

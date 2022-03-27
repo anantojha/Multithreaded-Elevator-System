@@ -232,15 +232,9 @@ public class Scheduler implements Serializable
                     byte [] receivedData = new byte[1000];
                     request = new DatagramPacket(receivedData, receivedData.length);
                     socket.receive(request);
-                    
-                    System.out.println(request.getData().toString());
-                    
                     byte data[] = new byte[request.getLength()];
                     System.arraycopy(receivedData, 0, data, 0, request.getLength());
                     String data1 = new String(data);
-                    
-                    System.out.println(data1);
-                    
                     String dataContents[] = data1.split(" ");
                     LocalDateTime datetime = LocalDateTime.parse(dataContents[2]);
                     for (Direction d: Direction.values()) {

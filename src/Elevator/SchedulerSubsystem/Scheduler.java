@@ -60,7 +60,7 @@ public class Scheduler implements Serializable
         this.elevatorThreads = new ArrayList<>();
         this.queue = new ConcurrentLinkedQueue<>();
         try {
-			this.socket = new DatagramSocket(10010);
+			this.socket = new DatagramSocket(201);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
@@ -209,7 +209,7 @@ public class Scheduler implements Serializable
         	try {
         		String message = "Connection Confirmed";
         		byte msg[] = message.getBytes();
-        		request = new DatagramPacket(msg, msg.length, socketPort);
+        		request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), socketPort);
         		socket.send(request);
         	} catch (IOException e) {
         		e.printStackTrace();
@@ -232,7 +232,11 @@ public class Scheduler implements Serializable
                     Request received = null; 
                     byte [] receivedData = new byte[1000];
                     request = new DatagramPacket(receivedData, receivedData.length);
+                	System.out.println("Debug Request!");
+
                     socket.receive(request);
+                	System.out.println("Receive Request!");
+
                     byte data[] = new byte[request.getLength()];
                     System.arraycopy(received, 0, data, 0, request.getLength());
                     String data1 = new String(data);
@@ -256,14 +260,16 @@ public class Scheduler implements Serializable
                     byte msg[] = requests.poll().toString().getBytes();
                     // send job to elevator
                     state.setState(SchedulerStatus.SENDREQUEST);
+                	System.out.println("Sending Request!");
+                	
                     if(chosenElevator.get() == 1) {
-                    	job = new DatagramPacket(msg, msg.length, elevatorThreadList.get(0).socketPort);
+                    	job = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), elevatorThreadList.get(0).socketPort);
                     	socket.send(job);
                         /*elevatorThreadList.get(0).dOut.writeObject(requests.poll());
                         elevatorThreadList.get(0).dOut.flush();*/
                         chosenElevator.set(2);
                     } else if (chosenElevator.get() == 2) {
-                    	job = new DatagramPacket(msg, msg.length, elevatorThreadList.get(1).socketPort);
+                    	job = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), elevatorThreadList.get(1).socketPort);
                     	socket.send(job);
                         /*elevatorThreadList.get(1).dOut.writeObject(requests.poll());
                         elevatorThreadList.get(1).dOut.flush();*/

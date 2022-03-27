@@ -139,7 +139,7 @@ public class Floor implements Serializable, Runnable{
      */
     public Floor(int myFloor) throws IOException {
         this.myFloor = myFloor;
-        this.socket = new DatagramSocket();
+        this.socket = new DatagramSocket(3000+myFloor);
         /*this.socket = new Socket("localhost", 10008);
         this.dOut = new ObjectOutputStream(socket.getOutputStream());
         this.dIn = new ObjectInputStream(socket.getInputStream());
@@ -198,6 +198,7 @@ public class Floor implements Serializable, Runnable{
             //For each line in the csv, find the appropriate Direction, and add it to the request
             while ((line = br.readLine()) != null) {
                 String[] requestContents = line.split(",");
+
                 for(Direction d: Direction.values()){
                     if(d.toString().equals(requestContents[2]) && myFloor == Integer.parseInt(requestContents[1])){ //Direction is appropriate and request is for this floor thread
                     	LocalDate date = LocalDateTime.now().toLocalDate(); 
@@ -245,7 +246,7 @@ public class Floor implements Serializable, Runnable{
     	//Send message to connect to scheduler
     	String message = "Connecting Floor " + myFloor;
     	byte msg[] = message.getBytes();
-    	request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), 10010);
+    	request = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), 201);
     	socket.send(request);
     	//Receive response from Scheduler's ServerThread
     	byte received[] = new byte[10000];

@@ -35,7 +35,7 @@ public class ElevatorState implements StateMachine {
 		ElevatorContext temp  = state;
 		this.state = nextState;
 		previousState = temp;
-		System.out.println(state.toString());
+		//System.out.println(state.toString());
 	}
 
 	@Override

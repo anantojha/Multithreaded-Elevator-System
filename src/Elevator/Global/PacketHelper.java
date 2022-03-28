@@ -40,6 +40,25 @@ public class PacketHelper {
         return packet;
     }
 
+    public static Request convertBytesToRequest(byte[] data){
+
+        List<Integer> delimitIndices = new ArrayList<>();
+        for(int i = 0; i < data.length; i++){
+            if(data[i] == 95){
+                delimitIndices.add(i);
+            }
+        }
+
+        byte[] subSystemBytes = Arrays.copyOfRange(data, delimitIndices.get(0)+1, delimitIndices.get(1));
+        byte[] timeBytes = Arrays.copyOfRange(data, delimitIndices.get(1)+1, delimitIndices.get(2));
+        byte[] directionBytes = Arrays.copyOfRange(data, delimitIndices.get(2)+1, delimitIndices.get(3));
+        byte[] sourceFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(3)+1, delimitIndices.get(4));
+        byte[] destinationFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(4)+1, delimitIndices.get(5));
+
+        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0]);
+        return request;
+    }
+
     public static Request convertPacketToRequest(DatagramPacket packet){
         // [95, 1, 95, 50, 48, 50, 50, 45, 48, 51, 45, 50, 55, 84, 48, 50, 58, 51, 51, 58, 52, 57, 46, 50, 55, 53, 95, 1, 95, 3, 95, 4, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         byte[] data = packet.getData();

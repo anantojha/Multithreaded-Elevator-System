@@ -53,7 +53,8 @@ public class Floor implements Serializable, Runnable{
      * 
      */
     public static long randomTimeDiff(){
-        return random.nextInt(25) + 5;
+        random.setSeed(random.nextInt(50) + 5);
+        return random.nextInt(50) + 5;
     }
 
 
@@ -184,6 +185,17 @@ public class Floor implements Serializable, Runnable{
         System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
         byte[] packet = PacketHelper.buildRequestPacket(r);
         System.out.println(Thread.currentThread().getName() + ": sending request: " + r);
+        System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
+        sendPacket = new DatagramPacket(packet, packet.length, localHostVar, 2505);
+        socket.send(sendPacket);
+        System.out.println(Thread.currentThread().getName() + ": Packet Sent.");
+    }
+
+
+    public void sendCoompletedSignal() throws IOException {
+        state.updateState();
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
+        byte[] packet = {0};
         System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
         sendPacket = new DatagramPacket(packet, packet.length, localHostVar, 2505);
         socket.send(sendPacket);

@@ -1,13 +1,16 @@
 package Elevator.SchedulerSubsystem;
 
+import Elevator.FloorSubsystem.Request;
+import Elevator.Global.PacketHelper;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeoutException;
 
 public class Scheduler implements Runnable {
 
@@ -30,6 +33,12 @@ public class Scheduler implements Runnable {
         }
     }
 
+
+    private int getEstimateTripTime(Request r){
+        int estimatedTripTime = 100000;
+        return estimatedTripTime;
+    }
+
     /*
      * The elevatorHandle() method is for handling communication with elevators.
      *
@@ -41,18 +50,21 @@ public class Scheduler implements Runnable {
 
         byte data[] = new byte[50];
         receiveServerPacket = new DatagramPacket(data, data.length);
+        int estimatedTime = 100000;
 
         while (true) {
             System.out.println("Scheduler: Waiting for Elevator Request...\n");
             try {
                 elevatorSocket.receive(receiveServerPacket);
+            } catch (SocketTimeoutException e) {
+                System.out.println("Scheduler: Fault detected.");
+                System.exit(1);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
             }
 
             int elevatorId = receiveServerPacket.getData()[1];
-
 
             if(!tasks.isEmpty()){
                 System.out.println("Scheduler: sending task to Elevator "+ elevatorId + " (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
@@ -61,6 +73,8 @@ public class Scheduler implements Runnable {
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
                             InetAddress.getLocalHost(), receiveServerPacket.getPort());
                     elevatorSocket.send(sendReplyPacket);
+//                    estimatedTime = getEstimateTripTime(PacketHelper.convertPacketToRequest(sendReplyPacket));
+                    elevatorSocket.setSoTimeout(estimatedTime);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -80,6 +94,7 @@ public class Scheduler implements Runnable {
     public void floorHandle(){
         byte data[] = new byte[50];
         receiveFloorPacket = new DatagramPacket(data, data.length);
+        int counter = 0;
 
         while (true) {
             System.out.println("Scheduler: Waiting for Floor Request...\n");
@@ -90,8 +105,13 @@ public class Scheduler implements Runnable {
                 System.exit(1);
             }
 
+            if (receiveFloorPacket.getData()[0] == 0) {
+                break;
+            }
+
             System.out.println("Scheduler: adding new task to Queue: " + Arrays.toString(receiveFloorPacket.getData()));
             tasks.add(receiveFloorPacket.getData());
+            counter++;
 
             System.out.println("Scheduler: sending acknowledgement to Floor ("+ receiveFloorPacket.getAddress() + ":" + receiveFloorPacket.getPort() + ")...\n");
             try {
@@ -102,6 +122,10 @@ public class Scheduler implements Runnable {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+
+            if(counter == 20){
+                break;
             }
         }
     }

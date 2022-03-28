@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
@@ -26,6 +28,10 @@ public class Elevator implements Runnable {
     private ElevatorContext elevatorContext;
     private ElevatorState state;
     byte[] taskRequest = {95, 1, 95};
+    private Timer timer;
+    private Timer doorTimer;
+    boolean forceFault = false;
+    final private float avgtime = 1.347887712f;
 
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
@@ -192,6 +198,28 @@ public class Elevator implements Runnable {
      */
     private void move(int targetFloor) {
     	try {
+    		
+    		//Auxillary code for iteration 5
+    		if(forceFault) {
+	    		int initialFloor = elevatorContext.getCurrentFloor();
+	    		//Create a timer
+	    		timer = new Timer();
+	    		timer.schedule(new TimerTask() {
+	    			public void run() {
+	    				//When the timer ends, and the elevator is not at their target floor, exit. Otherwise, continue.
+	    				if(elevatorContext.getCurrentFloor() == targetFloor) {
+	    					return;
+	    				}else {
+	    					System.out.println("Fault has been detected | Timer was " + (Math.abs(initialFloor - targetFloor) * avgtime) + 1600/1000);
+	    					System.exit(1);
+	    				}
+	    			}
+	    		}, (long) (Math.abs(initialFloor - targetFloor) * avgtime * 1000));
+	    		
+	    		Thread.sleep(1000);
+    		
+	    		
+    		}
             // Check if elevator is already at target floor
             if (elevatorContext.getCurrentFloor() == targetFloor){
                 return;

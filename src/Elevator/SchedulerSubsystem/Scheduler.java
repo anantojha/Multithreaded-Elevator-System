@@ -67,7 +67,7 @@ public class Scheduler implements Runnable {
             int elevatorId = receiveServerPacket.getData()[1];
 
             if(!tasks.isEmpty()){
-                System.out.println("Scheduler: sending task to Elevator "+ elevatorId + " (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
+                System.out.println("Scheduler: sending task to Elevator  (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
                 try {
                     byte[] taskToSend = tasks.poll();
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,

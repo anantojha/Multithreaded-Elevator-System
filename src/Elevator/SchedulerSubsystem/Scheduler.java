@@ -105,7 +105,18 @@ public class Scheduler implements Runnable {
             }
         }
     }
-
+    
+    /*
+     * getQueue() is a getter method for getting the tasks the floor sends
+     * for the elevator to service.
+     * 
+     * Input: None
+     * Output: Queue of tasks
+     */
+    public Queue getQueue() {
+    	return tasks;
+    }
+    
     @Override
     public void run() {
         while (true) {

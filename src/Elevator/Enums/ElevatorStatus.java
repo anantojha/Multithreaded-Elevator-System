@@ -5,6 +5,15 @@ package Elevator.Enums;
  * 
  */
 public enum ElevatorStatus {
+    /*
+     * INITIALIZE represents the state an elevator when it starts up.
+     */
+    INITIALIZE {
+        @Override
+        public String toString() {
+            return "INITIALIZE";
+        }
+    },
 	/*
 	 * RUNNING represents the state an elevator takes when currently transporting a customer across floors.
 	 */

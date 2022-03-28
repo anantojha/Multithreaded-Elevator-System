@@ -6,14 +6,9 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeoutException;
 
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
@@ -21,8 +16,6 @@ import java.util.concurrent.TimeoutException;
  * 
  */
 public class Elevator implements Runnable {
-	
-	final private float avgtime = 1.347887712f;
 
     private String Id;
     private DatagramSocket socket;
@@ -30,9 +23,9 @@ public class Elevator implements Runnable {
     private DatagramPacket receivePacket;
     private InetAddress localHostVar;
     int initialFloor;
+    private ElevatorContext elevatorContext;
     private ElevatorState state;
     byte[] taskRequest = {95, 1, 95};
-	Timer timer;
 
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
@@ -75,8 +68,9 @@ public class Elevator implements Runnable {
     	//All elevators start at Floor 1
         this.initialFloor = 1;
         this.Id = id;
-        this.state = new ElevatorState(this.initialFloor);
-        this.socket = new DatagramSocket(2950);
+        this.elevatorContext = new ElevatorContext(1, null, ElevatorStatus.INITIALIZE);
+        this.state = new ElevatorState(elevatorContext);
+        this.socket = new DatagramSocket(2950 + Integer.parseInt(id));
         socket.setSoTimeout(3000);
         localHostVar = InetAddress.getLocalHost();
     }
@@ -100,7 +94,7 @@ public class Elevator implements Runnable {
      * 
      */
     public ElevatorStatus getCurrentStatus() {
-        return state.getStatus();
+        return elevatorContext.getStatus();
     }
     
     /*
@@ -112,14 +106,14 @@ public class Elevator implements Runnable {
      * Output: none
      * 
      */
-    public void updateState(ElevatorStatus status) {
-        state.setStatus(status);
-        if (status.equals(ElevatorStatus.RUNNING)) {
-            System.out.println("Elevator " + getId() + " " + getCurrentStatus() + " | " + state.getDirection());
-        } else {
-            System.out.println("Elevator " + getId() + " " + getCurrentStatus());
-        }
-    }
+//    public void updateState(ElevatorStatus status) {
+//        elevatorContext.setStatus(status);
+//        if (status.equals(ElevatorStatus.RUNNING)) {
+//            System.out.println("Elevator " + getId() + " " + getCurrentStatus() + " | " + elevatorContext.getDirection());
+//        } else {
+//            System.out.println("Elevator " + getId() + " " + getCurrentStatus());
+//        }
+//    }
 
     /*
      * The receiveSchedulerTaskPacket() method is for send a request to the scheduler for a task.
@@ -160,9 +154,10 @@ public class Elevator implements Runnable {
     public void run() {
 
         while (true) {
-            updateState(ElevatorStatus.IDLE);
+            state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.IDLE));
+            state.updateState();
+
             System.out.println();
-			float initial = System.nanoTime()/1000000000;
 
             try {
                 sendSchedulerRequestPacket();
@@ -183,9 +178,6 @@ public class Elevator implements Runnable {
 
             Request task = PacketHelper.convertPacketToRequest(receivePacket);
             service(task);
-			float finale = System.nanoTime()/1000000000;
-			System.out.println(finale-initial);
-
         }
     }
     
@@ -200,49 +192,41 @@ public class Elevator implements Runnable {
      */
     private void move(int targetFloor) {
     	try {
-    		int initialFloor = state.getCurrentFloor();
-    		//Create a timer
-    		timer = new Timer();
-    		timer.schedule(new TimerTask() {
-    			public void run() {
-    				//When the timer ends, and the elevator is not at their target floor, exit. Otherwise, continue.
-    				if(state.getCurrentFloor() == targetFloor) {
-    					return;
-    				}else {
-    					System.out.println("Fault has been detected | Timer was " + (Math.abs(initialFloor - targetFloor) * avgtime));
-    					System.exit(1);
-    				}
-    			}
-    		}, (long) (Math.abs(initialFloor - targetFloor) * avgtime * 1000));
-    		
             // Check if elevator is already at target floor
-            if (state.getCurrentFloor() == targetFloor){
+            if (elevatorContext.getCurrentFloor() == targetFloor){
                 return;
             }
 
     		// Determine the direction the elevator will need to move 
-        	boolean isDirectionUp = (state.getCurrentFloor() < targetFloor);
+        	boolean isDirectionUp = (elevatorContext.getCurrentFloor() < targetFloor);
         	
         	// Set the direction state based on direction boolean above
         	if (isDirectionUp) {
-        		state.setDirection(Direction.UP);
+                state.setElevatorContext(elevatorContext.setDirection(Direction.UP));
+                state.updateState();
         	} else {
-        		state.setDirection(Direction.DOWN);
+                state.setElevatorContext(elevatorContext.setDirection(Direction.DOWN));
+                state.updateState();
         	}
-        	// Move to the targetFloor 
-        	updateState(ElevatorStatus.RUNNING);
-        	for (int i = Math.abs(state.getCurrentFloor() - targetFloor); i > 0; i--) {
+           
+        	// Move to the targetFloor
+            state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.RUNNING));
+            state.updateState();
+        	for (int i = Math.abs(elevatorContext.getCurrentFloor() - targetFloor); i > 0; i--) {
         		int x = isDirectionUp? 1 : -1; 	// If direction UP, increment current floor, else decrement
-        		System.out.println(Thread.currentThread().getName() + " is at floor: " + state.getCurrentFloor());
-        		state.setCurrentFloor(state.getCurrentFloor() + x);  // Increment or Decrement currentFloor
+        		System.out.println(Thread.currentThread().getName() + " is at floor: " + elevatorContext.getCurrentFloor());
+                state.setElevatorContext(elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x));
+                state.updateState();
         		Thread.sleep(1000);
         	}
-        	System.out.println(Thread.currentThread().getName() + " is at floor: " + state.getCurrentFloor());
+        	System.out.println(Thread.currentThread().getName() + " is at floor: " + elevatorContext.getCurrentFloor());
         	
         	// Update state when approaching targetFloor
-            updateState(ElevatorStatus.ARRIVED);
+            state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.ARRIVED));
+            state.updateState();
             Thread.sleep(600);
-            updateState(ElevatorStatus.OPEN_DOOR);
+            state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.OPEN_DOOR));
+            state.updateState();
             Thread.sleep(600);
         	
        	} catch (InterruptedException e) {
@@ -266,13 +250,15 @@ public class Elevator implements Runnable {
 	        // Move to source floor
 	        move(serviceRequest.getSourceFloor());
 	        System.out.println(Thread.currentThread().getName() + " Pick up passengers");
-	        updateState(ElevatorStatus.CLOSE_DOOR);
+            state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.CLOSE_DOOR));
+            state.updateState();
 	        Thread.sleep(1400);
 	        
 	        // Move to destination floor
 	        move(serviceRequest.getDestinationFloor());
-	        System.out.println(Thread.currentThread().getName() + " Drop off passengers");
-	        updateState(ElevatorStatus.CLOSE_DOOR);
+	        System.out.println(Thread.currentThread().getName() + " Drop off passengers" );
+            state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.CLOSE_DOOR));
+            state.updateState();
 	        Thread.sleep(1400);
 	        
     	} catch (InterruptedException e) {

@@ -1,12 +1,13 @@
 package Elevator.FloorSubsystem;
 
 import Elevator.Enums.FloorStatus;
+import Elevator.Global.StateMachine;
 
 /*
  * FloorState represents the State class of the Floor
  * 
  */
-public class FloorState {
+public class FloorState implements StateMachine {
 	private FloorStatus state;
 	private FloorStatus previousState;
 	/*
@@ -28,9 +29,9 @@ public class FloorState {
 	 * Output: none
 	 * 
 	 */
-	public FloorStatus updateState() {
+	@Override
+	public void updateState() {
 		state = determineNextState();
-		return state;
 	}
 
 	/*
@@ -63,6 +64,7 @@ public class FloorState {
 	 * Output: FloorStatus state
 	 * 
 	 */
+	@Override
 	public String getCurrentState() {
 		return state.toString();
 	}
@@ -74,6 +76,7 @@ public class FloorState {
 	 * Output: FloorStatus previousState
 	 *
 	 */
+	@Override
 	public String getPreviousState() {
 		return previousState.toString();
 	}

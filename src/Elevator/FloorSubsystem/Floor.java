@@ -151,7 +151,8 @@ public class Floor implements Serializable, Runnable{
      * Output: None
      */
     public void readCSV() {
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
+        state.updateState();
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
         String fileToRead = "CSV/FloorCSV/floor_" + myFloor + ".csv";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) {
@@ -179,7 +180,8 @@ public class Floor implements Serializable, Runnable{
      * Output: None
      */
     public void sendRequestToScheduler(Request r) throws IOException {
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
+        state.updateState();
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
         byte[] packet = PacketHelper.buildRequestPacket(r);
         System.out.println(Thread.currentThread().getName() + ": sending request: " + r);
         System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
@@ -196,7 +198,8 @@ public class Floor implements Serializable, Runnable{
      * Output: None
      */
     public void receiveResponseFromScheduler() throws IOException {
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
+        state.updateState();
+        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
         byte[] packet = new byte[1];
         sendPacket = new DatagramPacket(packet, packet.length);
         socket.receive(sendPacket);
@@ -215,7 +218,8 @@ public class Floor implements Serializable, Runnable{
      */
     public void sendReceiveRequest() throws IOException, ClassNotFoundException {
         for (Request r: incomingRequests) {
-            System.out.println(Thread.currentThread().getName() + ": updated state: " + state.updateState());
+            state.updateState();
+            System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
             while(true){
                 if(r.getTime().isBefore(LocalDateTime.now()))
                     break;

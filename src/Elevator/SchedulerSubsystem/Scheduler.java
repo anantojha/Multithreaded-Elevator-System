@@ -37,7 +37,7 @@ public class Scheduler implements Runnable {
      * Output: none
      *
      */
-    public void elevatorHandle(){
+    public void elevatorHandle() throws InterruptedException {
 
         byte data[] = new byte[50];
         receiveServerPacket = new DatagramPacket(data, data.length);
@@ -52,6 +52,8 @@ public class Scheduler implements Runnable {
             }
 
             int elevatorId = receiveServerPacket.getData()[1];
+
+
             if(!tasks.isEmpty()){
                 System.out.println("Scheduler: sending task to Elevator "+ elevatorId + " (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
                 try {
@@ -111,7 +113,7 @@ public class Scheduler implements Runnable {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws InterruptedException {
         Scheduler c = new Scheduler();
         Thread client = new Thread(c, "Client Thread");
         client.start();

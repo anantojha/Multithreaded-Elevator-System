@@ -1,8 +1,8 @@
 --------------------------------------------------------------------------------------------------
-Iteration 3
+Iteration 4
 Group: L2-G6
 Members: Lasitha Amuwala Meesthrige, Bonita Hout, Navaty Khara, Tyler Mak, Anant Ojha
-Date: March 9th, 2022
+Date: March 27th, 2022
 --------------------------------------------------------------------------------------------------
 Files in this project:
 
@@ -56,32 +56,21 @@ Right click on test file and run as 'JUnit Test'.
 --------------------------------------------------------------------------------------------------
 Groupwork Responsibilities:
 
-Lasitha Amuwala Meesthrige: 
-	Refactored and simplified Elevator.java, Added move() method and comments
-	Updated State Machine Diagram
-	Updated Scheduler State Machine Diagram
+Lasitha Amuwala Meesthrige:
 	
 Bonita Hout:
-	Updated UML Class Diagram
 	
 
 Navaty Khara: 
-	Fixed Bug with UDP implementation.
-	Calculated time for Timer
-	Timer implementation + induce fault flag
-	Timing diagram.
 	
 Tyler Mak: 
-	Added comments to Elevator.java, Floor.java, Scheduler.java, and SystemTest.java.
-	Updated READEME.txt
 
 Anant Ojha: 
-	Implemented Socket Communication for Scheduler (Server);
-	Implemented Socket Communication for Floor (Client);
-	Implemented Socket Communication for Elevator (Client);
-	Refactored state machines for each subsystems;
-	Refactored System to handle 10 Floors, and 2 Elevator connections concurrently; 
-	Updated Unit Tests to work with sockets;
+	Implemented UDP Communication for Scheduler (Server);
+	Implemented UDP Communication for Floor (Client);
+	Implemented UDP Communication for Elevator (Client);
+	Fixed StateMachine for Scheduler, Floor, Elevator;
+	
 	
 	
 	

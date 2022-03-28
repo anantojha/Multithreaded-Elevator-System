@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
 
 /*
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeoutException;
  * 
  */
 public class Elevator implements Runnable {
+	
+	final private float avgtime = 1.347887712f;
 
     private String Id;
     private DatagramSocket socket;
@@ -28,6 +32,7 @@ public class Elevator implements Runnable {
     int initialFloor;
     private ElevatorState state;
     byte[] taskRequest = {95, 1, 95};
+	Timer timer;
 
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
@@ -157,6 +162,7 @@ public class Elevator implements Runnable {
         while (true) {
             updateState(ElevatorStatus.IDLE);
             System.out.println();
+			float initial = System.nanoTime()/1000000000;
 
             try {
                 sendSchedulerRequestPacket();
@@ -177,6 +183,9 @@ public class Elevator implements Runnable {
 
             Request task = PacketHelper.convertPacketToRequest(receivePacket);
             service(task);
+			float finale = System.nanoTime()/1000000000;
+			System.out.println(finale-initial);
+
         }
     }
     
@@ -191,6 +200,21 @@ public class Elevator implements Runnable {
      */
     private void move(int targetFloor) {
     	try {
+    		int initialFloor = state.getCurrentFloor();
+    		//Create a timer
+    		timer = new Timer();
+    		timer.schedule(new TimerTask() {
+    			public void run() {
+    				//When the timer ends, and the elevator is not at their target floor, exit. Otherwise, continue.
+    				if(state.getCurrentFloor() == targetFloor) {
+    					return;
+    				}else {
+    					System.out.println("Fault has been detected | Timer was " + (Math.abs(initialFloor - targetFloor) * avgtime));
+    					System.exit(1);
+    				}
+    			}
+    		}, (long) (Math.abs(initialFloor - targetFloor) * avgtime * 1000));
+    		
             // Check if elevator is already at target floor
             if (state.getCurrentFloor() == targetFloor){
                 return;
@@ -205,7 +229,6 @@ public class Elevator implements Runnable {
         	} else {
         		state.setDirection(Direction.DOWN);
         	}
-           
         	// Move to the targetFloor 
         	updateState(ElevatorStatus.RUNNING);
         	for (int i = Math.abs(state.getCurrentFloor() - targetFloor); i > 0; i--) {

@@ -62,6 +62,7 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige:
+	Worked on refactoring Elevator state machine
 	
 Bonita Hout:
 	Updated UML Class Diagram

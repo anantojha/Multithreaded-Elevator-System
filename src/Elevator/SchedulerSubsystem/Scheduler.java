@@ -73,7 +73,6 @@ public class Scheduler implements Runnable {
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
                             InetAddress.getLocalHost(), receiveServerPacket.getPort());
                     elevatorSocket.send(sendReplyPacket);
-//                    estimatedTime = getEstimateTripTime(PacketHelper.convertPacketToRequest(sendReplyPacket));
                     elevatorSocket.setSoTimeout(estimatedTime);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();

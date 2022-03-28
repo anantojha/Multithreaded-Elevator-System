@@ -39,13 +39,16 @@ Sequence_Diagram.pdf: The UML sequence diagram for Iteration 3 of Elevator Proje
 Scheduler_State_Machine_Diagram-Iteration3.pdf: The UML state machine diagram for Iteration 3 of Elevator Project.
 State_Machine_Diagram-Iteration3.pdf: The UML state machine diagram for Iteration 3 of Elevator Project.
 --------------------------------------------------------------------------------------------------
-Running the program: To run the program, invoke the main function in the following programs in the order: Scheduler.java -> Elevator.java -> Elevator.java -> Floor.java. Each invocation of a program will have a separate output meaning a total of 4 Console Windows will be needed.
+Running the program: To run the program, invoke the main function in the following programs in the order: Scheduler.java -> Elevator.java -> Elevator.java (run 5 instances with different Ids) -> Floor.java. Each invocation of a program will have a separate output meaning a total of 4 Console Windows will be needed.
 Using Eclipse, import the project -> Open Scheduler.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
 Output will be shown on the Console Window, to ensure the Console Window stays focused on Scheduler.java click on 'Pin Console'.
 Create a new Console Window by: Select 'Open Console' -> Select '1 New Console View'.
 Open Elevator.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application' -> Enter '1' as Elevator Id.
 Output will be shown on the 2nd Console Window, to ensure the 2nd Console Window stays focused on Elevator.java click on 'Pin Console'.
 Repeat past 3 steps again for a 2nd Elevator.java instance with '2' as the Elevator Id.
+Repeat past 3 steps again for a 3rd Elevator.java instance with '3' as the Elevator Id.
+Repeat past 3 steps again for a 4th Elevator.java instance with '4' as the Elevator Id.
+Repeat past 3 steps again for a 5th Elevator.java instance with '5' as the Elevator Id.
 Create a new Console Window by: Select 'Open Console' -> Select '1 New Console View'.
 Open Floor.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
 Output will be shown on the 4th Console Window, to ensure the 4th Console Window stays focused on Floor.java click on 'Pin Console'.

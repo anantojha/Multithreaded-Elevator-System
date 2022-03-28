@@ -93,6 +93,6 @@ public class ElevatorContext {
 
     @Override
     public String toString() {
-        return "                    |  STATE UPDATE: currentFloor=" + currentFloor + ", direction=" + direction + ", status=" + status + "    |";
+        return "|  STATE UPDATE: currentFloor=" + currentFloor + ", direction=" + direction + ", status=" + status + "    |";
     }
 }

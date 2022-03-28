@@ -64,7 +64,8 @@ Import JUnit 4 library from 'configure project build path' settings.
 Right click on test file and run as 'JUnit Test'.
 --------------------------------------------------------------------------------------------------
 Groupwork Responsibilities:
-
+	Statemachines
+	
 Lasitha Amuwala Meesthrige:
 	
 Bonita Hout:

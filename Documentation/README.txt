@@ -53,6 +53,8 @@ Create a new Console Window by: Select 'Open Console' -> Select '1 New Console V
 Open Floor.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
 Output will be shown on the 4th Console Window, to ensure the 4th Console Window stays focused on Floor.java click on 'Pin Console'.
 
+NOTE: to see output of each state -> uncomment line #38 in ElevatorState's updateState() function to print state
+
 Running Unit Test:
 Import JUnit 4 library from 'configure project build path' settings. 
 Right click on test file and run as 'JUnit Test'.

@@ -67,6 +67,10 @@ Bonita Hout:
 	Updated UML Class Diagram
 
 Navaty Khara: 
+	Debugged an issue with UDP implmenetation
+	Implemented fault timer
+	Calculated average time for fault implementation
+	Timing Diagram
 	
 Tyler Mak: 
 

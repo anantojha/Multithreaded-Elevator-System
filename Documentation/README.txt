@@ -8,13 +8,15 @@ Files in this project:
 
 src/Elevator/ElevatorSubsystem:
 Elevator.java: Elevator thread class that retrieves a request from the scheduler class, validates if request can be done, and services the request. Main method in this class creates and starts one elevator thread.
-ElevatorState.java: State class for Elevator.java with setter and getter methods for elevator data.
+ElevatorContext.java: Class that holds elevator's data such as the floor, direction and status.
+ElevatorState.java: Statemachine class for Elevator.java which updates, sets and gets elevator states.
 
 src/Elevator/Enums:
 Direction.java: Enum class that declares a type called Direction that can be either UP or DOWN.
 ElevatorStatus.java: Enum class that declares Elevator States. (RUNNING, ARRIVED, IDLE, OPEN DOOR, CLOSE DOOR, TERMINATE)
 FloorStatus.java: Enum class that declares Floor States. (INITIALIZE, PROCESSING, SENDING, WAITING)
 SchedulerStatus.java: Enum class that declares Scheduler States. (INITIALIZE, CONNECTED ELEVATOR, CONNECTED FLOOR, ADDING REQUEST, SEND REQUEST, COMPLETE REQUEST)
+SubsystemMapping.java: Enum class that declares each subsystem. 
 
 src/Elevator/FloorSubsystem:
 Floor.java: Floor thread class that creates requests in a csv file stored in FloorCSV folder, reads the requests from created csv files and sends the request to the scheduler class. Main method in this class creates and starts 10 floor threads.
@@ -22,6 +24,8 @@ FloorState.java: State class for Floor.java with set and get methods for Floor s
 Request.java: Request data structure that holds information about the time of request, floor of request, direction from source floor to destination floor, and destination floor.
 
 src/Elevator/Global:
+PacketHelper.java: Helps build DatagramPackets for requests.
+StateMachine.java: Superclass of statemachine classes.
 SystemConfiguration.java: System data that defines maximum floor and elevators.
 
 src/Elevator/SchedulerSubsystem:
@@ -62,7 +66,6 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 
 Lasitha Amuwala Meesthrige:
-	Worked on refactoring Elevator state machine
 	
 Bonita Hout:
 	Updated UML Class Diagram
@@ -72,9 +75,13 @@ Navaty Khara:
 	Implemented fault timer
 	Calculated average time for fault implementation
 	Timing Diagram
-	
-Tyler Mak: 
 
+Tyler Mak: 
+	Implement one file input csv in GitHub branch Iteration4 (Not submitted)
+	Implement UDP communication for system in GitHub branch Iteration4 (Not submitted)
+	Fixed SystemTest.java
+	Assisted in timing states
+	
 Anant Ojha: 
 	Implemented UDP Communication for Scheduler (Server);
 	Implemented UDP Communication for Floor (Client);

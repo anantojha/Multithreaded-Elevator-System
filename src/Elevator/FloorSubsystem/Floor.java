@@ -173,7 +173,17 @@ public class Floor implements Serializable, Runnable{
         }
     }
 
-
+    /*
+     * The getRequestList() is a getter method for retrieving the ArrayList of requests
+     * the floor thread will send to the scheduler. 
+     * 
+     * Input: None
+     * Output: ArrayList of Requests being sent to scheduler
+     */
+    public ArrayList<Request> getRequestList(){
+    	return incomingRequests;
+    }
+    
     /*
      * The sendRequestToScheduler() method sends the request to the scheduler via. UDP
      *

@@ -137,7 +137,7 @@ public class Scheduler implements Runnable {
      * Input: None
      * Output: Queue of tasks
      */
-    public Queue getQueue() {
+    public Queue<byte[]> getQueue() {
     	return tasks;
     }
     

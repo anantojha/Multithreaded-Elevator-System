@@ -3,14 +3,9 @@ package Elevator.ElevatorSubsystem;
 import Elevator.Enums.Direction;
 import Elevator.Enums.ElevatorStatus;
 import Elevator.FloorSubsystem.Request;
-import Elevator.Global.PacketHelper;
 
 import java.io.IOException;
-import java.net.*;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /*
  * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
@@ -19,46 +14,13 @@ import java.util.TimerTask;
  */
 public class Elevator implements Runnable {
 
-    private String Id;
-    private DatagramSocket socket;
-    private DatagramPacket sendPacket;
-    private DatagramPacket receivePacket;
-    private InetAddress localHostVar;
     int initialFloor;
     private ElevatorContext elevatorContext;
     private ElevatorState state;
-    byte[] taskRequest = {95, 1, 95};
     private Timer timer;
-    private Timer doorTimer;
     boolean forceFault = false;
     final private float avgtime = 1.347887712f;
-
-    /*
-     * main(String [] args) asks user for elevator id and creates and starts elevator thread.
-     * 
-     * Input: none
-     * Output: none
-     * 
-     */
-    public static void main(String[] args) throws IOException {
-        String id = askElevatorId();
-        Thread elevatorOne = new Thread(new Elevator(id), "Elevator " + id);
-        elevatorOne.start();
-    }
-    
-    /*
-     * The askElevatorId() method gets and returns user input for an elevator id.
-     * 
-     * Input: none
-     * Output: Returns user input elevator id as String
-     * 
-     */
-    public static String askElevatorId() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Elevator Id: ");
-        String name = scanner.nextLine();
-        return name;
-    }
+    Queue<Request> jobs;
 
     /*
      * A constructor for the Elevator class. The constructor initializes the shared data structure and sets the id
@@ -70,26 +32,12 @@ public class Elevator implements Runnable {
      * Output: none
      *
      */
-    public Elevator(String id) throws IOException {
+    public Elevator(Queue<Request> jobs) throws IOException {
     	//All elevators start at Floor 1
         this.initialFloor = 1;
-        this.Id = id;
-        this.elevatorContext = new ElevatorContext(1, null, ElevatorStatus.INITIALIZE);
+        this.elevatorContext = new ElevatorContext(initialFloor, null, ElevatorStatus.INITIALIZE);
         this.state = new ElevatorState(elevatorContext);
-        this.socket = new DatagramSocket(2950 + Integer.parseInt(id));
-        socket.setSoTimeout(3000);
-        localHostVar = InetAddress.getLocalHost();
-    }
-
-    /*
-     * The getId() method returns the elevator id.
-     * 
-     * Input: none
-     * Output: Return elevator id as String.
-     * 
-     */
-    public String getId() {
-        return Id;
+        this.jobs = jobs;
     }
     
     /*
@@ -101,51 +49,6 @@ public class Elevator implements Runnable {
      */
     public ElevatorStatus getCurrentStatus() {
         return elevatorContext.getStatus();
-    }
-    
-    /*
-     * The updateState(ElevatorStatus status) method updates the current state of the Elevator and outputs the information to the console.
-     * 
-     * Input: 
-     * status(ElevatorStatus): State elevator will be updated to.
-     * 
-     * Output: none
-     * 
-     */
-//    public void updateState(ElevatorStatus status) {
-//        elevatorContext.setStatus(status);
-//        if (status.equals(ElevatorStatus.RUNNING)) {
-//            System.out.println("Elevator " + getId() + " " + getCurrentStatus() + " | " + elevatorContext.getDirection());
-//        } else {
-//            System.out.println("Elevator " + getId() + " " + getCurrentStatus());
-//        }
-//    }
-
-    /*
-     * The receiveSchedulerTaskPacket() method is for send a request to the scheduler for a task.
-     *
-     * Input: none
-     * Output: none
-     *
-     */
-    public void sendSchedulerRequestPacket() throws IOException {
-        System.out.println("Elevator " + getId() + ": sending task request: " + Arrays.toString(taskRequest));
-        sendPacket = new DatagramPacket(taskRequest, taskRequest.length, localHostVar, 2506);
-        socket.send(sendPacket);
-        System.out.println("Elevator " + getId() + ": Packet Sent.");
-    }
-
-    /*
-     * The receiveSchedulerTaskPacket() method is for receiving a Task from the scheduler.
-     *
-     * Input: none
-     * Output: none
-     *
-     */
-    public void receiveSchedulerTaskPacket() throws IOException {
-        byte[] data = new byte[50];
-        receivePacket = new DatagramPacket(data, data.length);
-        socket.receive(receivePacket);
     }
 
     /*
@@ -163,26 +66,9 @@ public class Elevator implements Runnable {
             state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.IDLE));
             state.updateState();
 
-            System.out.println();
+            while (jobs.isEmpty()){}
 
-            try {
-                sendSchedulerRequestPacket();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-
-            try {
-                receiveSchedulerTaskPacket();
-            } catch (SocketTimeoutException e) {
-                System.out.println("Elevator: Send timed out.");
-                continue;
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-
-            Request task = PacketHelper.convertPacketToRequest(receivePacket);
+            Request task = jobs.poll();
             service(task);
         }
     }
@@ -272,7 +158,12 @@ public class Elevator implements Runnable {
      * 
      */
     private void service(Request serviceRequest) {
+        if (serviceRequest == null){
+            return;
+        }
+
     	try {
+            System.out.println();
 	        System.out.println(Thread.currentThread().getName() +" is servicing "+ serviceRequest);
 	        
 	        // Move to source floor

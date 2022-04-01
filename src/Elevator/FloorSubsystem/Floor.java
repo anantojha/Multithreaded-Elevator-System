@@ -54,7 +54,7 @@ public class Floor implements Serializable, Runnable{
      */
     public static long randomTimeDiff(){
         random.setSeed(random.nextInt(50) + 5);
-        return random.nextInt(50) + 5;
+        return random.nextInt(50) + 7;
     }
 
 
@@ -134,7 +134,7 @@ public class Floor implements Serializable, Runnable{
     @Override
     public void run() {
         try {
-            createFloorCSV(myFloor , "FloorCSV", 2);
+            createFloorCSV(myFloor , "FloorCSV", 1);
             readCSV();
             sendReceiveRequest();
             socket.close();

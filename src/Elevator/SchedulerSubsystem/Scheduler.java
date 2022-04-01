@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
 public class Scheduler implements Runnable {
@@ -24,7 +25,7 @@ public class Scheduler implements Runnable {
      */
     public Scheduler() {
         try {
-            tasks = new ConcurrentLinkedQueue<>();
+            tasks = new LinkedBlockingQueue<>();
             floorSocket = new DatagramSocket(2505);
             elevatorSocket = new DatagramSocket(2506);
         } catch (IOException e) {
@@ -52,7 +53,7 @@ public class Scheduler implements Runnable {
         receiveServerPacket = new DatagramPacket(data, data.length);
         int estimatedTime = 100000;
 
-        while (true) {
+
             System.out.println("Scheduler: Waiting for Elevator Request...\n");
             try {
                 elevatorSocket.receive(receiveServerPacket);
@@ -67,11 +68,11 @@ public class Scheduler implements Runnable {
             int elevatorId = receiveServerPacket.getData()[1];
 
             if(!tasks.isEmpty()){
-                System.out.println("Scheduler: sending task to Elevator  (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
                 try {
                     byte[] taskToSend = tasks.poll();
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
                             InetAddress.getLocalHost(), receiveServerPacket.getPort());
+                    System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
                     elevatorSocket.send(sendReplyPacket);
                     elevatorSocket.setSoTimeout(estimatedTime);
                 } catch (UnknownHostException e) {
@@ -80,7 +81,7 @@ public class Scheduler implements Runnable {
                     e.printStackTrace();
                 }
             }
-        }
+
     }
 
     /*

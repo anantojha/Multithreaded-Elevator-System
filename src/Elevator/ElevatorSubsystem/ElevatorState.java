@@ -14,7 +14,6 @@ import java.util.Observable;
  */
 public class ElevatorState implements StateMachine {
 
-
 	private ElevatorContext state;
 	private ElevatorContext previousState;
 	private ElevatorContext nextState;

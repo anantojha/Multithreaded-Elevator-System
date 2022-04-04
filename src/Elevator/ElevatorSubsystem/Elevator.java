@@ -241,6 +241,16 @@ public class Elevator implements Runnable {
 	}
 
 	/*
+	 * The getJobs() is a getter method for retrieving the queue of requests 
+	 * the elevator will receive from the scheduler.
+	 * 
+	 * Input: Nonw
+	 * Output: Queue of requests received from scheduler
+	 */
+	public Queue<Request> getJobs(){
+		return jobs;
+	}
+	/*
 	 * The print() method prints a structured output string to console.
 	 * 
 	 * Input: string (String): the string to be printed

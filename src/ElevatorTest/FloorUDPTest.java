@@ -1,29 +1,19 @@
 package ElevatorTest;
 
 import Elevator.Global.PacketHelper;
-import Elevator.ElevatorSubsystem.Elevator;
 import Elevator.FloorSubsystem.Floor;
 import Elevator.SchedulerSubsystem.Scheduler;
 import Elevator.FloorSubsystem.Request;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Queue;
 
 public class FloorUDPTest {
 	Thread floorOne, scheduler;
-	DatagramSocket schedulerSocket;
-	DatagramPacket receiveFloorPacket, sendReplyPacket;
-	byte acknowledgementSignal[] = {1};
-	byte[] taskRequest = {95, 1, 95};
 	byte[] taskReceived;
 	
 	@Test

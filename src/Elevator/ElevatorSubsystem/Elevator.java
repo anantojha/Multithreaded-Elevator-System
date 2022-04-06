@@ -75,8 +75,6 @@ public class Elevator implements Runnable {
 		updateState();
 
 		while (true) {
-			// state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.IDLE));
-			// state.updateState();
 			System.out.println();
 
 			while (jobs.isEmpty()) {

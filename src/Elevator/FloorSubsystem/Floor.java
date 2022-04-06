@@ -38,6 +38,7 @@ public class Floor implements Serializable, Runnable{
      */
     public static void main(String[] args) throws IOException {
     	//create and start 10 floor threads
+        createFloorCSV(11, "FloorCSV", 11);
         for(int i = 1; i < 11; i++){
             Thread floor = new Thread(new Floor(i), "Floor " + i);
             floor.start();
@@ -53,8 +54,7 @@ public class Floor implements Serializable, Runnable{
      * 
      */
     public static long randomTimeDiff(){
-        random.setSeed(random.nextInt(50) + 5);
-        return random.nextInt(50) + 7;
+        return random.nextInt(7) + 7;
     }
 
 
@@ -70,14 +70,17 @@ public class Floor implements Serializable, Runnable{
      * Output: none
      * 
      */
-    public static void createFloorCSV(int floor, String folder, int numRequests) throws IOException {
-        FileWriter csv = new FileWriter("CSV/" + folder + "/floor_" + floor + ".csv");
+    public static void createFloorCSV(int numFloors, String folder, int numRequests) throws IOException {
+        FileWriter csv = new FileWriter("CSV/" + folder + "/floor.csv");
         LocalTime timeCount = LocalDateTime.now().toLocalTime();
         for(int j = 0; j < numRequests; j++){
+            int source;
             int destination;
             while (true){
-                int randDestination = random.nextInt(10) + 1;
-                if (randDestination != floor){
+                int randSource = random.nextInt(numFloors) + 1;
+                int randDestination = random.nextInt(numFloors) + 1;
+                if (randDestination != randSource){
+                    source = randSource;
                     destination = randDestination;
                     break;
                 }
@@ -89,9 +92,9 @@ public class Floor implements Serializable, Runnable{
             //Write all request information into csv file
             csv.append(timeCount.toString());
             csv.append(",");
-            csv.append(String.valueOf(floor));
+            csv.append(String.valueOf(source));
             csv.append(",");
-            if (destination > floor) 
+            if (destination > source)
             	csv.append("UP");
             else 
             	csv.append("DOWN");
@@ -134,13 +137,16 @@ public class Floor implements Serializable, Runnable{
     @Override
     public void run() {
         try {
-            createFloorCSV(myFloor , "FloorCSV", 1);
             readCSV();
             sendReceiveRequest();
             socket.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getMyFloor() {
+        return myFloor;
     }
 
 
@@ -154,7 +160,7 @@ public class Floor implements Serializable, Runnable{
     public void readCSV() {
         state.updateState();
         System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
-        String fileToRead = "CSV/FloorCSV/floor_" + myFloor + ".csv";
+        String fileToRead = "CSV/FloorCSV/floor.csv";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) {
             String line;
@@ -171,6 +177,8 @@ public class Floor implements Serializable, Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        incomingRequests.removeIf(r -> r.getSourceFloor() != this.getMyFloor());
     }
 
     /*

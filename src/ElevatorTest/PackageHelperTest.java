@@ -40,8 +40,8 @@ public class PackageHelperTest {
         }
         
         //Generate CSV file with 1 request
-        Floor.createFloorCSV(1, "TestFloorCSV", 1);
-		File file = new File("CSV/TestFloorCSV/floor_1.csv");
+        Floor.createFloorCSV(10, "TestFloorCSV", 1);
+		File file = new File("CSV/TestFloorCSV/floor.csv");
 		
 		//Read request in CSV file
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {

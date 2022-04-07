@@ -38,7 +38,7 @@ public class Floor implements Serializable, Runnable{
      */
     public static void main(String[] args) throws IOException {
     	//create and start 10 floor threads
-        createFloorCSV(11, "FloorCSV", 11);
+        createFloorCSV(10, "FloorCSV", 11);
         for(int i = 1; i < 11; i++){
             Thread floor = new Thread(new Floor(i), "Floor " + i);
             floor.start();

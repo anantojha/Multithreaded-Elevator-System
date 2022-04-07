@@ -3,6 +3,7 @@ package Elevator.ElevatorSubsystem;
 import Elevator.Enums.Direction;
 import Elevator.Enums.ElevatorStatus;
 import Elevator.FloorSubsystem.Request;
+import GUI.ControlPanelGUI;
 
 import java.io.IOException;
 import java.util.*;
@@ -20,6 +21,7 @@ public class Elevator implements Runnable {
 	private Timer timer;
 	boolean forceFault = false;
 	final private float avgtime = 1.347887712f;
+	private ControlPanelGUI gui;
 	Queue<Request> jobs;
 
 	/*
@@ -72,6 +74,11 @@ public class Elevator implements Runnable {
 	 */
 	@Override
 	public void run() {
+		try {
+			gui = new ControlPanelGUI();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		updateState();
 
 		while (true) {
@@ -148,8 +155,10 @@ public class Elevator implements Runnable {
 				state.setElevatorContext(elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x));
 //               state.updateState();
 				Thread.sleep(1000);
+				gui.moveElevator(elevatorContext.getStatus().toString(), elevatorContext.getCurrentFloor());
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
+
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();

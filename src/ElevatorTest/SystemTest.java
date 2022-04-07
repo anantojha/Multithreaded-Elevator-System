@@ -59,6 +59,9 @@ public class SystemTest {
         floorEight = new Thread(new Floor(8),"Floor 8");
         floorNine = new Thread(new Floor(9),"Floor 9");
         floorTen = new Thread(new Floor(10),"Floor 10");
+        
+        //Create CSV file for floor requests
+        Floor.createFloorCSV(10, "FloorCSV", 10);
 	}
 
 	@Test

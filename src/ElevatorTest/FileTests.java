@@ -37,7 +37,7 @@ public class FileTests {
     @Test
     public void inputCsvGeneration() throws IOException{
         // generate test csv
-        Floor.createFloorCSV(10, "TestFloorCSV", 1);
+        Floor.createFloorCSV(10, "TestFloorCSV", 10);
         File file = new File("CSV/TestFloorCSV/floor.csv");
 
         // assert file exists and is not a directory

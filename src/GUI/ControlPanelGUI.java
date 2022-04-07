@@ -2,17 +2,14 @@ package GUI;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import javax.swing.*;
-
-import Elevator.ElevatorSubsystem.Elevator;
-import Elevator.ElevatorSubsystem.ElevatorController;
-import Elevator.SchedulerSubsystem.Scheduler;
 
 /**
  * @author Lasitha
  *
  */
-public class ControlPanelGUI implements ActionListener {
+public class ControlPanelGUI extends JFrame {
 
 	int count = 0;
 	private JLabel label; 
@@ -22,46 +19,48 @@ public class ControlPanelGUI implements ActionListener {
 	public ControlPanelGUI() {
 
 		frame = new JFrame();
-
-		JButton button = new JButton("Start");
-		button.addActionListener(this);
 		
 		panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(0,0,500,1000));
+		panel.setBorder(BorderFactory.createEmptyBorder(0,0,500,500));
 		panel.setLayout(new GridLayout(0, 1));
-		panel.add(button);
+		panel.setBackground(Color.WHITE);
+
+		label = new JLabel(); //JLabel Creation
+		label.setIcon(new ImageIcon("elevator.jpeg")); //Sets the image to be displayed as an icon
+		Dimension size = label.getPreferredSize(); //Gets the size of the image
+		label.setBounds(50, 30, size.width, size.height); //Sets the location of the image
+		frame.add(label);
 
 		frame.add(panel, BorderLayout.CENTER);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("Elevator Control Panel GUI");
+		frame.setTitle("Elevator 1");
 		frame.pack();
 		frame.setVisible(true);
 	}
 
+	public void moveElevator(int diff) throws InterruptedException {
+		label.setLocation(0, diff);
+		Thread.sleep(10);
+		frame.repaint();
+	}
+
+
+
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		// TODO Auto-generated method stub
-		new ControlPanelGUI();
-		//ElevatorController e = new ElevatorController();
-		
-	}
+		ControlPanelGUI panel = new ControlPanelGUI();
+		for(int i = 0; i < 200; i++) {
+			panel.moveElevator(i);
+		}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-        Scheduler c = new Scheduler();
-        Thread client = new Thread(c, "Client Thread");
-        client.start();
+		for(int i = 200; i > 0; i--) {
+			panel.moveElevator(i);
+		}
 
-        while (true) {
-            try {
-				c.elevatorHandle();
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-        }
+
 	}
 
 }

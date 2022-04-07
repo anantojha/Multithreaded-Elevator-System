@@ -7,7 +7,6 @@ public class ElevatorContext {
     private Integer currentFloor;
     private Direction direction;
     private ElevatorStatus status;
-    private Integer maxFloor;
 
     /*
      * ElevatorState(Integer) is the constructor of the ElevatorState class. It initializes all necessary variables.

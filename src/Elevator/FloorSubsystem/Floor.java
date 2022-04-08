@@ -73,7 +73,7 @@ public class Floor implements Serializable, Runnable{
     public static void createFloorCSV(int numFloors, String folder, int numRequests) throws IOException {
         FileWriter csv = new FileWriter("CSV/" + folder + "/floor.csv");
         LocalTime timeCount = LocalDateTime.now().toLocalTime();
-        for(int j = 0; j < numRequests; j++){
+        for(int j = 1; j < numRequests; j++){
             int source;
             int destination;
             while (true){
@@ -99,7 +99,12 @@ public class Floor implements Serializable, Runnable{
             else 
             	csv.append("DOWN");
             csv.append(",");
-            csv.append(destination + "");
+            csv.append(String.valueOf(destination));
+            csv.append(",");
+            if(j % 5 == 0)
+                csv.append("f");
+            else
+                csv.append("n");
             csv.append("\n");
         }
         csv.flush();
@@ -170,7 +175,7 @@ public class Floor implements Serializable, Runnable{
                     if(d.toString().equals(requestContents[2])){
                         LocalDate date = LocalDateTime.now().toLocalDate();
                         incomingRequests.add(new Request(LocalDateTime.parse(date.toString() + "T" + requestContents[0]), Integer.parseInt(requestContents[1]),
-                                d, Integer.parseInt(requestContents[3])));
+                                d, Integer.parseInt(requestContents[3]), requestContents[4]));
                     }
                 }
             }

@@ -19,7 +19,7 @@ public class PacketHelper {
 
         // Packet Format:
         // 18:20:59.090,1,UP,4
-        // [dash-delimiter][requestFloor][dash-delimiter][Time][Dash-Delimiter][Direction][Dash-Delimiter][SourceFloor][Dash-Delimiter][DestinationFloor][Dash-Delimiter]
+        // [dash-delimiter][requestFloor][dash-delimiter][Time][Dash-Delimiter][Direction][Dash-Delimiter][SourceFloor][Dash-Delimiter][DestinationFloor][Dash-Delimiter][FaultFlag][Dash-Delimiter]
         try {
             buildPacket.write('_');
             buildPacket.write(SubSystemMapping.FLOOR.subSystemId());
@@ -31,6 +31,8 @@ public class PacketHelper {
             buildPacket.write(request.getSourceFloor());
             buildPacket.write('_');
             buildPacket.write(request.getDestinationFloor());
+            buildPacket.write('_');
+            buildPacket.write(request.getFaultByte());
             buildPacket.write('_');
         } catch (IOException e) {
             System.exit(1);
@@ -54,8 +56,9 @@ public class PacketHelper {
         byte[] directionBytes = Arrays.copyOfRange(data, delimitIndices.get(2)+1, delimitIndices.get(3));
         byte[] sourceFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(3)+1, delimitIndices.get(4));
         byte[] destinationFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(4)+1, delimitIndices.get(5));
+        byte[] faultBytes = Arrays.copyOfRange(data, delimitIndices.get(5)+1, delimitIndices.get(6));
 
-        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0]);
+        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0], faultBytes[0] == 1 ? "f":"n");
         return request;
     }
 
@@ -74,8 +77,9 @@ public class PacketHelper {
         byte[] directionBytes = Arrays.copyOfRange(data, delimitIndices.get(2)+1, delimitIndices.get(3));
         byte[] sourceFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(3)+1, delimitIndices.get(4));
         byte[] destinationFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(4)+1, delimitIndices.get(5));
+        byte[] faultBytes = Arrays.copyOfRange(data, delimitIndices.get(5)+1, delimitIndices.get(6));
 
-        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0]);
+        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0], faultBytes[0] == 1 ? "f":"n");
         return request;
     }
 }

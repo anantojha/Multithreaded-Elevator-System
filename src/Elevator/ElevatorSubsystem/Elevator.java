@@ -165,6 +165,11 @@ public class Elevator implements Runnable {
 		}
 	}
 
+
+	public void faultDetected(){
+		// implement fix fault, then return to carry out request
+	}
+
 	/*
 	 * service(Request serviceRequest) method services the request received from the
 	 * socket
@@ -177,6 +182,10 @@ public class Elevator implements Runnable {
 	private void service(Request serviceRequest) {
 		if (serviceRequest == null) {
 			return;
+		}
+
+		if (serviceRequest.getFault()) {
+			faultDetected();
 		}
 
 		try {

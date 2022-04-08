@@ -16,7 +16,7 @@ public class Request implements Serializable {
     private final int sourceFloor;
     private final Direction direction;
     private final int destinationFloor;
-
+	private Boolean fault;
     
     /*
 	 * A constructor for the Request class. The constructor initializes the variables that are necessary for the
@@ -26,11 +26,12 @@ public class Request implements Serializable {
 	 * Output: none
 	 * 
 	 */
-    public Request(LocalDateTime time, int sourceFloor, Direction direction, int destinationFloor){
+    public Request(LocalDateTime time, int sourceFloor, Direction direction, int destinationFloor, String fault){
         this.time = time;
         this.sourceFloor = sourceFloor;
         this.direction = direction;
         this.destinationFloor = destinationFloor;
+		this.fault = fault.contains("f");
     }
     
     /*
@@ -54,6 +55,10 @@ public class Request implements Serializable {
     public int getSourceFloor() {
         return sourceFloor;
     }
+
+	public byte getFaultByte() { return (byte) (fault ? 1: 0); }
+
+	public boolean getFault() { return fault; }
 
     /*
    	 * getDirection() is a getter method for the variable direction.
@@ -89,6 +94,7 @@ public class Request implements Serializable {
         return "| Time: " + time + " | " +
                 "source: " + sourceFloor + " | " +
                 "direction: " + direction + " | " +
-                "destination: " + destinationFloor + " |";
+                "destination: " + destinationFloor + " | " +
+				"fault: " + fault.toString() + " |";
     }
 }

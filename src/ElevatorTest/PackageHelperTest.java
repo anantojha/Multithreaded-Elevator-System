@@ -52,7 +52,7 @@ public class PackageHelperTest {
                     if(d.toString().equals(requestContents[2])){
                         LocalDate date = LocalDateTime.now().toLocalDate();
                         request = new Request(LocalDateTime.parse(date.toString() + "T" + requestContents[0]), Integer.parseInt(requestContents[1]), 
-                        		d, Integer.parseInt(requestContents[3]));
+                        		d, Integer.parseInt(requestContents[3]), "n");
                         expected = request.toString();
                         System.out.println("Generated Request: " + expected);
                     }

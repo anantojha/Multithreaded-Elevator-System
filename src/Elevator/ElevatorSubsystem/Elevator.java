@@ -126,8 +126,8 @@ public class Elevator implements Runnable {
 				}, (long) (Math.abs(initialFloor - targetFloor) * avgtime * 1000));
 
 				Thread.sleep(1000);
-
 			}
+			
 			// Check if elevator is already at target floor
 			if (elevatorContext.getCurrentFloor() == targetFloor) {
 				return;
@@ -167,8 +167,34 @@ public class Elevator implements Runnable {
 	}
 
 
-	public void faultDetected(){
+	public boolean faultDetected(){
 		// implement fix fault, then return to carry out request
+		try {
+			System.out.println("Fault has been detected");
+			Thread.sleep(1000);
+
+			//If a fault has been detected, move to the ground floor 
+			move(1);
+			
+			System.out.print("Elevator is repairing.");
+			//Repair the elevator
+			for(int i = 0; i < 20; i++) {
+				System.out.print(".");
+				Thread.sleep(1000);			
+			}
+			//After some period of time, the elevator is considered repaired
+			System.out.println("Elevator is repaired.");
+			Thread.sleep(1000);
+
+			System.out.println("Resuming Elevator activity.\n");
+			Thread.sleep(1000);
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+		
 	}
 
 	/*
@@ -186,7 +212,10 @@ public class Elevator implements Runnable {
 		}
 
 		if (serviceRequest.getFault()) {
-			faultDetected();
+			boolean temp = true;
+			temp = faultDetected();
+			while(temp);
+			
 		}
 
 		try {

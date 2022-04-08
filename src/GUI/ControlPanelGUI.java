@@ -27,7 +27,7 @@ public class ControlPanelGUI extends JFrame {
 	private RequestsView requestsLabel;
 	private JLabel currentRequest;
 	
-	public ControlPanelGUI() throws InterruptedException {
+	public ControlPanelGUI(int id) throws InterruptedException {
 
 		frame = new JFrame();
 		
@@ -62,7 +62,7 @@ public class ControlPanelGUI extends JFrame {
 
 		frame.add(panel, BorderLayout.CENTER);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("Elevator 1");
+		frame.setTitle("Elevator " + id);
 		frame.pack();
 		frame.setVisible(true);
 	}

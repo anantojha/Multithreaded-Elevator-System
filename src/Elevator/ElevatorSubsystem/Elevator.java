@@ -16,6 +16,7 @@ import java.util.*;
 public class Elevator implements Runnable {
 
 	int initialFloor;
+	int id;
 	private ElevatorContext elevatorContext;
 	private ElevatorState state;
 	private Timer timer;
@@ -35,8 +36,9 @@ public class Elevator implements Runnable {
 	 * Output: none
 	 *
 	 */
-	public Elevator(Queue<Request> jobs) throws IOException {
+	public Elevator(int id, Queue<Request> jobs) throws IOException {
 		// All elevators start at Floor 1
+		this.id = id;
 		this.initialFloor = 1;
 		this.elevatorContext = new ElevatorContext(initialFloor, null, ElevatorStatus.INITIALIZE);
 		this.state = new ElevatorState(elevatorContext);
@@ -75,7 +77,7 @@ public class Elevator implements Runnable {
 	@Override
 	public void run() {
 		try {
-			gui = new ControlPanelGUI();
+			gui = new ControlPanelGUI(id);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

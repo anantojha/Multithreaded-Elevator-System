@@ -17,7 +17,7 @@ public class Scheduler implements Runnable {
     DatagramSocket elevatorSocket, floorSocket;
     private byte[] acknowledgementSignal = {1};
     private Queue<byte[]> tasks;
-    private Random random = new Random();
+    private int lastElevator = 1;
 
     /**
      * IntermediateHost Constructor for the class.
@@ -69,9 +69,10 @@ public class Scheduler implements Runnable {
             if(!tasks.isEmpty()){
                 try {
                     byte[] taskToSend = tasks.poll();
+                    int elevatorChoice = 2950 + getElevator();
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
-                            InetAddress.getLocalHost(), 2951+ random.nextInt(SystemConfiguration.ELEVATORS));
-                    System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
+                            InetAddress.getLocalHost(), elevatorChoice);
+                    System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + InetAddress.getLocalHost() + ":" + elevatorChoice +")...\n");
                     elevatorSocket.send(sendReplyPacket);
                     elevatorSocket.setSoTimeout(estimatedTime);
                 } catch (UnknownHostException e) {
@@ -83,6 +84,15 @@ public class Scheduler implements Runnable {
 
     }
 
+
+    public int getElevator() {
+        if (lastElevator == 2){
+            lastElevator = 1;
+            return 1;
+        }
+        lastElevator = 2;
+        return 2;
+    }
     /*
      * The floorHandle() method is for handling communication with floors.
      *

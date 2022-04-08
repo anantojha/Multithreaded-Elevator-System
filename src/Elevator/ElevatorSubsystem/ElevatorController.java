@@ -34,7 +34,7 @@ public class ElevatorController implements Runnable {
 
         String id = askElevatorId();
         Thread elevatorController = new Thread(new ElevatorController(id, jobs), "ElevatorController " + id);
-        Thread elevatorOne = new Thread(new Elevator(jobs), "Elevator " + id);
+        Thread elevatorOne = new Thread(new Elevator(Integer.parseInt(id), jobs), "Elevator " + id);
         elevatorController.start();
         elevatorOne.start();
 

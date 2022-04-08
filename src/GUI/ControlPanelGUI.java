@@ -1,5 +1,7 @@
 package GUI;
 
+import Elevator.Enums.ElevatorStatus;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -18,6 +20,8 @@ public class ControlPanelGUI extends JFrame {
 	private JFrame frame;
 	private JPanel panel;
 	private int[] pos = {240, 216, 192, 168, 144, 120, 96, 72, 48, 24, 0};
+	private ImageIcon closeElevatorImage;
+	private ImageIcon openElevatorImage;
 	
 	public ControlPanelGUI() throws InterruptedException {
 
@@ -29,16 +33,18 @@ public class ControlPanelGUI extends JFrame {
 		panel.setBackground(Color.WHITE);
 
 		status_label = new JLabel();
-		status_label.setText(" null  ");
-		status_label.setBounds(0, 0, 15, 15);
+		status_label.setText(ElevatorStatus.INITIALIZE.toString());
+		status_label.setBounds(0, 0, 200, 20);
 		frame.add(status_label);
 		floor_label = new JLabel();
-		floor_label.setText(" null  ");
-		floor_label.setBounds(0, 20, 15, 15);
+		floor_label.setText("1");
+		floor_label.setBounds(0, 25, 30, 20);
 		frame.add(floor_label);
 
 		label = new JLabel(); //JLabel Creation
-		label.setIcon(new ImageIcon("elevator.jpeg")); //Sets the image to be displayed as an icon
+		closeElevatorImage = new ImageIcon("elevator_close.jpeg");
+		openElevatorImage = new ImageIcon("elevator_open.jpeg");
+		label.setIcon(closeElevatorImage); //Sets the image to be displayed as an icon
 		Dimension size = label.getPreferredSize(); //Gets the size of the image
 		label.setBounds(75, 240, size.width, size.height); //Sets the location of the image
 		frame.add(label);
@@ -50,23 +56,22 @@ public class ControlPanelGUI extends JFrame {
 		frame.setVisible(true);
 	}
 
-	public void moveElevator(String status, int floor) throws InterruptedException {
+	public void moveElevator(int floor) throws InterruptedException {
 		floor_label.setText(String.valueOf(floor));
-		status_label.setText(String.valueOf(status));
 		label.setLocation(label.getLocation().x, pos[floor]);
 		frame.repaint();
 	}
 
+	public void updateElevatorLabels(ElevatorStatus status) throws InterruptedException {
+		status_label.setText(status.toString());
+		if(status == ElevatorStatus.OPEN_DOOR){
+			label.setIcon(openElevatorImage);
+		}
 
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws InterruptedException {
-		// TODO Auto-generated method stub
-		ControlPanelGUI panel = new ControlPanelGUI();
-
-
+		if (status == ElevatorStatus.CLOSE_DOOR){
+			label.setIcon(closeElevatorImage);
+		}
+		frame.repaint();
 	}
 
 }

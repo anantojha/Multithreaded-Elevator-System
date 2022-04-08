@@ -155,7 +155,7 @@ public class Elevator implements Runnable {
 				state.setElevatorContext(elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x));
 //               state.updateState();
 				Thread.sleep(1000);
-				gui.moveElevator(elevatorContext.getStatus().toString(), elevatorContext.getCurrentFloor());
+				gui.moveElevator(elevatorContext.getCurrentFloor());
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
 
@@ -201,11 +201,13 @@ public class Elevator implements Runnable {
 
 				// Handle IDLE state
 				case IDLE:
+					gui.updateElevatorLabels(elevatorContext.getStatus());
 					updateState();
 					break;
 
 				// Handle RUNNING state
 				case RUNNING:
+					gui.updateElevatorLabels(elevatorContext.getStatus());
 					if (!sourceFLoorReached) {
 						// Move to source floor
 						move(serviceRequest.getSourceFloor());
@@ -221,12 +223,14 @@ public class Elevator implements Runnable {
 
 				// Handle ARRIVED state
 				case ARRIVED:
+					gui.updateElevatorLabels(elevatorContext.getStatus());
 					Thread.sleep(600);
 					updateState();
 					break;
 
 				// Handle OPEN_DOOR state
 				case OPEN_DOOR:
+					gui.updateElevatorLabels(elevatorContext.getStatus());
 					print("Opening doors");
 					Thread.sleep(600);
 					print(destinationFLoorReached ? "Drop off passengers" : "Pick up passengers");
@@ -235,6 +239,7 @@ public class Elevator implements Runnable {
 
 				// Handle CLOSE_DOOR state
 				case CLOSE_DOOR:
+					gui.updateElevatorLabels(elevatorContext.getStatus());
 					print("Closing doors");
 					Thread.sleep(1400);
 

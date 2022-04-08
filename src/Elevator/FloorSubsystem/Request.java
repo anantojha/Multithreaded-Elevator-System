@@ -17,6 +17,7 @@ public class Request implements Serializable {
     private final Direction direction;
     private final int destinationFloor;
 	private Boolean fault;
+	private char faulttype;
     
     /*
 	 * A constructor for the Request class. The constructor initializes the variables that are necessary for the
@@ -31,7 +32,8 @@ public class Request implements Serializable {
         this.sourceFloor = sourceFloor;
         this.direction = direction;
         this.destinationFloor = destinationFloor;
-		this.fault = fault.contains("f");
+		this.fault = fault.contains("f") || fault.contains("t");
+		this.faulttype = fault.charAt(0);
     }
     
     /*
@@ -56,9 +58,10 @@ public class Request implements Serializable {
         return sourceFloor;
     }
 
-	public byte getFaultByte() { return (byte) (fault ? 1: 0); }
+	public byte getFaultByte() { return (byte) (faulttype == 'f' ? 1 : faulttype == 't' ? 2 : 0); }
 
 	public boolean getFault() { return fault; }
+	public char getFaultType() { return faulttype; }
 
     /*
    	 * getDirection() is a getter method for the variable direction.

@@ -58,7 +58,7 @@ public class PacketHelper {
         byte[] destinationFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(4)+1, delimitIndices.get(5));
         byte[] faultBytes = Arrays.copyOfRange(data, delimitIndices.get(5)+1, delimitIndices.get(6));
 
-        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0], faultBytes[0] == 1 ? "f":"n");
+        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0], faultBytes[0] == 1 ? "f": faultBytes[0] == 2 ? "t" :"n");
         return request;
     }
 
@@ -78,8 +78,7 @@ public class PacketHelper {
         byte[] sourceFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(3)+1, delimitIndices.get(4));
         byte[] destinationFloorBytes = Arrays.copyOfRange(data, delimitIndices.get(4)+1, delimitIndices.get(5));
         byte[] faultBytes = Arrays.copyOfRange(data, delimitIndices.get(5)+1, delimitIndices.get(6));
-
-        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0], faultBytes[0] == 1 ? "f":"n");
+        Request request = new Request(LocalDateTime.parse(new String(timeBytes)), sourceFloorBytes[0], Direction.getDirectionFromId(directionBytes[0]), destinationFloorBytes[0], faultBytes[0] == 1 ? "f": faultBytes[0] == 2 ? "t" : "n");
         return request;
     }
 }

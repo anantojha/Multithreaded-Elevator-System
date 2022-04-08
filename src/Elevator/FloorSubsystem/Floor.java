@@ -103,9 +103,9 @@ public class Floor implements Serializable, Runnable{
             csv.append(String.valueOf(destination));
             csv.append(",");
             if(j % 5 == 0)
-                csv.append("f");
+                if(new Random().nextBoolean()) csv.append("f"); else csv.append("t");
             else
-                csv.append("n");
+                csv.append("n");        
             csv.append("\n");
         }
         csv.flush();

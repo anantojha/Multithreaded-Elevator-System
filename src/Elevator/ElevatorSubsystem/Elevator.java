@@ -18,9 +18,6 @@ public class Elevator implements Runnable {
 	int initialFloor;
 	private ElevatorContext elevatorContext;
 	private ElevatorState state;
-	private Timer timer;
-	boolean forceFault = false;
-	final private float avgtime = 1.347887712f;
 	private ControlPanelGUI gui;
 	Queue<Request> jobs;
 
@@ -105,28 +102,6 @@ public class Elevator implements Runnable {
 	 */
 	private void move(int targetFloor) {
 		try {
-
-			// Auxillary code for iteration 5
-			if (forceFault) {
-				int initialFloor = elevatorContext.getCurrentFloor();
-				// Create a timer
-				timer = new Timer();
-				timer.schedule(new TimerTask() {
-					public void run() {
-						// When the timer ends, and the elevator is not at their target floor, exit.
-						// Otherwise, continue.
-						if (elevatorContext.getCurrentFloor() == targetFloor) {
-							return;
-						} else {
-							System.out.println("Fault has been detected | Timer was "
-									+ (Math.abs(initialFloor - targetFloor) * avgtime) + 1600 / 1000);
-							System.exit(1);
-						}
-					}
-				}, (long) (Math.abs(initialFloor - targetFloor) * avgtime * 1000));
-
-				Thread.sleep(1000);
-			}
 			
 			// Check if elevator is already at target floor
 			if (elevatorContext.getCurrentFloor() == targetFloor) {
@@ -167,27 +142,35 @@ public class Elevator implements Runnable {
 	}
 
 
-	public boolean faultDetected(){
-		// implement fix fault, then return to carry out request
+	public boolean faultDetected(char type){
+		String fault = type == 'f' ? "Hard Fault" : "Transient Fault";
 		try {
-			System.out.println("Fault has been detected");
+			System.out.println("Fault has been detected: " + fault);
 			Thread.sleep(1000);
 
-			//If a fault has been detected, move to the ground floor 
-			move(1);
-			
-			System.out.print("Elevator is repairing.");
-			//Repair the elevator
-			for(int i = 0; i < 20; i++) {
-				System.out.print(".");
-				Thread.sleep(1000);			
+			if(fault.equals("Hard Fault")) {
+				//If a fault has been detected, move to the ground floor 
+				move(1);
+				
+				System.out.print("Elevator is repairing.");
+				//Repair the elevator
+				for(int i = 0; i < 20; i++) {
+					System.out.print(".");
+					Thread.sleep(1000);			
+				}
+				//After some period of time, the elevator is considered repaired
+				System.out.println("Elevator is repaired.");
+				Thread.sleep(1000);
+	
+				System.out.println("Resuming Elevator activity.\n");
+				Thread.sleep(1000);
+			}else {
+				System.out.print("Retrying...");
+				for(int i = 0; i < 10; i++) {
+					System.out.print(".");
+					Thread.sleep(1000);			
+				}
 			}
-			//After some period of time, the elevator is considered repaired
-			System.out.println("Elevator is repaired.");
-			Thread.sleep(1000);
-
-			System.out.println("Resuming Elevator activity.\n");
-			Thread.sleep(1000);
 			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -213,7 +196,7 @@ public class Elevator implements Runnable {
 
 		if (serviceRequest.getFault()) {
 			boolean temp = true;
-			temp = faultDetected();
+			temp = faultDetected(serviceRequest.getFaultType());
 			while(temp);
 			
 		}

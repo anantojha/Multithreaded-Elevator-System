@@ -156,6 +156,7 @@ public class Elevator implements Runnable {
 //               state.updateState();
 				Thread.sleep(1000);
 				gui.moveElevator(elevatorContext.getCurrentFloor());
+				gui.updateElevatorQueue(jobs);
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
 
@@ -231,12 +232,16 @@ public class Elevator implements Runnable {
 				// Handle IDLE state
 				case IDLE:
 					gui.updateElevatorLabels(elevatorContext.getStatus());
+					gui.updateCurrentRequestLabel(serviceRequest);
+					gui.updateElevatorQueue(jobs);
 					updateState();
 					break;
 
 				// Handle RUNNING state
 				case RUNNING:
 					gui.updateElevatorLabels(elevatorContext.getStatus());
+					gui.updateCurrentRequestLabel(serviceRequest);
+					gui.updateElevatorQueue(jobs);
 					if (!sourceFLoorReached) {
 						// Move to source floor
 						move(serviceRequest.getSourceFloor());
@@ -248,11 +253,15 @@ public class Elevator implements Runnable {
 						destinationFLoorReached = true;
 					}
 					updateState();
+					gui.updateCurrentRequestLabel(serviceRequest);
+					gui.updateElevatorQueue(jobs);
 					break;
 
 				// Handle ARRIVED state
 				case ARRIVED:
 					gui.updateElevatorLabels(elevatorContext.getStatus());
+					gui.updateCurrentRequestLabel(serviceRequest);
+					gui.updateElevatorQueue(jobs);
 					Thread.sleep(600);
 					updateState();
 					break;
@@ -260,6 +269,8 @@ public class Elevator implements Runnable {
 				// Handle OPEN_DOOR state
 				case OPEN_DOOR:
 					gui.updateElevatorLabels(elevatorContext.getStatus());
+					gui.updateCurrentRequestLabel(serviceRequest);
+					gui.updateElevatorQueue(jobs);
 					print("Opening doors");
 					Thread.sleep(600);
 					print(destinationFLoorReached ? "Drop off passengers" : "Pick up passengers");
@@ -269,6 +280,8 @@ public class Elevator implements Runnable {
 				// Handle CLOSE_DOOR state
 				case CLOSE_DOOR:
 					gui.updateElevatorLabels(elevatorContext.getStatus());
+					gui.updateCurrentRequestLabel(serviceRequest);
+					gui.updateElevatorQueue(jobs);
 					print("Closing doors");
 					Thread.sleep(1400);
 

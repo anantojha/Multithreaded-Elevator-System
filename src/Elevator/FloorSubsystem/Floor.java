@@ -4,6 +4,7 @@ import Elevator.Enums.Direction;
 import Elevator.Enums.FloorStatus;
 import Elevator.Enums.SubSystemMapping;
 import Elevator.Global.PacketHelper;
+import Elevator.Global.SystemConfiguration;
 
 import java.io.*;
 import java.net.*;
@@ -38,7 +39,7 @@ public class Floor implements Serializable, Runnable{
      */
     public static void main(String[] args) throws IOException {
     	//create and start 10 floor threads
-        createFloorCSV(10, "FloorCSV", 11);
+        createFloorCSV(SystemConfiguration.MAX_FLOOR, "FloorCSV", SystemConfiguration.MAX_REQUESTS);
         for(int i = 1; i < 11; i++){
             Thread floor = new Thread(new Floor(i), "Floor " + i);
             floor.start();
@@ -54,7 +55,7 @@ public class Floor implements Serializable, Runnable{
      * 
      */
     public static long randomTimeDiff(){
-        return random.nextInt(7) + 7;
+        return random.nextInt(3) + 7;
     }
 
 

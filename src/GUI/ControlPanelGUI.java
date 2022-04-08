@@ -32,7 +32,7 @@ public class ControlPanelGUI extends JFrame {
 		frame = new JFrame();
 		
 		panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(0,0,700,700));
+		panel.setBorder(BorderFactory.createEmptyBorder(0,0,700,550));
 		panel.setLayout(new GridLayout(0, 1));
 		panel.setBackground(Color.WHITE);
 
@@ -47,7 +47,7 @@ public class ControlPanelGUI extends JFrame {
 
 		currentRequest = new JLabel();
 		currentRequest.setLocation(5,0);
-		currentRequest.setSize(700,25);
+		currentRequest.setSize(550,25);
 		frame.add(currentRequest);
 		requestsLabel = new RequestsView("");
 		frame.add(requestsLabel);
@@ -57,7 +57,7 @@ public class ControlPanelGUI extends JFrame {
 		openElevatorImage = new ImageIcon("elevator_open.jpeg");
 		label.setIcon(closeElevatorImage); //Sets the image to be displayed as an icon
 		Dimension size = label.getPreferredSize(); //Gets the size of the image
-		label.setBounds(350, 240, size.width, size.height); //Sets the location of the image
+		label.setBounds(255, 240, size.width, size.height); //Sets the location of the image
 		frame.add(label);
 
 		frame.add(panel, BorderLayout.CENTER);

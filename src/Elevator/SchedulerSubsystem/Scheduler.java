@@ -2,13 +2,11 @@ package Elevator.SchedulerSubsystem;
 
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import Elevator.Global.SystemConfiguration;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
@@ -19,6 +17,7 @@ public class Scheduler implements Runnable {
     DatagramSocket elevatorSocket, floorSocket;
     private byte[] acknowledgementSignal = {1};
     private Queue<byte[]> tasks;
+    private Random random = new Random();
 
     /**
      * IntermediateHost Constructor for the class.
@@ -71,7 +70,7 @@ public class Scheduler implements Runnable {
                 try {
                     byte[] taskToSend = tasks.poll();
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
-                            InetAddress.getLocalHost(), receiveServerPacket.getPort());
+                            InetAddress.getLocalHost(), 2951+ random.nextInt(SystemConfiguration.ELEVATORS));
                     System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + receiveServerPacket.getAddress() + ":" + receiveServerPacket.getPort() +")...\n");
                     elevatorSocket.send(sendReplyPacket);
                     elevatorSocket.setSoTimeout(estimatedTime);

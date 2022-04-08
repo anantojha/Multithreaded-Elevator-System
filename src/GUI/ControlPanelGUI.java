@@ -1,10 +1,12 @@
 package GUI;
 
 import Elevator.Enums.ElevatorStatus;
+import Elevator.FloorSubsystem.Request;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.util.Queue;
 import javax.swing.*;
 
 /**
@@ -22,31 +24,40 @@ public class ControlPanelGUI extends JFrame {
 	private int[] pos = {240, 216, 192, 168, 144, 120, 96, 72, 48, 24, 0};
 	private ImageIcon closeElevatorImage;
 	private ImageIcon openElevatorImage;
+	private RequestsView requestsLabel;
+	private JLabel currentRequest;
 	
 	public ControlPanelGUI() throws InterruptedException {
 
 		frame = new JFrame();
 		
 		panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(0,0,500,500));
+		panel.setBorder(BorderFactory.createEmptyBorder(0,0,700,700));
 		panel.setLayout(new GridLayout(0, 1));
 		panel.setBackground(Color.WHITE);
 
 		status_label = new JLabel();
 		status_label.setText(ElevatorStatus.INITIALIZE.toString());
-		status_label.setBounds(0, 0, 200, 20);
+		status_label.setBounds(5, 25, 200, 20);
 		frame.add(status_label);
 		floor_label = new JLabel();
 		floor_label.setText("1");
-		floor_label.setBounds(0, 25, 30, 20);
+		floor_label.setBounds(5, 50, 30, 20);
 		frame.add(floor_label);
+
+		currentRequest = new JLabel();
+		currentRequest.setLocation(5,0);
+		currentRequest.setSize(700,25);
+		frame.add(currentRequest);
+		requestsLabel = new RequestsView("");
+		frame.add(requestsLabel);
 
 		label = new JLabel(); //JLabel Creation
 		closeElevatorImage = new ImageIcon("elevator_close.jpeg");
 		openElevatorImage = new ImageIcon("elevator_open.jpeg");
 		label.setIcon(closeElevatorImage); //Sets the image to be displayed as an icon
 		Dimension size = label.getPreferredSize(); //Gets the size of the image
-		label.setBounds(75, 240, size.width, size.height); //Sets the location of the image
+		label.setBounds(350, 240, size.width, size.height); //Sets the location of the image
 		frame.add(label);
 
 		frame.add(panel, BorderLayout.CENTER);
@@ -74,4 +85,20 @@ public class ControlPanelGUI extends JFrame {
 		frame.repaint();
 	}
 
+	public void updateCurrentRequestLabel(Request request) throws InterruptedException {
+		currentRequest.setText(request.toString());
+		frame.repaint();
+	}
+
+	public void updateElevatorQueue(Queue<Request> requests) throws InterruptedException {
+		String text = "<br>";
+
+		for (Request r: requests) {
+			text = text + r.toString() + "<br><br>";
+		}
+		requestsLabel.setText("<html>" + text + "</html>");
+		requestsLabel.setVerticalTextPosition(SwingConstants.TOP);
+
+		frame.repaint();
+	}
 }

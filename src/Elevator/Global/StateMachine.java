@@ -1,11 +1,12 @@
 package Elevator.Global;
 
+import Elevator.Enums.ElevatorStatus;
 import Elevator.Enums.FloorStatus;
 
 public interface StateMachine {
 
     void updateState();
-    String getCurrentState();
+	void updateState(boolean condition);
+	String getCurrentState();
     String getPreviousState();
-
 }

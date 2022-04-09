@@ -31,8 +31,8 @@ public enum ElevatorStatus {
 		}
 
 		@Override
-		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = RUNNING;
+		public ElevatorStatus nextState(boolean isFault) {
+			ElevatorStatus nextState = isFault ? FAULT_DETECTED : RUNNING;
 			printUpdate(nextState);
 			return nextState;
 		}

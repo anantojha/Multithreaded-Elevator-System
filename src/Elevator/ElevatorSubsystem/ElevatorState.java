@@ -14,27 +14,24 @@ import java.util.Observable;
  */
 public class ElevatorState implements StateMachine {
 
-	private ElevatorContext state;
-	private ElevatorContext previousState;
-	private ElevatorContext nextState;
+	private ElevatorStatus state;
+	private ElevatorStatus previousState;
 
-	public ElevatorState(ElevatorContext initialContext) {
-		this.state = initialContext;
+	public ElevatorState() {
+		this.state = ElevatorStatus.INITIALIZE;
 		this.previousState = null;
-		this.nextState = null;
-	}
-
-	public ElevatorState setElevatorContext(ElevatorContext context){
-		nextState = context;
-		return this;
 	}
 
 	@Override
 	public void updateState() {
-		ElevatorContext temp  = state;
-		this.state = nextState;
-		previousState = temp;
-		//System.out.println(state.toString());
+		previousState = state;
+		this.state = state.nextState();
+	}
+	
+	@Override
+	public void updateState(boolean condition) {
+		previousState = state;
+		this.state = state.nextState(condition);
 	}
 
 	@Override

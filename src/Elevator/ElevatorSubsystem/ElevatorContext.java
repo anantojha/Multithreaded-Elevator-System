@@ -6,7 +6,7 @@ import Elevator.Enums.ElevatorStatus;
 public class ElevatorContext {
     private Integer currentFloor;
     private Direction direction;
-    private ElevatorStatus status;
+    //private ElevatorStatus status;
 
     /*
      * ElevatorState(Integer) is the constructor of the ElevatorState class. It initializes all necessary variables.
@@ -15,10 +15,10 @@ public class ElevatorContext {
      * Output: none
      *
      */
-    public ElevatorContext(Integer floor, Direction direction, ElevatorStatus status){
+    public ElevatorContext(Integer floor, Direction direction){
         this.currentFloor = floor;
         this.direction = direction;
-        this.status = status;
+        //this.status = status;
     }
 
     /*
@@ -74,9 +74,9 @@ public class ElevatorContext {
      * Output: ElevatorStatus status
      *
      */
-    public ElevatorStatus getStatus() {
-        return status;
-    }
+//    public ElevatorStatus getStatus() {
+//        return status;
+//    }
 
     /*
      * setStatus(ElevatorMachineStatus) sets the current state equal to paramater.
@@ -85,13 +85,13 @@ public class ElevatorContext {
      * Output: none
      *
      */
-    public ElevatorContext setStatus(ElevatorStatus status) {
-        this.status = status;
-        return this;
-    }
+//    public ElevatorContext setStatus(ElevatorStatus status) {
+//        this.status = status;
+//        return this;
+//    }
 
-    @Override
-    public String toString() {
-        return "|  STATE UPDATE: currentFloor=" + currentFloor + ", direction=" + direction + ", status=" + status + "    |";
-    }
+//    @Override
+//    public String toString() {
+//        return "|  STATE UPDATE: currentFloor=" + currentFloor + ", direction=" + direction + ", status=" + status + "    |";
+//    }
 }

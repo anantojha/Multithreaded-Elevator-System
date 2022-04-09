@@ -73,13 +73,13 @@ public class ControlPanelGUI extends JFrame {
 		frame.repaint();
 	}
 
-	public void updateElevatorLabels(ElevatorStatus status) throws InterruptedException {
-		status_label.setText(status.toString());
-		if(status == ElevatorStatus.OPEN_DOOR){
+	public void updateElevatorLabels(String status) throws InterruptedException {
+		status_label.setText(status);
+		if(status == ElevatorStatus.OPEN_DOOR.toString()){
 			label.setIcon(openElevatorImage);
 		}
 
-		if (status == ElevatorStatus.CLOSE_DOOR){
+		if (status == ElevatorStatus.CLOSE_DOOR.toString()){
 			label.setIcon(closeElevatorImage);
 		}
 		frame.repaint();

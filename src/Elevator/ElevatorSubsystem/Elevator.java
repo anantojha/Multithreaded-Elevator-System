@@ -37,30 +37,9 @@ public class Elevator implements Runnable {
 		// All elevators start at Floor 1
 		this.id = id;
 		this.initialFloor = 1;
-		this.elevatorContext = new ElevatorContext(initialFloor, null, ElevatorStatus.INITIALIZE);
-		this.state = new ElevatorState(elevatorContext);
+		this.elevatorContext = new ElevatorContext(initialFloor, null);
+		this.state = new ElevatorState();
 		this.jobs = jobs;
-	}
-
-	/*
-	 * The getCurrentStatus() method returns the status the elevator is currently
-	 * in.
-	 * 
-	 * Input: none Output: Return elevator status as Enum ElevatorStatus.
-	 * 
-	 */
-	public ElevatorStatus getCurrentStatus() {
-		return elevatorContext.getStatus();
-	}
-
-	/*
-	 * The updateState() method updates the current state of the elevator
-	 * 
-	 */
-	public void updateState() {
-		ElevatorStatus currentState = elevatorContext.getStatus();
-		currentState = currentState.nextState();
-		elevatorContext.setStatus(currentState);
 	}
 
 	/*
@@ -78,7 +57,8 @@ public class Elevator implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		updateState();
+		
+		state.updateState();
 
 		while (true) {
 			System.out.println();
@@ -115,22 +95,21 @@ public class Elevator implements Runnable {
 
 			// Set the direction state based on direction boolean above
 			if (isDirectionUp) {
-				state.setElevatorContext(elevatorContext.setDirection(Direction.UP));
+				elevatorContext.setDirection(Direction.UP);
 				// state.updateState();
 			} else {
-				state.setElevatorContext(elevatorContext.setDirection(Direction.DOWN));
+				elevatorContext.setDirection(Direction.DOWN);
 				// state.updateState();
 			}
 
 			print("Moving " + elevatorContext.getDirection());
 			// Move to the targetFloor
-//			state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.RUNNING));
-//			state.updateState();
+
 			for (int i = Math.abs(elevatorContext.getCurrentFloor() - targetFloor); i > 0; i--) {
 				int x = isDirectionUp ? 1 : -1; // If direction UP, increment current floor, else decrement
 				print("Arrived at floor: " + elevatorContext.getCurrentFloor());
-				state.setElevatorContext(elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x));
-//               state.updateState();
+				elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x);
+
 				Thread.sleep(1000);
 				gui.moveElevator(elevatorContext.getCurrentFloor());
 				gui.updateElevatorQueue(jobs);
@@ -144,39 +123,39 @@ public class Elevator implements Runnable {
 	}
 
 	public void updateGUI(Request serviceRequest) throws InterruptedException {
-		gui.updateElevatorLabels(elevatorContext.getStatus());
+		gui.updateElevatorLabels(state.getCurrentState());
 		gui.updateCurrentRequestLabel(serviceRequest);
 		gui.updateElevatorQueue(jobs);
 	}
 
 
-	public void faultDetected(Request serviceRequest){
-
-		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
-
-		try {
-			print(fault + " has been detected");
-			state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.FAULT_DETECTED));
-			updateGUI(serviceRequest);
-			Thread.sleep(2000);
-
-			// reset elevator
-			print("Resetting");
-			updateState();
-			updateGUI(serviceRequest);
-			Thread.sleep(2000);
-			move(1);
-
-			print("Resuming");
-			updateState();
-			updateGUI(serviceRequest);
-			Thread.sleep(3000);
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public void faultDetected(Request serviceRequest){
+//
+//		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+//
+//		try {
+//			print(fault + " has been detected");
+//			updateGUI(serviceRequest);
+//			Thread.sleep(2000);
+//
+//			// reset elevator
+//			print("Resetting");
+//			state.updateState();
+//			updateGUI(serviceRequest);
+//			Thread.sleep(2000);
+//			move(1);
+//
+//			print("Resuming");
+//			state.updateState();
+//			updateGUI(serviceRequest);
+//			Thread.sleep(3000);
+//			
+//
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 	/*
 	 * service(Request serviceRequest) method services the request received from the
@@ -192,10 +171,6 @@ public class Elevator implements Runnable {
 			return;
 		}
 
-		if (serviceRequest.getFault()) {
-			faultDetected(serviceRequest);
-		}
-
 		try {
 
 			boolean sourceFLoorReached = false;
@@ -204,17 +179,18 @@ public class Elevator implements Runnable {
 			print("Started servicing " + serviceRequest);
 
 			while ((!sourceFLoorReached || !destinationFLoorReached)
-					|| elevatorContext.getStatus() != ElevatorStatus.IDLE) {
-				switch (elevatorContext.getStatus()) {
+					|| state.getCurrentState() != ElevatorStatus.IDLE.toString()) {
+				
+				switch (state.getCurrentState()) {
 
 				// Handle IDLE state
-				case IDLE:
+				case "IDLE":
 					updateGUI(serviceRequest);
-					updateState();
+					state.updateState(serviceRequest.getFault());
 					break;
 
 				// Handle RUNNING state
-				case RUNNING:
+				case "RUNNING":
 					updateGUI(serviceRequest);
 					if (!sourceFLoorReached) {
 						// Move to source floor
@@ -226,43 +202,64 @@ public class Elevator implements Runnable {
 						sourceFLoorReached = true;
 						destinationFLoorReached = true;
 					}
-					updateState();
+					state.updateState();
 					updateGUI(serviceRequest);
 					break;
 
 				// Handle ARRIVED state
-				case ARRIVED:
+				case "ARRIVED":
 					updateGUI(serviceRequest);
 					Thread.sleep(600);
-					updateState();
+					state.updateState();
 					break;
 
 				// Handle OPEN_DOOR state
-				case OPEN_DOOR:
+				case "OPEN_DOOR":
 					updateGUI(serviceRequest);
 					print("Opening doors");
 					Thread.sleep(600);
 					print(destinationFLoorReached ? "Drop off passengers" : "Pick up passengers");
-					updateState();
+					state.updateState();
 					break;
 
 				// Handle CLOSE_DOOR state
-				case CLOSE_DOOR:
+				case "CLOSE_DOOR":
 					updateGUI(serviceRequest);
 					print("Closing doors");
 					Thread.sleep(1400);
 
-					elevatorContext.setStatus(elevatorContext.getStatus().nextState(destinationFLoorReached));
+					state.updateState(destinationFLoorReached);
 					break;
-
-				// Handle IDLE state
-				case RESUMING:
-					updateState();
+					
+				// Handle FAULT_DETECTED state	
+				case "FAULT_DETECTED":
+					String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+					print(fault + " has been detected");
 					updateGUI(serviceRequest);
+					Thread.sleep(2000);
+					state.updateState();
+					break;
+				
+				// Handle RESETTING state
+				case "RESETTING":
+					// reset elevator
+					print("Resetting");
+					updateGUI(serviceRequest);
+					Thread.sleep(2000);
+					move(1);
+					state.updateState();
+					break;
+						
+				// Handle RESUMING state
+				case "RESUMING":
+					print("Resuming");
+					updateGUI(serviceRequest);
+					Thread.sleep(3000);
+					state.updateState();
 					break;
 
 				// Handle TERMINATE state
-				case TERMINATE:
+				case "TERMINATE":
 					break;
 
 				default:
@@ -280,19 +277,18 @@ public class Elevator implements Runnable {
 	 * The getJobs() is a getter method for retrieving the queue of requests 
 	 * the elevator will receive from the scheduler.
 	 * 
-	 * Input: Nonw
+	 * Input: None
 	 * Output: Queue of requests received from scheduler
 	 */
 	public Queue<Request> getJobs(){
 		return jobs;
 	}
+	
 	/*
 	 * The print() method prints a structured output string to console.
 	 * 
 	 * Input: string (String): the string to be printed
-	 * 
-	 * Output: Return elevator status as Enum ElevatorStatus.
-	 * 
+	 * Output: None
 	 */
 	private void print(String string) {
 		System.out.println("[ " + Thread.currentThread().getName() + " ]: " + string);

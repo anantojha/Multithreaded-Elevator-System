@@ -40,7 +40,7 @@ public class FloorUDPTest {
                     f.delete();
         }
 		csv = new FileWriter("CSV/FloorCSV/floor.csv");
-        //Manually input a floor 1 requests into csv input file
+        //Manually input a request from floor 1 as source into csv input file
 		LocalTime timeCount = LocalDateTime.now().toLocalTime().plusSeconds(random.nextInt(7) + 7);
 		csv.append(timeCount.toString());
 		csv.append(",");
@@ -49,10 +49,12 @@ public class FloorUDPTest {
         csv.append("UP");
         csv.append(",");
         csv.append(String.valueOf(random.nextInt(10)+1) + "");
+        csv.append(",");
+        csv.append("f");
         csv.append("\n");
 		csv.flush();
 		csv.close();
-		//Create scheduler and floor threads then start them
+		//Create scheduler and floor threads and start them
 		a = new Scheduler();
 		b = new Floor(1);
 		scheduler = new Thread(a, "Scheduler");

@@ -38,9 +38,9 @@ public class Floor implements Serializable, Runnable{
      *
      */
     public static void main(String[] args) throws IOException {
-    	//create and start 10 floor threads
+    	//create and start 22 floor threads
         createFloorCSV(SystemConfiguration.MAX_FLOOR, "FloorCSV", SystemConfiguration.MAX_REQUESTS);
-        for(int i = 1; i < 11; i++){
+        for(int i = 1; i < 22; i++){
             Thread floor = new Thread(new Floor(i), "Floor " + i);
             floor.start();
         }
@@ -74,7 +74,7 @@ public class Floor implements Serializable, Runnable{
     public static void createFloorCSV(int numFloors, String folder, int numRequests) throws IOException {
         FileWriter csv = new FileWriter("CSV/" + folder + "/floor.csv");
         LocalTime timeCount = LocalDateTime.now().toLocalTime();
-        for(int j = 1; j < numRequests; j++){
+        for(int j = 1; j < numRequests + 1; j++){
             int source;
             int destination;
             while (true){

@@ -21,7 +21,7 @@ public class ControlPanelGUI extends JFrame {
 	private JLabel status_label;
 	private JFrame frame;
 	private JPanel panel;
-	private int[] pos = {240, 216, 192, 168, 144, 120, 96, 72, 48, 24, 0};
+	private int[] pos = {240, 231, 220, 209, 198, 187, 176, 165, 154, 143, 132, 121, 110, 99, 88, 77, 66, 55, 44, 33, 22, 11, 0};
 	private ImageIcon closeElevatorImage;
 	private ImageIcon openElevatorImage;
 	private RequestsView requestsLabel;

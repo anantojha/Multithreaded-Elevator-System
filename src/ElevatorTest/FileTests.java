@@ -36,7 +36,7 @@ public class FileTests {
     // Test input csv file generation
     @Test
     public void inputCsvGeneration() throws IOException{
-        // generate test csv
+        // generate test csv for 10 floors and a total of 10 requests
         Floor.createFloorCSV(10, "TestFloorCSV", 10);
         File file = new File("CSV/TestFloorCSV/floor.csv");
 

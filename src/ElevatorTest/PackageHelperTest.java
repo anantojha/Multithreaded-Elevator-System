@@ -51,8 +51,9 @@ public class PackageHelperTest {
                 for(Direction d: Direction.values()){
                     if(d.toString().equals(requestContents[2])){
                         LocalDate date = LocalDateTime.now().toLocalDate();
+                        //Put request into Request format
                         request = new Request(LocalDateTime.parse(date.toString() + "T" + requestContents[0]), Integer.parseInt(requestContents[1]), 
-                        		d, Integer.parseInt(requestContents[3]), "n");
+                        		d, Integer.parseInt(requestContents[3]), requestContents[4]);
                         expected = request.toString();
                         System.out.println("Generated Request: " + expected);
                     }
@@ -83,7 +84,7 @@ public class PackageHelperTest {
 
 	@After
 	public void tearDown() {
-		//delete files made for SystemTest.java
+		//delete files made for PackageHelperTest.java
 		for (File f: TestFolder.listFiles()) {
 			if (!f.isDirectory()) {
 				f.delete();

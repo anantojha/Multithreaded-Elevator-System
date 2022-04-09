@@ -19,7 +19,7 @@ public class SchedulerUDPTest {
 	Thread elevator, elevatorController, scheduler;
 	Queue<Request> jobs = new LinkedBlockingQueue<>();
 	Queue<Request> receivedJobs;
-	byte[] task = {95, 1, 95, 50, 48, 50, 50, 45, 48, 52, 45, 48, 52, 84, 49, 54, 58, 51, 48, 58, 48, 54, 46, 51, 51, 51, 53, 51, 56, 55, 48, 48, 95, 1, 95, 1, 95, 7, 95};
+	byte[] task = {95, 1, 95, 50, 48, 50, 50, 45, 48, 52, 45, 48, 57, 84, 48, 49, 58, 48, 48, 58, 52, 57, 46, 53, 48, 51, 53, 54, 52, 95, 2, 95, 5, 95, 1, 95, 0, 95};
 	DatagramPacket job;
 	DatagramSocket floor;
 	Scheduler a;
@@ -34,7 +34,7 @@ public class SchedulerUDPTest {
 		
 		//Create scheduler. elevator, and elevator controller threads
 		a = new Scheduler();
-		b = new Elevator(jobs);
+		b = new Elevator(1, jobs);
 		scheduler = new Thread(a, "Scheduler");
 		elevatorController = new Thread(new ElevatorController("1", jobs), "ElevatorController 1");
         elevator = new Thread(b, "Elevator 1");
@@ -62,7 +62,7 @@ public class SchedulerUDPTest {
         	Assert.assertTrue(receivedRequests.size() == 0);
         }
         //Let elevator thread run
-        Thread.sleep(11000);
+        Thread.sleep(13500);
         //After elevator completes request check there are no requests remaining
         receivedJobs = b.getJobs();
         Assert.assertTrue(receivedJobs.size() == 0);

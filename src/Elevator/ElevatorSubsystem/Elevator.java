@@ -151,10 +151,11 @@ public class Elevator implements Runnable {
 
 
 	public void faultDetected(Request serviceRequest){
-		// String fault = type == 'f' ? "Hard Fault" : "Transient Fault";
+
+		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
 
 		try {
-			print("Fault has been detected");
+			print(fault + " has been detected");
 			state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.FAULT_DETECTED));
 			updateGUI(serviceRequest);
 			Thread.sleep(2000);

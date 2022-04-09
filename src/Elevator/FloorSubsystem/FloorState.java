@@ -80,4 +80,10 @@ public class FloorState implements StateMachine {
 	public String getPreviousState() {
 		return previousState.toString();
 	}
+
+	@Override
+	public void updateState(boolean condition) {
+		// TODO Auto-generated method stub
+		
+	}
 }

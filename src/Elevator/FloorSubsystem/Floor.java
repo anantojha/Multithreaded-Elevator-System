@@ -74,7 +74,7 @@ public class Floor implements Serializable, Runnable{
     public static void createFloorCSV(int numFloors, String folder, int numRequests) throws IOException {
         FileWriter csv = new FileWriter("CSV/" + folder + "/floor.csv");
         LocalTime timeCount = LocalDateTime.now().toLocalTime();
-        for(int j = 1; j < numRequests; j++){
+        for(int j = 1; j < numRequests + 1; j++){
             int source;
             int destination;
             while (true){

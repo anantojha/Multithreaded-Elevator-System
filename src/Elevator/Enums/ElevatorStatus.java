@@ -105,6 +105,54 @@ public enum ElevatorStatus {
 		}
 	},
 	/*
+	 * FAULT_DETECTED represents the state an elevator takes when a fault is first detected.
+	 */
+	FAULT_DETECTED {
+		@Override
+		public String toString() {
+			return "FAULT_DETECTED";
+		}
+
+		@Override
+		public ElevatorStatus nextState() {
+			ElevatorStatus nextState = RESETTING;
+			printUpdate(nextState);
+			return nextState;
+		}
+	},
+	/*
+	 * RESETTING represents the state an elevator takes when a fault occurs and the elevator has to reset.
+	 */
+	RESETTING {
+		@Override
+		public String toString() {
+			return "RESETTING";
+		}
+
+		@Override
+		public ElevatorStatus nextState() {
+			ElevatorStatus nextState = RESUMING;
+			printUpdate(nextState);
+			return nextState;
+		}
+	},
+	/*
+	 * RESUMING represents the state an elevator takes when a fault is resolved.
+	 */
+	RESUMING {
+		@Override
+		public String toString() {
+			return "RESUMING";
+		}
+
+		@Override
+		public ElevatorStatus nextState() {
+			ElevatorStatus nextState = RUNNING;
+			printUpdate(nextState);
+			return nextState;
+		}
+	},
+	/*
 	 * TERMINATE represents the state an elevator takes when the elevator stops
 	 * working.
 	 */

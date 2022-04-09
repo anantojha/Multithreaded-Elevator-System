@@ -143,43 +143,38 @@ public class Elevator implements Runnable {
 		}
 	}
 
+	public void updateGUI(Request serviceRequest) throws InterruptedException {
+		gui.updateElevatorLabels(elevatorContext.getStatus());
+		gui.updateCurrentRequestLabel(serviceRequest);
+		gui.updateElevatorQueue(jobs);
+	}
 
-	public boolean faultDetected(char type){
-		String fault = type == 'f' ? "Hard Fault" : "Transient Fault";
+
+	public void faultDetected(Request serviceRequest){
+		// String fault = type == 'f' ? "Hard Fault" : "Transient Fault";
+
 		try {
-			System.out.println("Fault has been detected: " + fault);
-			Thread.sleep(1000);
+			print("Fault has been detected");
+			state.setElevatorContext(elevatorContext.setStatus(ElevatorStatus.FAULT_DETECTED));
+			updateGUI(serviceRequest);
+			Thread.sleep(2000);
 
-			if(fault.equals("Hard Fault")) {
-				//If a fault has been detected, move to the ground floor 
-				move(1);
-				
-				System.out.print("Elevator is repairing.");
-				//Repair the elevator
-				for(int i = 0; i < 20; i++) {
-					System.out.print(".");
-					Thread.sleep(1000);			
-				}
-				//After some period of time, the elevator is considered repaired
-				System.out.println("Elevator is repaired.");
-				Thread.sleep(1000);
-	
-				System.out.println("Resuming Elevator activity.\n");
-				Thread.sleep(1000);
-			}else {
-				System.out.print("Retrying...");
-				for(int i = 0; i < 10; i++) {
-					System.out.print(".");
-					Thread.sleep(1000);			
-				}
-			}
-			
+			// reset elevator
+			print("Resetting");
+			updateState();
+			updateGUI(serviceRequest);
+			Thread.sleep(2000);
+			move(1);
+
+			print("Resuming");
+			updateState();
+			updateGUI(serviceRequest);
+			Thread.sleep(3000);
+
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
-		
 	}
 
 	/*
@@ -197,10 +192,7 @@ public class Elevator implements Runnable {
 		}
 
 		if (serviceRequest.getFault()) {
-			boolean temp = true;
-			temp = faultDetected(serviceRequest.getFaultType());
-			while(temp);
-			
+			faultDetected(serviceRequest);
 		}
 
 		try {
@@ -216,17 +208,13 @@ public class Elevator implements Runnable {
 
 				// Handle IDLE state
 				case IDLE:
-					gui.updateElevatorLabels(elevatorContext.getStatus());
-					gui.updateCurrentRequestLabel(serviceRequest);
-					gui.updateElevatorQueue(jobs);
+					updateGUI(serviceRequest);
 					updateState();
 					break;
 
 				// Handle RUNNING state
 				case RUNNING:
-					gui.updateElevatorLabels(elevatorContext.getStatus());
-					gui.updateCurrentRequestLabel(serviceRequest);
-					gui.updateElevatorQueue(jobs);
+					updateGUI(serviceRequest);
 					if (!sourceFLoorReached) {
 						// Move to source floor
 						move(serviceRequest.getSourceFloor());
@@ -238,24 +226,19 @@ public class Elevator implements Runnable {
 						destinationFLoorReached = true;
 					}
 					updateState();
-					gui.updateCurrentRequestLabel(serviceRequest);
-					gui.updateElevatorQueue(jobs);
+					updateGUI(serviceRequest);
 					break;
 
 				// Handle ARRIVED state
 				case ARRIVED:
-					gui.updateElevatorLabels(elevatorContext.getStatus());
-					gui.updateCurrentRequestLabel(serviceRequest);
-					gui.updateElevatorQueue(jobs);
+					updateGUI(serviceRequest);
 					Thread.sleep(600);
 					updateState();
 					break;
 
 				// Handle OPEN_DOOR state
 				case OPEN_DOOR:
-					gui.updateElevatorLabels(elevatorContext.getStatus());
-					gui.updateCurrentRequestLabel(serviceRequest);
-					gui.updateElevatorQueue(jobs);
+					updateGUI(serviceRequest);
 					print("Opening doors");
 					Thread.sleep(600);
 					print(destinationFLoorReached ? "Drop off passengers" : "Pick up passengers");
@@ -264,13 +247,17 @@ public class Elevator implements Runnable {
 
 				// Handle CLOSE_DOOR state
 				case CLOSE_DOOR:
-					gui.updateElevatorLabels(elevatorContext.getStatus());
-					gui.updateCurrentRequestLabel(serviceRequest);
-					gui.updateElevatorQueue(jobs);
+					updateGUI(serviceRequest);
 					print("Closing doors");
 					Thread.sleep(1400);
 
 					elevatorContext.setStatus(elevatorContext.getStatus().nextState(destinationFLoorReached));
+					break;
+
+				// Handle IDLE state
+				case RESUMING:
+					updateState();
+					updateGUI(serviceRequest);
 					break;
 
 				// Handle TERMINATE state

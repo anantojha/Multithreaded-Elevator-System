@@ -34,7 +34,7 @@ public class SchedulerUDPTest {
 		
 		//Create scheduler. elevator, and elevator controller threads
 		a = new Scheduler();
-		b = new Elevator(jobs);
+		b = new Elevator(1, jobs);
 		scheduler = new Thread(a, "Scheduler");
 		elevatorController = new Thread(new ElevatorController("1", jobs), "ElevatorController 1");
         elevator = new Thread(b, "Elevator 1");

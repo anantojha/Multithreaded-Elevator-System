@@ -34,7 +34,7 @@ public class ElevatorUDPTest {
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
 		
 		//Create scheduler. elevator, and elevator controller threads
-		a = new Elevator(jobs);
+		a = new Elevator(1, jobs);
 		elevatorController = new Thread(new ElevatorController("1", jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");
 	}

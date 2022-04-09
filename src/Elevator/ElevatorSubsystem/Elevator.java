@@ -37,7 +37,7 @@ public class Elevator implements Runnable {
 		// All elevators start at Floor 1
 		this.id = id;
 		this.initialFloor = 1;
-		this.elevatorContext = new ElevatorContext(initialFloor, null, ElevatorStatus.INITIALIZE);
+		this.elevatorContext = new ElevatorContext(id, initialFloor, null, ElevatorStatus.INITIALIZE);
 		this.state = new ElevatorState(elevatorContext);
 		this.jobs = jobs;
 	}

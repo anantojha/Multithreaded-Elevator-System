@@ -7,6 +7,7 @@ public class ElevatorContext {
     private Integer currentFloor;
     private Direction direction;
     private ElevatorStatus status;
+    private Integer id;
 
     /*
      * ElevatorState(Integer) is the constructor of the ElevatorState class. It initializes all necessary variables.
@@ -15,7 +16,8 @@ public class ElevatorContext {
      * Output: none
      *
      */
-    public ElevatorContext(Integer floor, Direction direction, ElevatorStatus status){
+    public ElevatorContext(Integer id, Integer floor, Direction direction, ElevatorStatus status){
+    	this.id = id;
         this.currentFloor = floor;
         this.direction = direction;
         this.status = status;
@@ -89,9 +91,14 @@ public class ElevatorContext {
         this.status = status;
         return this;
     }
+    
+	public int getID() {
+		return id;
+	}
 
     @Override
     public String toString() {
         return "|  STATE UPDATE: currentFloor=" + currentFloor + ", direction=" + direction + ", status=" + status + "    |";
     }
+
 }

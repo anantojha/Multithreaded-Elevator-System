@@ -3,7 +3,6 @@ package Elevator.ElevatorSubsystem;
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 import GUI.ControlPanelGUI;
-import GUI.MainGUI;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -48,7 +47,7 @@ public class ElevatorController implements Runnable {
             elevatorController.start();
             elevatorOne.start();
         }
-        //gui.updateTable();
+        
     }
 
     /*

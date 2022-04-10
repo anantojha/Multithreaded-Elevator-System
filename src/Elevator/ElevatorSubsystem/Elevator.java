@@ -43,6 +43,7 @@ public class Elevator implements Runnable {
 		this.state = new ElevatorState();
 		this.jobs = jobs;
 		this.gui = gui;
+		gui.initialize(id, state.getCurrentState());
 	}
 
 	/*
@@ -109,6 +110,13 @@ public class Elevator implements Runnable {
 				elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x);
 				Thread.sleep(1000);
 				gui.updateFloor(id, elevatorContext.getCurrentFloor());
+				gui.updateData(id, 
+						state.getCurrentState(), 
+						elevatorContext.getDirection().toString(), 
+						elevatorContext.getCurrentFloor(), 
+						targetFloor, 
+						destinationFloor);
+
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
 
@@ -263,7 +271,13 @@ public class Elevator implements Runnable {
 				default:
 					break;
 				}
-
+				
+				gui.updateData(id, 
+						state.getCurrentState(), 
+						"", 
+						elevatorContext.getCurrentFloor(), 
+						-1, 
+						-1);
 			}
 			print("Waiting for next request...");
 		} catch (InterruptedException e) {
@@ -279,6 +293,10 @@ public class Elevator implements Runnable {
 	 */
 	public Queue<Request> getJobs() {
 		return jobs;
+	}
+	
+	public int getId() {
+		return this.id;
 	}
 	
 	/*

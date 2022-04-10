@@ -15,6 +15,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author Lasitha
@@ -39,17 +40,23 @@ public class ControlPanelGUI extends JFrame {
 	private Map<Integer, JLabel> statusLabelList;
 	private Map<Integer, JLabel> floorLabelList;
 	private Map<Integer, JLabel> doorLabelList;
+	private Map<Integer, Object[]> ev_row;
+	//Table variables
+	private Object[][] data;
+	DefaultTableModel tm;
+	private String[] columnNames;
+	JTable table;
 
 	public ControlPanelGUI(int numElevators) throws InterruptedException {
-
+		
 		// Create GUI frame
 		frame = new JFrame();
 		frame.setTitle("Elevator Control Panel");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setSize(1200, 800);
+		frame.setSize(1200, 1000);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-
+		
 		// Create GUI panel
 		contentPane = new JPanel();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -87,19 +94,50 @@ public class ControlPanelGUI extends JFrame {
 		}
 		
 		
-		// UI Data Table Here:
+		// Create GUI Data Table
+		
+		ev_row = new HashMap<Integer, Object[]>();
+		data = new Object[numElevators][6];
+		tm = new DefaultTableModel(data, columnNames);
+		columnNames = new String[] {
+					"ID",
+		            "Status",
+		            "Direction",
+		            "Current Floor",
+		            "Source Floor",
+		            "Destination Floor"};
 		JPanel dataTable = new JPanel();
+		table = new JTable(tm){
+            private static final long serialVersionUID = 1L;
+
+            public boolean isCellEditable(int row, int column) {                
+                    return false;               
+            };
+   
+        };
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setFocusable(false);
+        table.setCellSelectionEnabled(false);
+        table.setEnabled(false);   
+
 		dataTable.setLayout(new GridLayout());
 		dataTable.setBorder(BorderFactory.createTitledBorder("Data Table"));
 		dataTable.setSize(100, 100);
 		
+		table.setFillsViewportHeight(true);
+		table.setPreferredScrollableViewportSize(new Dimension(100, 100));
+		
+		JScrollPane scrollPane = new JScrollPane(table);
+		frame.add(scrollPane, BorderLayout.CENTER);
+
 		elevatorPanel.add(requestsPanel);
 		contentPane.add(elevatorPanel);
-		//contentPane.add(dataTable);
+		contentPane.add(scrollPane);
 
 		frame.add(contentPane);
 //		frame.pack();
 		frame.setVisible(true);
+		
 	}
 
 	public void addElevatorPanel(int id) {
@@ -162,7 +200,42 @@ public class ControlPanelGUI extends JFrame {
 		}
 		frame.repaint();
 	}
+	public void initialize(int id, String state) {
+		ev_row.put(id, new Object[] { id, state, "", 1, -1, -1 });
+		data[id - 1] = ev_row.get(id);
+		tm = new DefaultTableModel(data, columnNames);//THIS IS THE ISSUE
+		table.setModel(tm);
+	}
 
+	public void updateData(int id, String state, String direction, int current, int source, int destination) {
+		
+		ev_row.put(id, new Object[] { id, state, direction, current, source, destination });
+		
+		// Since we are creating the elevators in ascending order (id = 1,2,3,4...)
+		// We do not need dynamic table searching, as the elevators will be added in
+		// order
+		// This means that at row 0, elevator 1's information should be there
+		// A better solution would be to implement dynamic searching, but that seems a
+		// bit excessive for our scope
+		// data[id-1] = ev_row.get(id);
+		data[id - 1] = ev_row.get(id);
+		updateTable(id);
+		// Reset the table model
+		//tm = new DefaultTableModel(data, columnNames);//THIS IS THE ISSUE
+		//table.setModel(tm);
+		tm.fireTableDataChanged();
+
+	}
+	public void updateTable(int id) {
+
+		table.setValueAt(ev_row.get(id)[0], id-1, 0);
+		table.setValueAt(ev_row.get(id)[1], id-1, 1);
+		table.setValueAt(ev_row.get(id)[2], id-1, 2);
+		table.setValueAt(ev_row.get(id)[3], id-1, 3);
+		table.setValueAt(ev_row.get(id)[4], id-1, 4);
+		table.setValueAt(ev_row.get(id)[5], id-1, 5);
+
+	}
 	public void print(String str) {
 		System.out.println(str);
 	}

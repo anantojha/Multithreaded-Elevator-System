@@ -33,7 +33,7 @@ public class ElevatorController implements Runnable {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         MainGUI gui = new MainGUI();
-        for(int i = 1; i < 5; i++){
+        for(int i = 1; i < 4; i++){
             Queue<Request> jobs = new LinkedBlockingQueue<>();
             Thread elevatorController = new Thread(new ElevatorController(i, jobs), "ElevatorController " + i);
             

@@ -3,6 +3,7 @@ package Elevator.ElevatorSubsystem;
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 import GUI.ControlPanelGUI;
+import GUI.MainGUI;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -24,7 +25,6 @@ public class ElevatorController implements Runnable {
     private static ControlPanelGUI gui;
     byte[] taskRequest = {95, 1, 95};
     Queue<Request> jobs;
-
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
      *
@@ -48,6 +48,7 @@ public class ElevatorController implements Runnable {
             elevatorController.start();
             elevatorOne.start();
         }
+        //gui.updateTable();
     }
 
     /*

@@ -8,6 +8,7 @@ public class ElevatorContext {
     private Direction direction;
     //private ElevatorStatus status;
 
+
     /*
      * ElevatorState(Integer) is the constructor of the ElevatorState class. It initializes all necessary variables.
      *
@@ -90,8 +91,10 @@ public class ElevatorContext {
 //        return this;
 //    }
 
+
 //    @Override
 //    public String toString() {
 //        return "|  STATE UPDATE: currentFloor=" + currentFloor + ", direction=" + direction + ", status=" + status + "    |";
 //    }
+
 }

@@ -16,6 +16,7 @@ import java.util.*;
 public class Elevator implements Runnable {
 
 	int initialFloor;
+	int destinationFloor;
 	int id;
 	private ElevatorContext elevatorContext;
 	private ElevatorState state;
@@ -37,6 +38,7 @@ public class Elevator implements Runnable {
 		// All elevators start at Floor 1
 		this.id = id;
 		this.initialFloor = 1;
+		this.destinationFloor = 1;
 		this.elevatorContext = new ElevatorContext(initialFloor, null);
 		this.state = new ElevatorState();
 		this.jobs = jobs;
@@ -107,7 +109,6 @@ public class Elevator implements Runnable {
 				elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x);
 				Thread.sleep(1000);
 				gui.updateFloor(id, elevatorContext.getCurrentFloor());
-
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
 
@@ -118,7 +119,7 @@ public class Elevator implements Runnable {
 
 	public void faultDetected(Request serviceRequest) {
 
-		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+		String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
 
 		try {
 
@@ -173,6 +174,7 @@ public class Elevator implements Runnable {
 			boolean destinationFLoorReached = false;
 
 			print("Started servicing " + serviceRequest);
+			this.destinationFloor = serviceRequest.getDestinationFloor();
 
 			while ((!sourceFLoorReached || !destinationFLoorReached)
 					|| state.getCurrentState() != ElevatorStatus.IDLE.toString()) {
@@ -228,7 +230,7 @@ public class Elevator implements Runnable {
 
 				// Handle FAULT_DETECTED state
 				case "FAULT_DETECTED":
-					String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+					String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
 					print(fault + " has been detected");
 					faultDetected(serviceRequest);
 					Thread.sleep(2000);
@@ -241,7 +243,7 @@ public class Elevator implements Runnable {
 					// reset elevator
 					print("Resetting");
 					Thread.sleep(2000);
-					move(1);
+					//move(1);
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
 					break;
@@ -278,12 +280,14 @@ public class Elevator implements Runnable {
 	public Queue<Request> getJobs() {
 		return jobs;
 	}
-
+	
 	/*
 	 * The print() method prints a structured output string to console.
 	 * 
 	 * Input: string (String): the string to be printed Output: None
 	 */
+	
+
 	private void print(String string) {
 		System.out.println("[ " + Thread.currentThread().getName() + " ]: " + string);
 	}

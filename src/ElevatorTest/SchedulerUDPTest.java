@@ -14,6 +14,7 @@ import org.junit.Test;
 import Elevator.ElevatorSubsystem.*;
 import Elevator.FloorSubsystem.Request;
 import Elevator.SchedulerSubsystem.Scheduler;
+import GUI.MainGUI;
 
 public class SchedulerUDPTest {
 	Thread elevator, elevatorController, scheduler;
@@ -24,6 +25,7 @@ public class SchedulerUDPTest {
 	DatagramSocket floor;
 	Scheduler a;
 	Elevator b;
+	MainGUI gui;
 	
 	@Before
 	public void setup() throws IOException {
@@ -32,12 +34,14 @@ public class SchedulerUDPTest {
 		InetAddress localHostVar = InetAddress.getLocalHost();;
 		job = new DatagramPacket(task, task.length, localHostVar, 2505);	
 		
-		//Create scheduler. elevator, and elevator controller threads
+		//Create scheduler, GUI, elevator, and elevator controller threads then add elevator to GUI
 		a = new Scheduler();
-		b = new Elevator(1, jobs);
+		b = new Elevator(2, jobs);
+		gui = new MainGUI();
 		scheduler = new Thread(a, "Scheduler");
-		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");
-        elevator = new Thread(b, "Elevator 1");
+		elevatorController = new Thread(new ElevatorController(2, jobs), "ElevatorController 2");
+        elevator = new Thread(b, "Elevator 2");
+        gui.addElevator(b);
 	}
 	
 	@Test
@@ -62,7 +66,12 @@ public class SchedulerUDPTest {
         	Assert.assertTrue(receivedRequests.size() == 0);
         }
         //Let elevator thread run
-        Thread.sleep(13500);
+        Thread.sleep(500);
+        while(b.getState().getCurrentState() != "IDLE") {
+			gui.updateData();
+			Thread.sleep(500);
+		}
+        
         //After elevator completes request check there are no requests remaining
         receivedJobs = b.getJobs();
         Assert.assertTrue(receivedJobs.size() == 0);

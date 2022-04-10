@@ -16,6 +16,7 @@ import Elevator.ElevatorSubsystem.Elevator;
 import Elevator.ElevatorSubsystem.ElevatorController;
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import GUI.ControlPanelGUI;
 
 public class TransientFaultTest {
 	Thread elevator, elevatorController;
@@ -27,17 +28,19 @@ public class TransientFaultTest {
 	DatagramPacket job, faultJob, requestPacket;
 	DatagramSocket scheduler;
 	Elevator a;
+	ControlPanelGUI gui;
 	
 	@Before
-	public void setup() throws IOException {
+	public void setup() throws IOException, InterruptedException {
 		//Create socket for imitating scheduler and a DatagramPacket with a set request and a request with a hard fault
 		scheduler = new DatagramSocket(2506);
 		InetAddress localHostVar = InetAddress.getLocalHost();
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
 		faultJob = new DatagramPacket(fault, fault.length, localHostVar, 2951);
-		System.out.println(PacketHelper.convertPacketToRequest(faultJob).toString());
-		//Create scheduler. elevator, and elevator controller threads
-		a = new Elevator(1, jobs);
+		
+		//Create GUI, elevator, and elevator controller threads
+		gui = new ControlPanelGUI(1);
+		a = new Elevator(1, jobs, gui);
 		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");
 	}
@@ -68,7 +71,7 @@ public class TransientFaultTest {
 		scheduler.send(faultJob);
 		Assert.assertTrue(PacketHelper.convertPacketToRequest(faultJob).getFault());
 		//Let elevator thread run showcasing what happens when a transient fault occurs
-		Thread.sleep(26000);
+		Thread.sleep(35000);
 		
 		//Check elevator completes and the job sent is no longer in elevator queue
 		receivedJobs = a.getJobs();

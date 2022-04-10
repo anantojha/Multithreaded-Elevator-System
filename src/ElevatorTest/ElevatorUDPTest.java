@@ -15,6 +15,7 @@ import org.junit.Test;
 import Elevator.ElevatorSubsystem.Elevator;
 import Elevator.ElevatorSubsystem.ElevatorController;
 import Elevator.FloorSubsystem.Request;
+import GUI.ControlPanelGUI;
 
 public class ElevatorUDPTest {
 	Thread elevator, elevatorController;
@@ -25,16 +26,18 @@ public class ElevatorUDPTest {
 	DatagramPacket job, requestPacket;
 	DatagramSocket scheduler;
 	Elevator a;
+	ControlPanelGUI gui;
 	
 	@Before
-	public void setup() throws IOException {
+	public void setup() throws IOException, InterruptedException {
 		//Create socket for imitating scheduler and a DatagramPacket with a set request (source 5, destination 1)
 		scheduler = new DatagramSocket(2506);
 		InetAddress localHostVar = InetAddress.getLocalHost();
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
 		
-		//Create scheduler. elevator, and elevator controller threads
-		a = new Elevator(1, jobs);
+		//Create GUI, elevator, and elevator controller threads
+		gui = new ControlPanelGUI(1);
+		a = new Elevator(1, jobs, gui);
 		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");
 	}

@@ -17,7 +17,7 @@ public class Scheduler implements Runnable {
     DatagramSocket elevatorSocket, floorSocket;
     private byte[] acknowledgementSignal = {1};
     private Queue<byte[]> tasks;
-    private int lastElevator = 1;
+    private int lastElevator = 0;
 
     /**
      * IntermediateHost Constructor for the class.

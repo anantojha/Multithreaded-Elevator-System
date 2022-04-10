@@ -201,13 +201,13 @@ public class ControlPanelGUI extends JFrame {
 		frame.repaint();
 	}
 	public void initialize(int id, String state) {
-		ev_row.put(id, new Object[] { id, state, "", 1, -1, -1 });
+		ev_row.put(id, new Object[] { id, state, "", 1, null, null });
 		data[id - 1] = ev_row.get(id);
 		tm = new DefaultTableModel(data, columnNames);//THIS IS THE ISSUE
 		table.setModel(tm);
 	}
 
-	public void updateData(int id, String state, String direction, int current, int source, int destination) {
+	public void updateData(int id, String state, String direction, Integer current, Integer source, Integer destination) {
 		
 		ev_row.put(id, new Object[] { id, state, direction, current, source, destination });
 		

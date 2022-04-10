@@ -69,7 +69,6 @@ public class Elevator implements Runnable {
 			}
 
 			Request task = jobs.poll();
-			this.destinationFloor = task.getDestinationFloor();
 			service(task);
 		}
 	}
@@ -190,6 +189,7 @@ public class Elevator implements Runnable {
 			boolean destinationFLoorReached = false;
 
 			print("Started servicing " + serviceRequest);
+			this.destinationFloor = serviceRequest.getDestinationFloor();
 
 			while ((!sourceFLoorReached || !destinationFLoorReached)
 					|| state.getCurrentState() != ElevatorStatus.IDLE.toString()) {

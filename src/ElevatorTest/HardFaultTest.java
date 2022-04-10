@@ -37,7 +37,7 @@ public class HardFaultTest {
 		faultJob = new DatagramPacket(fault, fault.length, localHostVar, 2951);
 		//Create scheduler. elevator, and elevator controller threads
 		a = new Elevator(1, jobs);
-		elevatorController = new Thread(new ElevatorController("1", jobs), "ElevatorController 1");
+		elevatorController = new Thread(new ElevatorController( jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");
 	}
 	

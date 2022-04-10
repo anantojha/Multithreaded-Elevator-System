@@ -52,8 +52,6 @@ public class Scheduler implements Runnable {
         receiveServerPacket = new DatagramPacket(data, data.length);
         int estimatedTime = 100000;
 
-
-            System.out.println("Scheduler: Waiting for Elevator Request...\n");
             try {
                 elevatorSocket.receive(receiveServerPacket);
             } catch (SocketTimeoutException e) {
@@ -64,15 +62,12 @@ public class Scheduler implements Runnable {
                 System.exit(1);
             }
 
-            int elevatorId = receiveServerPacket.getData()[1];
-
             if(!tasks.isEmpty()){
                 try {
                     byte[] taskToSend = tasks.poll();
-                    int elevatorChoice = 2950 + getElevator();
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
-                            InetAddress.getLocalHost(), elevatorChoice);
-                    System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + InetAddress.getLocalHost() + ":" + elevatorChoice +")...\n");
+                            InetAddress.getLocalHost(), receiveServerPacket.getPort());
+                    System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + InetAddress.getLocalHost() + ":" + receiveServerPacket.getPort() +")...\n");
                     elevatorSocket.send(sendReplyPacket);
                     elevatorSocket.setSoTimeout(estimatedTime);
                 } catch (UnknownHostException e) {
@@ -85,14 +80,6 @@ public class Scheduler implements Runnable {
     }
 
 
-    public int getElevator() {
-        if (lastElevator == 2){
-            lastElevator = 1;
-            return 1;
-        }
-        lastElevator = 2;
-        return 2;
-    }
     /*
      * The floorHandle() method is for handling communication with floors.
      *
@@ -163,6 +150,7 @@ public class Scheduler implements Runnable {
         client.start();
 
         while (true) {
+            System.out.println("Scheduler: Waiting for Elevator Request...\n");
             c.elevatorHandle();
         }
     }

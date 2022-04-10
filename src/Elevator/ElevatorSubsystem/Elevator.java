@@ -16,10 +16,11 @@ import java.util.*;
 public class Elevator implements Runnable {
 
 	int initialFloor;
+	int destinationFloor;
 	int id;
 	private ElevatorContext elevatorContext;
 	private ElevatorState state;
-	private ControlPanelGUI gui;
+	//private ControlPanelGUI gui;
 	Queue<Request> jobs;
 
 	/*
@@ -37,6 +38,7 @@ public class Elevator implements Runnable {
 		// All elevators start at Floor 1
 		this.id = id;
 		this.initialFloor = 1;
+		this.destinationFloor = 1;
 		this.elevatorContext = new ElevatorContext(initialFloor, null);
 		this.state = new ElevatorState();
 		this.jobs = jobs;
@@ -52,11 +54,11 @@ public class Elevator implements Runnable {
 	 */
 	@Override
 	public void run() {
-		try {
-			gui = new ControlPanelGUI(id);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	//	try {
+		//	gui = new ControlPanelGUI(id);
+	//	} catch (InterruptedException e) {
+		//	e.printStackTrace();
+	//	}
 		
 		state.updateState();
 
@@ -67,6 +69,7 @@ public class Elevator implements Runnable {
 			}
 
 			Request task = jobs.poll();
+			this.destinationFloor = task.getDestinationFloor();
 			service(task);
 		}
 	}
@@ -111,8 +114,8 @@ public class Elevator implements Runnable {
 				elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x);
 
 				Thread.sleep(1000);
-				gui.moveElevator(elevatorContext.getCurrentFloor());
-				gui.updateElevatorQueue(jobs);
+				//gui.moveElevator(elevatorContext.getCurrentFloor());
+			//	gui.updateElevatorQueue(jobs);
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
 
@@ -123,9 +126,9 @@ public class Elevator implements Runnable {
 	}
 
 	public void updateGUI(Request serviceRequest) throws InterruptedException {
-		gui.updateElevatorLabels(state.getCurrentState());
-		gui.updateCurrentRequestLabel(serviceRequest);
-		gui.updateElevatorQueue(jobs);
+	//	gui.updateElevatorLabels(state.getCurrentState());
+	//	gui.updateCurrentRequestLabel(serviceRequest);
+	//	gui.updateElevatorQueue(jobs);
 	}
 
 
@@ -295,12 +298,27 @@ public class Elevator implements Runnable {
 		return jobs;
 	}
 	
+	public int getID() {
+		return this.id;
+	}
+	public int getDestinationFloor() {
+		return this.destinationFloor;
+	}
+	public ElevatorState getState() {
+		return this.state;
+	}
+	public ElevatorContext getContext() {
+		return this.elevatorContext;
+	}
+	
 	/*
 	 * The print() method prints a structured output string to console.
 	 * 
 	 * Input: string (String): the string to be printed
 	 * Output: None
 	 */
+	
+
 	private void print(String string) {
 		System.out.println("[ " + Thread.currentThread().getName() + " ]: " + string);
 	}

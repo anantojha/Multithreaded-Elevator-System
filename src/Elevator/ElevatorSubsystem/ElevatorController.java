@@ -2,6 +2,8 @@ package Elevator.ElevatorSubsystem;
 
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import GUI.MainGUI;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -21,7 +23,7 @@ public class ElevatorController implements Runnable {
     private InetAddress localHostVar;
     byte[] taskRequest = {95, 1, 95};
     Queue<Request> jobs;
-
+    MainGUI gui;
     /*
      * main(String [] args) asks user for elevator id and creates and starts elevator thread.
      *
@@ -29,14 +31,22 @@ public class ElevatorController implements Runnable {
      * Output: none
      *
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        MainGUI gui = new MainGUI();
         for(int i = 1; i < 5; i++){
             Queue<Request> jobs = new LinkedBlockingQueue<>();
             Thread elevatorController = new Thread(new ElevatorController(i, jobs), "ElevatorController " + i);
-            Thread elevatorOne = new Thread(new Elevator(i, jobs), "Elevator " + i);
+            
+            Elevator temp = new Elevator(i, jobs);
+            Thread elevatorOne = new Thread(temp, "Elevator " + i);
+            
+            gui.addElevator(temp);
+            
             elevatorController.start();
             elevatorOne.start();
         }
+        while(true) { gui.updateData(); Thread.sleep(500);}
+        //gui.updateTable();
     }
 
     /*

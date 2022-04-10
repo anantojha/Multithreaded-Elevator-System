@@ -15,6 +15,7 @@ import org.junit.Test;
 import Elevator.ElevatorSubsystem.Elevator;
 import Elevator.ElevatorSubsystem.ElevatorController;
 import Elevator.FloorSubsystem.Request;
+import GUI.MainGUI;
 
 public class ElevatorUDPTest {
 	Thread elevator, elevatorController;
@@ -24,7 +25,8 @@ public class ElevatorUDPTest {
 	byte[] requestJob = {95, 1, 95};
 	DatagramPacket job, requestPacket;
 	DatagramSocket scheduler;
-	Elevator a;
+	Elevator a, b, c, d;
+	MainGUI gui;
 	
 	@Before
 	public void setup() throws IOException {
@@ -33,10 +35,12 @@ public class ElevatorUDPTest {
 		InetAddress localHostVar = InetAddress.getLocalHost();
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
 		
-		//Create scheduler. elevator, and elevator controller threads
+		//Create scheduler, GUI, elevator, and elevator controller threads then add elevator to GUI
 		a = new Elevator(1, jobs);
+		gui = new MainGUI();
 		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");
+        gui.addElevator(a);
 	}
 	
 	@Test
@@ -54,7 +58,11 @@ public class ElevatorUDPTest {
         //Send task to elevator thread as if scheduler was sending it
         scheduler.send(job);
         //Let elevator thread run 
-        Thread.sleep(13500);
+        Thread.sleep(500);
+        while(a.getState().getCurrentState() != "IDLE") {
+        	gui.updateData();
+        	Thread.sleep(500);
+        }
         
         //Check elevator completes and the job sent is no longer in elevator queue
         receivedJobs = a.getJobs();

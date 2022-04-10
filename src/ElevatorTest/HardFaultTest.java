@@ -16,6 +16,7 @@ import Elevator.ElevatorSubsystem.Elevator;
 import Elevator.ElevatorSubsystem.ElevatorController;
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import GUI.MainGUI;
 
 public class HardFaultTest {
 	Thread elevator, elevatorController;
@@ -27,6 +28,7 @@ public class HardFaultTest {
 	DatagramPacket job, faultJob, requestPacket;
 	DatagramSocket scheduler;
 	Elevator a;
+	MainGUI gui;
 	
 	@Before
 	public void setup() throws IOException {
@@ -35,10 +37,12 @@ public class HardFaultTest {
 		InetAddress localHostVar = InetAddress.getLocalHost();
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
 		faultJob = new DatagramPacket(fault, fault.length, localHostVar, 2951);
-		//Create scheduler. elevator, and elevator controller threads
+		//Create scheduler, GUI, elevator, and elevator controller threads then add elevator to GUI
 		a = new Elevator(1, jobs);
+		gui = new MainGUI();
 		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");
+        gui.addElevator(a);
 	}
 	
 	@Test
@@ -56,7 +60,11 @@ public class HardFaultTest {
 		//Send task to elevator thread as if scheduler was sending it
 		scheduler.send(job);
 		//Let elevator thread run 
-		Thread.sleep(13500);
+		Thread.sleep(500);
+		while(a.getState().getCurrentState() != "IDLE") {
+			gui.updateData();
+			Thread.sleep(500);
+		}
 		
 		//Receive elevator thread request for packet again
 		requestPacket = new DatagramPacket(data, data.length);
@@ -67,7 +75,11 @@ public class HardFaultTest {
 		scheduler.send(faultJob);
 		Assert.assertTrue(PacketHelper.convertPacketToRequest(faultJob).getFault());
 		//Let elevator thread run showcasing what happens when a hard fault occurs
-		Thread.sleep(45000);
+		Thread.sleep(500);
+		while(a.getState().getCurrentState() != "IDLE") {
+			gui.updateData();
+			Thread.sleep(500);
+		}
 		
 		//Check elevator completes and the job sent is no longer in elevator queue
 		receivedJobs = a.getJobs();

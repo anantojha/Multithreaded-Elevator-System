@@ -2,6 +2,8 @@ package Elevator.ElevatorSubsystem;
 
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import GUI.ControlPanelGUI;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -19,6 +21,7 @@ public class ElevatorController implements Runnable {
     private DatagramPacket sendPacket;
     public DatagramPacket receivePacket;
     private InetAddress localHostVar;
+    private static ControlPanelGUI gui;
     byte[] taskRequest = {95, 1, 95};
     Queue<Request> jobs;
 
@@ -30,10 +33,18 @@ public class ElevatorController implements Runnable {
      *
      */
     public static void main(String[] args) throws IOException {
+    	
+    	try {
+			gui = new ControlPanelGUI(4);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
         for(int i = 1; i < 5; i++){
             Queue<Request> jobs = new LinkedBlockingQueue<>();
             Thread elevatorController = new Thread(new ElevatorController(i, jobs), "ElevatorController " + i);
-            Thread elevatorOne = new Thread(new Elevator(i, jobs), "Elevator " + i);
+            Thread elevatorOne = new Thread(new Elevator(i, jobs, gui), "Elevator " + i);
             elevatorController.start();
             elevatorOne.start();
         }

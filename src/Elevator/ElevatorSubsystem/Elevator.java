@@ -33,13 +33,14 @@ public class Elevator implements Runnable {
 	 * Output: none
 	 *
 	 */
-	public Elevator(int id, Queue<Request> jobs) throws IOException {
+	public Elevator(int id, Queue<Request> jobs, ControlPanelGUI gui) throws IOException {
 		// All elevators start at Floor 1
 		this.id = id;
 		this.initialFloor = 1;
 		this.elevatorContext = new ElevatorContext(initialFloor, null);
 		this.state = new ElevatorState();
 		this.jobs = jobs;
+		this.gui = gui;
 	}
 
 	/*
@@ -52,13 +53,8 @@ public class Elevator implements Runnable {
 	 */
 	@Override
 	public void run() {
-		try {
-			gui = new ControlPanelGUI(id);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
 		state.updateState();
+		gui.updateStatus(id, state.getCurrentState());
 
 		while (true) {
 			System.out.println();
@@ -84,7 +80,7 @@ public class Elevator implements Runnable {
 	 */
 	private void move(int targetFloor) {
 		try {
-			
+
 			// Check if elevator is already at target floor
 			if (elevatorContext.getCurrentFloor() == targetFloor) {
 				return;
@@ -109,57 +105,47 @@ public class Elevator implements Runnable {
 				int x = isDirectionUp ? 1 : -1; // If direction UP, increment current floor, else decrement
 				print("Arrived at floor: " + elevatorContext.getCurrentFloor());
 				elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x);
-
 				Thread.sleep(1000);
-				gui.moveElevator(elevatorContext.getCurrentFloor());
-				gui.updateElevatorQueue(jobs);
+				gui.updateFloor(id, elevatorContext.getCurrentFloor());
+
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
-
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void updateGUI(Request serviceRequest) throws InterruptedException {
-		gui.updateElevatorLabels(state.getCurrentState());
-		gui.updateCurrentRequestLabel(serviceRequest);
-		gui.updateElevatorQueue(jobs);
-	}
-
-
-	public void faultDetected(Request serviceRequest){
+	public void faultDetected(Request serviceRequest) {
 
 		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
 
 		try {
-			
-			if(fault.equals("Hard Fault")) {
-				//If a fault has been detected, move to the ground floor 
+
+			if (fault.equals("Hard Fault")) {
+				// If a fault has been detected, move to the ground floor
 				move(1);
-				
+
 				System.out.print("Elevator is repairing.");
-				//Repair the elevator
-				for(int i = 0; i < 20; i++) {
+				// Repair the elevator
+				for (int i = 0; i < 20; i++) {
 					System.out.print(".");
-					Thread.sleep(1000);			
+					Thread.sleep(1000);
 				}
-				//After some period of time, the elevator is considered repaired
+				// After some period of time, the elevator is considered repaired
 				System.out.println("Elevator is repaired.");
 				Thread.sleep(1000);
-	
+
 				System.out.println("Resuming Elevator activity.\n");
 				Thread.sleep(1000);
-			}else {
+			} else {
 				System.out.print("Retrying...");
-				for(int i = 0; i < 10; i++) {
+				for (int i = 0; i < 10; i++) {
 					System.out.print(".");
-					Thread.sleep(1000);			
+					Thread.sleep(1000);
 				}
 				System.out.println();
 			}
-			
 
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -190,18 +176,17 @@ public class Elevator implements Runnable {
 
 			while ((!sourceFLoorReached || !destinationFLoorReached)
 					|| state.getCurrentState() != ElevatorStatus.IDLE.toString()) {
-				
+
 				switch (state.getCurrentState()) {
 
 				// Handle IDLE state
 				case "IDLE":
-					updateGUI(serviceRequest);
 					state.updateState(serviceRequest.getFault());
+					gui.updateStatus(id, state.getCurrentState());
 					break;
 
 				// Handle RUNNING state
 				case "RUNNING":
-					updateGUI(serviceRequest);
 					if (!sourceFLoorReached) {
 						// Move to source floor
 						move(serviceRequest.getSourceFloor());
@@ -213,60 +198,60 @@ public class Elevator implements Runnable {
 						destinationFLoorReached = true;
 					}
 					state.updateState();
-					updateGUI(serviceRequest);
+					gui.updateStatus(id, state.getCurrentState());
 					break;
 
 				// Handle ARRIVED state
 				case "ARRIVED":
-					updateGUI(serviceRequest);
 					Thread.sleep(600);
 					state.updateState();
+					gui.updateStatus(id, state.getCurrentState());
 					break;
 
 				// Handle OPEN_DOOR state
 				case "OPEN_DOOR":
-					updateGUI(serviceRequest);
 					print("Opening doors");
 					Thread.sleep(600);
 					print(destinationFLoorReached ? "Drop off passengers" : "Pick up passengers");
 					state.updateState();
+					gui.updateStatus(id, state.getCurrentState());
 					break;
 
 				// Handle CLOSE_DOOR state
 				case "CLOSE_DOOR":
-					updateGUI(serviceRequest);
 					print("Closing doors");
 					Thread.sleep(1400);
 
 					state.updateState(destinationFLoorReached);
+					gui.updateStatus(id, state.getCurrentState());
 					break;
-					
-				// Handle FAULT_DETECTED state	
+
+				// Handle FAULT_DETECTED state
 				case "FAULT_DETECTED":
 					String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
 					print(fault + " has been detected");
 					faultDetected(serviceRequest);
-					updateGUI(serviceRequest);
 					Thread.sleep(2000);
 					state.updateState();
+					gui.updateStatus(id, state.getCurrentState());
 					break;
-				
+
 				// Handle RESETTING state
 				case "RESETTING":
 					// reset elevator
 					print("Resetting");
-					updateGUI(serviceRequest);
 					Thread.sleep(2000);
 					move(1);
 					state.updateState();
+					gui.updateStatus(id, state.getCurrentState());
 					break;
-						
+
 				// Handle RESUMING state
 				case "RESUMING":
 					print("Resuming");
-					updateGUI(serviceRequest);
 					Thread.sleep(3000);
 					state.updateState();
+					gui.updateStatus(id, state.getCurrentState());
 					break;
 
 				// Handle TERMINATE state
@@ -285,21 +270,19 @@ public class Elevator implements Runnable {
 	}
 
 	/*
-	 * The getJobs() is a getter method for retrieving the queue of requests 
-	 * the elevator will receive from the scheduler.
+	 * The getJobs() is a getter method for retrieving the queue of requests the
+	 * elevator will receive from the scheduler.
 	 * 
-	 * Input: None
-	 * Output: Queue of requests received from scheduler
+	 * Input: None Output: Queue of requests received from scheduler
 	 */
-	public Queue<Request> getJobs(){
+	public Queue<Request> getJobs() {
 		return jobs;
 	}
-	
+
 	/*
 	 * The print() method prints a structured output string to console.
 	 * 
-	 * Input: string (String): the string to be printed
-	 * Output: None
+	 * Input: string (String): the string to be printed Output: None
 	 */
 	private void print(String string) {
 		System.out.println("[ " + Thread.currentThread().getName() + " ]: " + string);

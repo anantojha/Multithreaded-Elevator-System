@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class ElevatorController implements Runnable {
-    private String Id;
+    private int Id;
     private DatagramSocket socket;
     private DatagramPacket sendPacket;
     public DatagramPacket receivePacket;
@@ -30,14 +30,13 @@ public class ElevatorController implements Runnable {
      *
      */
     public static void main(String[] args) throws IOException {
-        Queue<Request> jobs = new LinkedBlockingQueue<>();
-
-        String id = askElevatorId();
-        Thread elevatorController = new Thread(new ElevatorController(id, jobs), "ElevatorController " + id);
-        Thread elevatorOne = new Thread(new Elevator(Integer.parseInt(id), jobs), "Elevator " + id);
-        elevatorController.start();
-        elevatorOne.start();
-
+        for(int i = 1; i < 5; i++){
+            Queue<Request> jobs = new LinkedBlockingQueue<>();
+            Thread elevatorController = new Thread(new ElevatorController(i, jobs), "ElevatorController " + i);
+            Thread elevatorOne = new Thread(new Elevator(i, jobs), "Elevator " + i);
+            elevatorController.start();
+            elevatorOne.start();
+        }
     }
 
     /*
@@ -47,12 +46,12 @@ public class ElevatorController implements Runnable {
      * Output: Returns user input elevator id as String
      *
      */
-    public static String askElevatorId() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Elevator Id: ");
-        String name = scanner.nextLine();
-        return name;
-    }
+//    public static String askElevatorId() {
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Enter Elevator Id: ");
+//        String name = scanner.nextLine();
+//        return name;
+//    }
 
     /*
      * A constructor for the Elevator class. The constructor initializes the shared data structure and sets the id
@@ -64,10 +63,10 @@ public class ElevatorController implements Runnable {
      * Output: none
      *
      */
-    public ElevatorController(String id, Queue<Request> jobs) throws IOException {
+    public ElevatorController(int id, Queue<Request> jobs) throws IOException {
         //All elevators start at Floor 1
         this.Id = id;
-        this.socket = new DatagramSocket(2950 + Integer.parseInt(id));
+        this.socket = new DatagramSocket(2950 + id);
         socket.setSoTimeout(3000);
         localHostVar = InetAddress.getLocalHost();
         this.jobs = jobs;
@@ -112,7 +111,7 @@ public class ElevatorController implements Runnable {
         // System.out.println("Elevator " + getId() + ": Packet Sent.");
     }
 
-    private String getId() {
+    private int getId() {
         return Id;
     }
 

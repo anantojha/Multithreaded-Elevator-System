@@ -6,5 +6,5 @@ package Elevator.Global;
 public final class SystemConfiguration {
     public static final Integer MAX_FLOOR = 22;
     public static final Integer MAX_REQUESTS = 20;
-    public static final Integer ELEVATORS = 2;
+    public static final Integer ELEVATORS = 4;
 }

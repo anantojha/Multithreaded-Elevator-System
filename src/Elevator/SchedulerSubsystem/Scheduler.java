@@ -86,12 +86,21 @@ public class Scheduler implements Runnable {
 
 
     public int getElevator() {
-        if (lastElevator == 2){
+        if (lastElevator == 1){
+            lastElevator = 2;
+            return 2;
+        } else if (lastElevator == 2){
+            lastElevator = 3;
+            return 3;
+        } else if (lastElevator == 3){
+            lastElevator = 4;
+            return 4;
+        } else if (lastElevator == 4){
             lastElevator = 1;
             return 1;
         }
-        lastElevator = 2;
-        return 2;
+        lastElevator = 1;
+        return 1;
     }
     /*
      * The floorHandle() method is for handling communication with floors.

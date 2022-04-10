@@ -44,6 +44,7 @@ public class ElevatorController implements Runnable {
             
             elevatorController.start();
             elevatorOne.start();
+            Thread.sleep(100);
         }
         while(true) { gui.updateData(); Thread.sleep(500);}
         //gui.updateTable();

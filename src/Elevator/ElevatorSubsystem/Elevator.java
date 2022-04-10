@@ -16,6 +16,7 @@ import java.util.*;
 public class Elevator implements Runnable {
 
 	int initialFloor;
+	int sourceFloor;
 	int destinationFloor;
 	int id;
 	private ElevatorContext elevatorContext;
@@ -38,6 +39,7 @@ public class Elevator implements Runnable {
 		// All elevators start at Floor 1
 		this.id = id;
 		this.initialFloor = 1;
+		this.sourceFloor = 1;
 		this.destinationFloor = 1;
 		this.elevatorContext = new ElevatorContext(initialFloor, null);
 		this.state = new ElevatorState();
@@ -114,7 +116,7 @@ public class Elevator implements Runnable {
 						state.getCurrentState(), 
 						elevatorContext.getDirection().toString(), 
 						elevatorContext.getCurrentFloor(), 
-						targetFloor, 
+						sourceFloor, 
 						destinationFloor);
 
 			}
@@ -183,6 +185,7 @@ public class Elevator implements Runnable {
 
 			print("Started servicing " + serviceRequest);
 			this.destinationFloor = serviceRequest.getDestinationFloor();
+			this.sourceFloor = serviceRequest.getSourceFloor();
 
 			while ((!sourceFLoorReached || !destinationFLoorReached)
 					|| state.getCurrentState() != ElevatorStatus.IDLE.toString()) {
@@ -276,8 +279,8 @@ public class Elevator implements Runnable {
 						state.getCurrentState(), 
 						"", 
 						elevatorContext.getCurrentFloor(), 
-						-1, 
-						-1);
+						null, 
+						null);
 			}
 			print("Waiting for next request...");
 		} catch (InterruptedException e) {

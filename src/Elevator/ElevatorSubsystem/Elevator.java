@@ -129,33 +129,43 @@ public class Elevator implements Runnable {
 	}
 
 
-//	public void faultDetected(Request serviceRequest){
-//
-//		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
-//
-//		try {
-//			print(fault + " has been detected");
-//			updateGUI(serviceRequest);
-//			Thread.sleep(2000);
-//
-//			// reset elevator
-//			print("Resetting");
-//			state.updateState();
-//			updateGUI(serviceRequest);
-//			Thread.sleep(2000);
-//			move(1);
-//
-//			print("Resuming");
-//			state.updateState();
-//			updateGUI(serviceRequest);
-//			Thread.sleep(3000);
-//			
-//
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	public void faultDetected(Request serviceRequest){
+
+		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+
+		try {
+			
+			if(fault.equals("Hard Fault")) {
+				//If a fault has been detected, move to the ground floor 
+				move(1);
+				
+				System.out.print("Elevator is repairing.");
+				//Repair the elevator
+				for(int i = 0; i < 20; i++) {
+					System.out.print(".");
+					Thread.sleep(1000);			
+				}
+				//After some period of time, the elevator is considered repaired
+				System.out.println("Elevator is repaired.");
+				Thread.sleep(1000);
+	
+				System.out.println("Resuming Elevator activity.\n");
+				Thread.sleep(1000);
+			}else {
+				System.out.print("Retrying...");
+				for(int i = 0; i < 10; i++) {
+					System.out.print(".");
+					Thread.sleep(1000);			
+				}
+				System.out.println();
+			}
+			
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/*
 	 * service(Request serviceRequest) method services the request received from the
@@ -235,6 +245,7 @@ public class Elevator implements Runnable {
 				case "FAULT_DETECTED":
 					String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
 					print(fault + " has been detected");
+					faultDetected(serviceRequest);
 					updateGUI(serviceRequest);
 					Thread.sleep(2000);
 					state.updateState();

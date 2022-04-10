@@ -44,9 +44,9 @@ public class SystemTest {
         
         //create and start 2 elevator threads
         elevatorOne = new Thread(new Elevator(1, jobs), "Elevator 1");
-        elevatorControllerOne = new Thread(new ElevatorController( jobs), "Elevator Controller 1");
+        elevatorControllerOne = new Thread(new ElevatorController("1", jobs), "Elevator Controller 1");
         elevatorTwo = new Thread(new Elevator(2, jobs), "Elevator 2");
-        elevatorControllerTwo = new Thread(new ElevatorController( jobs), "Elevator Controller 2");
+        elevatorControllerTwo = new Thread(new ElevatorController("2", jobs), "Elevator Controller 2");
 
         //create 10 floor threads
         floorOne = new Thread(new Floor(1), "Floor 1");

@@ -2,8 +2,6 @@ package Elevator.ElevatorSubsystem;
 
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
-import Elevator.Global.SystemConfiguration;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -32,29 +30,44 @@ public class ElevatorController implements Runnable {
      *
      */
     public static void main(String[] args) throws IOException {
-        Queue<Request> current_jobs = new LinkedBlockingQueue<>(); // thread safe
+        Queue<Request> jobs = new LinkedBlockingQueue<>();
 
-        Thread elevatorController = new Thread(new ElevatorController(current_jobs), "ElevatorController ");
+        String id = askElevatorId();
+        Thread elevatorController = new Thread(new ElevatorController(id, jobs), "ElevatorController " + id);
+        Thread elevatorOne = new Thread(new Elevator(Integer.parseInt(id), jobs), "Elevator " + id);
         elevatorController.start();
+        elevatorOne.start();
 
-        for(int i = 1; i < SystemConfiguration.ELEVATORS + 1; i++){
-            Thread elevator = new Thread(new Elevator(i, current_jobs), "Elevator " + i);
-            elevator.start();
-        }
     }
 
     /*
-     * A constructor for the ElevatorController class. The constructor initializes the socket used for UDP communication.
-     * The jobs queue is a shared between the created Elevator threads. (controller is producer & elevators are consumers)
+     * The askElevatorId() method gets and returns user input for an elevator id.
+     *
+     * Input: none
+     * Output: Returns user input elevator id as String
+     *
+     */
+    public static String askElevatorId() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Elevator Id: ");
+        String name = scanner.nextLine();
+        return name;
+    }
+
+    /*
+     * A constructor for the Elevator class. The constructor initializes the shared data structure and sets the id
+     * of the Elevator. Each elevator starts from floor 1.
      *
      * Input:
-     * jobs (Queue): Queue of jobs
+     * id (String): The elevator id previously entered from askElevatorId() method
      *
      * Output: none
      *
      */
-    public ElevatorController(Queue<Request> jobs) throws IOException {
-        this.socket = new DatagramSocket(2950);
+    public ElevatorController(String id, Queue<Request> jobs) throws IOException {
+        //All elevators start at Floor 1
+        this.Id = id;
+        this.socket = new DatagramSocket(2950 + Integer.parseInt(id));
         socket.setSoTimeout(3000);
         localHostVar = InetAddress.getLocalHost();
         this.jobs = jobs;
@@ -97,6 +110,10 @@ public class ElevatorController implements Runnable {
         sendPacket = new DatagramPacket(taskRequest, taskRequest.length, localHostVar, 2506);
         socket.send(sendPacket);
         // System.out.println("Elevator " + getId() + ": Packet Sent.");
+    }
+
+    private String getId() {
+        return Id;
     }
 
     /*

@@ -36,7 +36,7 @@ public class SchedulerUDPTest {
 		
 		//Create scheduler, GUI, elevator, and elevator controller threads
 		a = new Scheduler();
-		gui = new ControlPanelGUI(1);
+		gui = new ControlPanelGUI(4);
 		b = new Elevator(1, jobs, gui);
 		scheduler = new Thread(a, "Scheduler");
 		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");

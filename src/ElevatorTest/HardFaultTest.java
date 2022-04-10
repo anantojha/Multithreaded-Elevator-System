@@ -38,7 +38,7 @@ public class HardFaultTest {
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
 		faultJob = new DatagramPacket(fault, fault.length, localHostVar, 2951);
 		//Create GUI, elevator, and elevator controller threads
-		gui = new ControlPanelGUI(1);
+		gui = new ControlPanelGUI(4);
 		a = new Elevator(1, jobs, gui);
 		elevatorController = new Thread(new ElevatorController(1, jobs), "ElevatorController 1");
         elevator = new Thread(a, "Elevator 1");

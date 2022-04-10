@@ -2,6 +2,7 @@ package Elevator.ElevatorSubsystem;
 
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import Elevator.Global.SystemConfiguration;
 import GUI.ControlPanelGUI;
 
 import java.io.IOException;
@@ -34,13 +35,13 @@ public class ElevatorController implements Runnable {
     public static void main(String[] args) throws IOException {
     	
     	try {
-			gui = new ControlPanelGUI(4);
+			gui = new ControlPanelGUI(SystemConfiguration.ELEVATORS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
-        for(int i = 1; i < 5; i++){
+        for(int i = 1; i < SystemConfiguration.ELEVATORS + 1; i++){
             Queue<Request> jobs = new LinkedBlockingQueue<>();
             Thread elevatorController = new Thread(new ElevatorController(i, jobs), "ElevatorController " + i);
             Thread elevatorOne = new Thread(new Elevator(i, jobs, gui), "Elevator " + i);
@@ -49,20 +50,6 @@ public class ElevatorController implements Runnable {
         }
         
     }
-
-    /*
-     * The askElevatorId() method gets and returns user input for an elevator id.
-     *
-     * Input: none
-     * Output: Returns user input elevator id as String
-     *
-     */
-//    public static String askElevatorId() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter Elevator Id: ");
-//        String name = scanner.nextLine();
-//        return name;
-//    }
 
     /*
      * A constructor for the Elevator class. The constructor initializes the shared data structure and sets the id

@@ -1,18 +1,11 @@
 package GUI;
 
-import Elevator.ElevatorSubsystem.Elevator;
-import Elevator.ElevatorSubsystem.ElevatorController;
 import Elevator.Enums.ElevatorStatus;
-import Elevator.FloorSubsystem.Request;
+import Elevator.Global.SystemConfiguration;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -179,11 +172,11 @@ public class ControlPanelGUI extends JFrame {
 
 
 	public static void main(String[] args) throws InterruptedException {
-		new ControlPanelGUI(4);
+		new ControlPanelGUI(SystemConfiguration.ELEVATORS);
 	}
 
 	public void updateFloor(int id, int floor) {
-		floorLabelList.get(id).setText("Floor: " + Integer.toString(floor));
+		floorLabelList.get(id).setText("Floor: " + floor);
 		JLabel doorLabel = doorLabelList.get(id);
 		doorLabel.setLocation(doorLabel.getLocation().x, pos[floor - 1]);
 		frame.repaint();

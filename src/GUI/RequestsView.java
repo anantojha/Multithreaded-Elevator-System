@@ -1,8 +1,6 @@
 package GUI;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.text.Position;
 import java.awt.*;
 
 public class RequestsView extends JLabel implements Scrollable {

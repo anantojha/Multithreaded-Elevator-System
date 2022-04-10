@@ -134,7 +134,7 @@ public class Elevator implements Runnable {
 
 	public void faultDetected(Request serviceRequest){
 
-		String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+		String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
 
 		try {
 			
@@ -246,7 +246,7 @@ public class Elevator implements Runnable {
 					
 				// Handle FAULT_DETECTED state	
 				case "FAULT_DETECTED":
-					String fault = serviceRequest.getFaultByte() == 'f' ? "Hard Fault" : "Transient Fault";
+					String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
 					print(fault + " has been detected");
 					faultDetected(serviceRequest);
 					updateGUI(serviceRequest);
@@ -260,7 +260,7 @@ public class Elevator implements Runnable {
 					print("Resetting");
 					updateGUI(serviceRequest);
 					Thread.sleep(2000);
-					move(1);
+					//move(1);
 					state.updateState();
 					break;
 						

@@ -125,7 +125,7 @@ public class Floor implements Serializable, Runnable{
      */
     public Floor(int myFloor) throws IOException {
         this.myFloor = myFloor;
-        this.socket = new DatagramSocket(3080 + myFloor);
+        this.socket = new DatagramSocket(SystemConfiguration.FLOOR_PORT + myFloor);
         localHostVar = InetAddress.getLocalHost();
         this.state = new FloorState();
     }
@@ -210,18 +210,7 @@ public class Floor implements Serializable, Runnable{
         byte[] packet = PacketHelper.buildRequestPacket(r);
         System.out.println(Thread.currentThread().getName() + ": sending request: " + r);
         System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
-        sendPacket = new DatagramPacket(packet, packet.length, localHostVar, 2505);
-        socket.send(sendPacket);
-        System.out.println(Thread.currentThread().getName() + ": Packet Sent.");
-    }
-
-
-    public void sendCoompletedSignal() throws IOException {
-        state.updateState();
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
-        byte[] packet = {0};
-        System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
-        sendPacket = new DatagramPacket(packet, packet.length, localHostVar, 2505);
+        sendPacket = new DatagramPacket(packet, packet.length, localHostVar, SystemConfiguration.SCHEDULER_FLOOR_PORT);
         socket.send(sendPacket);
         System.out.println(Thread.currentThread().getName() + ": Packet Sent.");
     }

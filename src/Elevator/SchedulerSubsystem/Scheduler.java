@@ -17,7 +17,7 @@ public class Scheduler implements Runnable {
     DatagramSocket elevatorSocket, floorSocket;
     private byte[] acknowledgementSignal = {1};
     private Queue<byte[]> tasks;
-    private int lastElevator = 0;
+    private int lastElevator = 1;
 
     /**
      * IntermediateHost Constructor for the class.
@@ -25,8 +25,8 @@ public class Scheduler implements Runnable {
     public Scheduler() {
         try {
             tasks = new LinkedBlockingQueue<>();
-            floorSocket = new DatagramSocket(2505);
-            elevatorSocket = new DatagramSocket(2506);
+            floorSocket = new DatagramSocket(SystemConfiguration.SCHEDULER_FLOOR_PORT);
+            elevatorSocket = new DatagramSocket(SystemConfiguration.SCHEDULER_ELEVATOR_PORT);
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -64,12 +64,10 @@ public class Scheduler implements Runnable {
                 System.exit(1);
             }
 
-            int elevatorId = receiveServerPacket.getData()[1];
-
             if(!tasks.isEmpty()){
                 try {
                     byte[] taskToSend = tasks.poll();
-                    int elevatorChoice = 2950 + getElevator();
+                    int elevatorChoice = SystemConfiguration.ELEVATOR_PORT + getNextElevator();
                     sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
                             InetAddress.getLocalHost(), elevatorChoice);
                     System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + InetAddress.getLocalHost() + ":" + elevatorChoice +")...\n");
@@ -85,23 +83,18 @@ public class Scheduler implements Runnable {
     }
 
 
-    public int getElevator() {
-        if (lastElevator == 1){
-            lastElevator = 2;
-            return 2;
-        } else if (lastElevator == 2){
-            lastElevator = 3;
-            return 3;
-        } else if (lastElevator == 3){
-            lastElevator = 4;
-            return 4;
-        } else if (lastElevator == 4){
+    public int getNextElevator() {
+
+        int temp = lastElevator;
+        lastElevator++;
+        if(temp == SystemConfiguration.ELEVATORS){
             lastElevator = 1;
-            return 1;
         }
-        lastElevator = 1;
-        return 1;
+        return temp;
     }
+
+
+
     /*
      * The floorHandle() method is for handling communication with floors.
      *

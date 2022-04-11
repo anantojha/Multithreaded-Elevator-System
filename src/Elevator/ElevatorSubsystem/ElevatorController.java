@@ -2,6 +2,7 @@ package Elevator.ElevatorSubsystem;
 
 import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
+import Elevator.Global.SystemConfiguration;
 import GUI.ControlPanelGUI;
 
 import java.io.IOException;
@@ -34,16 +35,15 @@ public class ElevatorController implements Runnable {
     public static void main(String[] args) throws IOException {
     	
     	try {
-			gui = new ControlPanelGUI(4);
+			gui = new ControlPanelGUI(SystemConfiguration.ELEVATORS);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
-        for(int i = 1; i < 5; i++){
+        for(int i = 1; i < SystemConfiguration.ELEVATORS + 1; i++){
             Queue<Request> jobs = new LinkedBlockingQueue<>();
             Thread elevatorController = new Thread(new ElevatorController(i, jobs), "ElevatorController " + i);
-            Thread elevatorOne = new Thread(new Elevator(i, jobs, gui), "Elevator " + i);
+            Thread elevatorOne = new Thread(new Elevator(i, jobs, gui ), "Elevator " + i);
             elevatorController.start();
             elevatorOne.start();
         }
@@ -77,7 +77,7 @@ public class ElevatorController implements Runnable {
     public ElevatorController(int id, Queue<Request> jobs) throws IOException {
         //All elevators start at Floor 1
         this.Id = id;
-        this.socket = new DatagramSocket(2950 + id);
+        this.socket = new DatagramSocket(SystemConfiguration.ELEVATOR_PORT + id);
         socket.setSoTimeout(3000);
         localHostVar = InetAddress.getLocalHost();
         this.jobs = jobs;
@@ -117,7 +117,7 @@ public class ElevatorController implements Runnable {
      */
     public void sendSchedulerRequestPacket() throws IOException {
         // System.out.println("Elevator " + getId() + ": sending task request: " + Arrays.toString(taskRequest));
-        sendPacket = new DatagramPacket(taskRequest, taskRequest.length, localHostVar, 2506);
+        sendPacket = new DatagramPacket(taskRequest, taskRequest.length, localHostVar, SystemConfiguration.SCHEDULER_ELEVATOR_PORT);
         socket.send(sendPacket);
         // System.out.println("Elevator " + getId() + ": Packet Sent.");
     }

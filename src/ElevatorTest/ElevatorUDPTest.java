@@ -17,6 +17,11 @@ import Elevator.ElevatorSubsystem.ElevatorController;
 import Elevator.FloorSubsystem.Request;
 import GUI.ControlPanelGUI;
 
+/*
+ * ElevatorUDPTest tests the Elevator's UDP connection with the scheduler.
+ * The test creates a DatagramSocket to imitate the scheduler and uses it to receive elevator's request for task and send a task to the elevator.
+ * The elevator should send a request for a task and receive then service the task it receives.
+ */
 public class ElevatorUDPTest {
 	Thread elevator, elevatorController;
 	Queue<Request> jobs = new LinkedBlockingQueue<>();
@@ -29,6 +34,13 @@ public class ElevatorUDPTest {
 	ControlPanelGUI gui;
 	
 	@Before
+	/*
+	 * setup() performs necessary setup to perform test case. Creates a socket imitating scheduler, a packet to be sent to the elevator with a set task,
+	 * the GUI, the elevator to test, and the elevator's controller.
+	 * 
+	 * Input: None 
+	 * Output: None
+	 */
 	public void setup() throws IOException, InterruptedException {
 		//Create socket for imitating scheduler and a DatagramPacket with a set request (source 5, destination 1)
 		scheduler = new DatagramSocket(2506);
@@ -43,6 +55,12 @@ public class ElevatorUDPTest {
 	}
 	
 	@Test
+	/*
+	 * receiveRequests() starts the elevator threads and checks all UDP messages sent and received are correctly relayed.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
 	public void receiveRequests() throws IOException, InterruptedException {
 		//Start elevator threads
 		elevatorController.start();
@@ -52,14 +70,15 @@ public class ElevatorUDPTest {
 		byte data[] = new byte[3];
 		requestPacket = new DatagramPacket(data, data.length);
 		scheduler.receive(requestPacket);
+		//Check that request for task from elevator is the set {95, 1, 95} 
         Assert.assertEquals(Arrays.toString(requestJob), Arrays.toString(requestPacket.getData()));
         
         //Send task to elevator thread as if scheduler was sending it
         scheduler.send(job);
-        //Let elevator thread run 
+        //Let elevator thread run until it completes the task 
         Thread.sleep(13500);
         
-        //Check elevator completes and the job sent is no longer in elevator queue
+        //Check elevator completes and the job sent is no longer in elevator's queue
         receivedJobs = a.getJobs();
         Assert.assertTrue(receivedJobs.size() == 0);
 	}

@@ -16,6 +16,11 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.SchedulerSubsystem.Scheduler;
 import GUI.ControlPanelGUI;
 
+/*
+ * SchedulerUDPTest tests the Scheduler's UDP connections with the elevators and floors.
+ * The test creates a DatagramSocket to imitate the floor and uses it to send a set task to the scheduler.
+ * The scheduler should receive the task from the floor, add task to queue, then send task to elevator to service once it receives request for task from elevator.
+ */
 public class SchedulerUDPTest {
 	Thread elevator, elevatorController, scheduler;
 	Queue<Request> jobs = new LinkedBlockingQueue<>();
@@ -28,8 +33,15 @@ public class SchedulerUDPTest {
 	ControlPanelGUI gui;
 	
 	@Before
+	/*
+	 * setup() performs necessary setup to perform test case. Creates a socket imitating floor, a packet to be sent to the scheduler with a set task,
+	 * the scheduler instance, the GUI, the elevator to test, and the elevator's controller.
+	 * 
+	 * Input: None 
+	 * Output: None
+	 */
 	public void setup() throws IOException, InterruptedException {
-		//Create socket for imitating floor and a DatagramPacket with a set request
+		//Create socket for imitating floor and a DatagramPacket with a set request (Source: 5, Destination: 1)
 		floor = new DatagramSocket();
 		InetAddress localHostVar = InetAddress.getLocalHost();;
 		job = new DatagramPacket(task, task.length, localHostVar, 2505);	
@@ -44,6 +56,14 @@ public class SchedulerUDPTest {
 	}
 	
 	@Test
+	/*
+	 * sendAndReceiveRequests() starts the scheduler and elevator threads and checks all UDP messages send and received are correctly relayed.
+	 * The floor sends the task to the scheduler, then the scheduler should receive it, add it to it's queue then send it to elevator once scheduler
+	 * receives request for task from elevator.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
     public void sendAndReceiveRequests() throws IOException, InterruptedException {
 		//Start threads
         scheduler.start();
@@ -61,11 +81,12 @@ public class SchedulerUDPTest {
         //Begin elevator communication
         while (!receivedRequests.isEmpty()) {
         	a.elevatorHandle();
-        	//Check if elevator properly received request
-        	Assert.assertTrue(receivedRequests.size() == 0);
+        	//Check if scheduler properly sent task to elevator
+        	Assert.assertTrue(receivedRequests.isEmpty());
         }
-        //Let elevator thread run
+        //Let elevator thread run until it completes the task
         Thread.sleep(13500);
+        
         //After elevator completes request check there are no requests remaining
         receivedJobs = b.getJobs();
         Assert.assertTrue(receivedJobs.size() == 0);

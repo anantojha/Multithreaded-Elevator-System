@@ -18,6 +18,12 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 import GUI.ControlPanelGUI;
 
+/*
+ * HardFaultTest tests how the system will react when a hard fault occurs. 
+ * The test creates a DatagramSocket to imitate the scheduler and 2 DatagramPackets (1 normal request, 1 with hard fault).
+ * The elevator will first receive the normal request then the request with a hard fault.
+ * When a hard fault occurs the elevator should return to floor 1, reset the elevator and continue servicing the request.
+ */
 public class HardFaultTest {
 	Thread elevator, elevatorController;
 	Queue<Request> jobs = new LinkedBlockingQueue<>();
@@ -31,6 +37,13 @@ public class HardFaultTest {
 	ControlPanelGUI gui;
 	
 	@Before
+	/*
+	 * setup() performs necessary setup to perform test case. Creates DatagramSocket to imitate scheduler, 2 DatagramPackets (1 normal request, 1 request with hard fault),
+	 * the GUI, the elevator to test, and the elevator's controller. 
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
 	public void setup() throws IOException, InterruptedException {
 		//Create socket for imitating scheduler and a DatagramPacket with a set request (source 5, destination 4) and a request with a hard fault (source 9, destination 3)
 		scheduler = new DatagramSocket(2506);
@@ -45,12 +58,19 @@ public class HardFaultTest {
 	}
 	
 	@Test
+	/*
+	 * receiveRequests() starts the elevator threads and checks that all messages are properly being sent and received.
+	 * The scheduler first sends the normal request then the request with a hard fault.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
 	public void receiveRequests() throws IOException, InterruptedException {
 		//Start elevator threads
 		elevatorController.start();
 		elevator.start();
 		        
-		//Receive elevator thread request for packet as if scheduler was receiving it
+		//Receive elevator thread request for task as if scheduler was receiving it
 		byte data[] = new byte[3];
 		requestPacket = new DatagramPacket(data, data.length);
 		scheduler.receive(requestPacket);
@@ -61,7 +81,7 @@ public class HardFaultTest {
 		//Let elevator thread run 
 		Thread.sleep(13500);
 		
-		//Receive elevator thread request for packet again
+		//Receive elevator thread request for task again
 		requestPacket = new DatagramPacket(data, data.length);
 		scheduler.receive(requestPacket);
 		Assert.assertEquals(Arrays.toString(requestJob), Arrays.toString(requestPacket.getData()));
@@ -72,7 +92,7 @@ public class HardFaultTest {
 		//Let elevator thread run showcasing what happens when a hard fault occurs
 		Thread.sleep(55000);
 		
-		//Check elevator completes and the job sent is no longer in elevator queue
+		//Check elevator completes and the jobs sent is no longer in elevator queue
 		receivedJobs = a.getJobs();
 		Assert.assertTrue(receivedJobs.size() == 0);
 	}

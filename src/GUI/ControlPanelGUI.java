@@ -126,11 +126,14 @@ public class ControlPanelGUI extends JFrame {
 		dataTable.setBorder(BorderFactory.createTitledBorder("Data Table"));
 		dataTable.setSize(100, 100);
 		
-		table.setFillsViewportHeight(true);
+		//table.setFillsViewportHeight(true);
 		table.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		frame.add(scrollPane, BorderLayout.CENTER);
+		scrollPane.setMaximumSize(new Dimension(9000, 9000));
+		
+		//frame.add(scrollPane, BorderLayout.CENTER);
+		
 
 		elevatorPanel.add(requestsPanel);
 

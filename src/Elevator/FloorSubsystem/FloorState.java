@@ -62,6 +62,13 @@ public class FloorState implements StateMachine {
 		return previousState.toString();
 	}
 
+	/*
+	 * updateState(boolean) updates the state.
+	 *
+	 * Input: boolean
+	 * Output: none
+	 *
+	 */
 	@Override
 	public void updateState(boolean condition) {
 		updateState();

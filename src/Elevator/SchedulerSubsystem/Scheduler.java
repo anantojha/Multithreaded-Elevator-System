@@ -11,6 +11,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
+/*
+ * The scheduler class is a runnable thread that is responsible for managing the UDP requests between floor and elevator.
+ * 
+ */
 public class Scheduler implements Runnable {
 
     DatagramPacket receiveFloorPacket, receiveServerPacket, sendReplyPacket;

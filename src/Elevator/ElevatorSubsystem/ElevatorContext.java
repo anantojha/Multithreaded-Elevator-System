@@ -1,7 +1,6 @@
 package Elevator.ElevatorSubsystem;
 
 import Elevator.Enums.Direction;
-import Elevator.Enums.ElevatorStatus;
 
 public class ElevatorContext {
     private Integer currentFloor;

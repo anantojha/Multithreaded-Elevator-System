@@ -6,7 +6,7 @@ package Elevator.Global;
 public final class SystemConfiguration {
     public static final Integer MAX_FLOOR = 22;                     // number of floors
     public static final Integer MAX_REQUESTS = 20;                  // total number of requests
-    public static final Integer ELEVATORS = 3;                      // number of elevators
+    public static final Integer ELEVATORS = 2;                      // number of elevators
     public static final byte ACKNOWLEDGEMENT_SIGNAL = 1;            // acknowledgement signal (byte)
     public static final Integer FLOOR_REQUEST_TIME = 5;             // keep between 5 and 10
     public static final Integer SCHEDULER_ELEVATOR_PORT = 2506;     // scheduler socket port for elevator communication

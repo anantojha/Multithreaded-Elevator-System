@@ -287,7 +287,7 @@ public class Elevator implements Runnable {
 				default:
 					break;
 				}
-
+				//Update GUI 
 				gui.updateElevatorQueue(id, jobs);
 				gui.updateTableData(id,
 						state.getCurrentState(), 

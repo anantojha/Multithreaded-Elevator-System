@@ -55,7 +55,7 @@ public class Floor implements Serializable, Runnable{
      * 
      */
     public static long randomTimeDiff(){
-        return random.nextInt(3) + 7;
+        return random.nextInt(3) + 5;
     }
 
 

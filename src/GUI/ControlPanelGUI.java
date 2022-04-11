@@ -1,11 +1,15 @@
 package GUI;
 
 import Elevator.Enums.ElevatorStatus;
+import Elevator.FloorSubsystem.Request;
 import Elevator.Global.SystemConfiguration;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,12 +27,11 @@ public class ControlPanelGUI extends JFrame {
 	private JFrame frame;
 	private JPanel contentPane;
 	private JPanel elevatorPanel;
+	private JPanel requestsPanel;
 	private int[] pos = { 575, 550, 525, 500, 475, 450, 425, 400, 375, 350, 325, 300, 275, 250, 225, 200, 175, 150, 125, 100,
 			75, 50 };
 	private ImageIcon closeElevatorImage;
 	private ImageIcon openElevatorImage;
-	private RequestsView requestsLabel;
-	private JLabel currentRequest;
 
 	private Map<Integer, JLabel> statusLabelList;
 	private Map<Integer, JLabel> floorLabelList;
@@ -72,17 +75,19 @@ public class ControlPanelGUI extends JFrame {
 		for (int i = 1; i < numElevators + 1; i++) {
 			addElevatorPanel(i);
 		}
-		
-		JPanel requestsPanel = new JPanel();
+
+		requestsPanel = new JPanel();
 		requestsPanel.setLayout(new BoxLayout(requestsPanel, BoxLayout.Y_AXIS));
 		requestsPanel.setBackground(Color.WHITE);
 
-		
+
 		for (int i = 1; i < numElevators + 1; i++) {
 			JPanel r = new JPanel();
-			r.setLayout(null);
-			r.setBackground(Color.WHITE);
+			r.setLayout(new GridLayout(4, 1));
 			r.setBorder(BorderFactory.createTitledBorder("Elevator " + i + " Requests"));
+			r.setBackground(Color.WHITE);
+			JLabel n = new JLabel();
+			r.add(n);
 			requestsPanel.add(r);
 		}
 		
@@ -229,6 +234,21 @@ public class ControlPanelGUI extends JFrame {
 		table.setValueAt(ev_row.get(id)[5], id-1, 5);
 
 	}
+
+	public void updateElevatorQueue(int id, Queue<Request> requests){
+		String text = "<br>";
+
+		for (Request r: requests) {
+			text = text + r.toRequestDisplayString() + "<br><br>";
+		}
+
+		if(requestsPanel.getComponent(id-1) != null)
+			((JLabel)((JPanel) requestsPanel.getComponent(id-1)).getComponent(0)).setText("<html>" + text + "</html>");
+
+		frame.repaint();
+	}
+
+
 	public void print(String str) {
 		System.out.println(str);
 	}

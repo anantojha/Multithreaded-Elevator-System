@@ -100,4 +100,11 @@ public class Request implements Serializable {
                 "destination: " + destinationFloor + " | " +
 				"fault: " + fault.toString() + " |";
     }
+
+	public String toRequestDisplayString(){
+		return "source: " + sourceFloor + " | " +
+				"direction: " + direction + " | " +
+				"destination: " + destinationFloor + " | " +
+				"fault: " + fault.toString() + " |";
+	}
 }

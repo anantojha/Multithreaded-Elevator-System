@@ -112,6 +112,7 @@ public class Elevator implements Runnable {
 				elevatorContext.setCurrentFloor(elevatorContext.getCurrentFloor() + x);
 				Thread.sleep(1000);
 				gui.updateFloor(id, elevatorContext.getCurrentFloor());
+				gui.updateElevatorQueue(id, jobs);
 				gui.updateData(id, 
 						state.getCurrentState(), 
 						elevatorContext.getDirection().toString(), 
@@ -196,6 +197,7 @@ public class Elevator implements Runnable {
 				case "IDLE":
 					state.updateState(serviceRequest.getFault());
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle RUNNING state
@@ -212,6 +214,7 @@ public class Elevator implements Runnable {
 					}
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle ARRIVED state
@@ -219,6 +222,7 @@ public class Elevator implements Runnable {
 					Thread.sleep(600);
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle OPEN_DOOR state
@@ -228,6 +232,7 @@ public class Elevator implements Runnable {
 					print(destinationFLoorReached ? "Drop off passengers" : "Pick up passengers");
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle CLOSE_DOOR state
@@ -237,6 +242,7 @@ public class Elevator implements Runnable {
 
 					state.updateState(destinationFLoorReached);
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle FAULT_DETECTED state
@@ -247,6 +253,7 @@ public class Elevator implements Runnable {
 					Thread.sleep(2000);
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle RESETTING state
@@ -257,6 +264,7 @@ public class Elevator implements Runnable {
 					//move(1);
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle RESUMING state
@@ -265,6 +273,7 @@ public class Elevator implements Runnable {
 					Thread.sleep(3000);
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
+					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle TERMINATE state
@@ -274,7 +283,8 @@ public class Elevator implements Runnable {
 				default:
 					break;
 				}
-				
+
+				gui.updateElevatorQueue(id, jobs);
 				gui.updateData(id, 
 						state.getCurrentState(), 
 						"", 

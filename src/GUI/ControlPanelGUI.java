@@ -88,6 +88,7 @@ public class ControlPanelGUI extends JFrame {
 			r.setBackground(Color.WHITE);
 			JTextArea n = new JTextArea();
 			//n.setMinimumSize(1, 1);
+			n.setEditable(false);
 			n.setPreferredSize(new Dimension(0,1));
 			n.setSize(0, 1);
 

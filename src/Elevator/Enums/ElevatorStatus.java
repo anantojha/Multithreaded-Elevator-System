@@ -13,7 +13,13 @@ public enum ElevatorStatus {
 		public String toString() {
 			return "INITIALIZE";
 		}
-
+		/*
+		 * nextState() moves INITIALIZE to IDLE
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return IDLE;
@@ -28,6 +34,13 @@ public enum ElevatorStatus {
 			return "IDLE";
 		}
 
+		/*
+		 * nextState() moves IDLE to FAULT_DETECTED if a fault is present or RUNNING otherwise
+		 * 
+		 * input: boolean
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState(boolean isFault) {
 			return isFault ? FAULT_DETECTED : RUNNING;
@@ -43,6 +56,13 @@ public enum ElevatorStatus {
 			return "RUNNING";
 		}
 
+		/*
+		 * nextState() moves RUNNING to ARRIVED
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return ARRIVED;
@@ -58,6 +78,13 @@ public enum ElevatorStatus {
 			return "ARRIVED";
 		}
 
+		/*
+		 * nextState() moves ARRIVED to OPEN_DOOR
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return OPEN_DOOR;
@@ -73,6 +100,13 @@ public enum ElevatorStatus {
 			return "OPEN_DOOR";
 		}
 
+		/*
+		 * nextState() moves OPEN_DOOR to CLOSE_DOOR
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return CLOSE_DOOR;
@@ -87,6 +121,13 @@ public enum ElevatorStatus {
 			return "CLOSE_DOOR";
 		}
 
+		/*
+		 * nextState() moves CLOSE_DOOR to IDLE if destination is reached and RUNNING otherwise
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState(boolean isDestinationReached) {
 			return isDestinationReached ? IDLE : RUNNING;
@@ -101,6 +142,13 @@ public enum ElevatorStatus {
 			return "FAULT_DETECTED";
 		}
 
+		/*
+		 * nextState() moves FAULT_DETECTED to RESETTING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return RESETTING;
@@ -115,6 +163,13 @@ public enum ElevatorStatus {
 			return "RESETTING";
 		}
 
+		/*
+		 * nextState() moves RESETTING to RESUMING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return RESUMING;
@@ -129,6 +184,13 @@ public enum ElevatorStatus {
 			return "RESUMING";
 		}
 
+		/*
+		 * nextState() moves RESUMING to RUNNING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public ElevatorStatus nextState() {
 			return RUNNING;
@@ -144,6 +206,7 @@ public enum ElevatorStatus {
 		}
 	};
 
+	
 	public ElevatorStatus nextState() {
 		// TODO Auto-generated method stub
 		return null;

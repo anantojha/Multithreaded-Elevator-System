@@ -1,6 +1,5 @@
 package ElevatorTest;//package ElevatorTest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -13,10 +12,13 @@ import Elevator.SchedulerSubsystem.Scheduler;
 import GUI.ControlPanelGUI;
 
 import org.junit.Before;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.Assert;
 
+/*
+ * SystemTest tests the entire system with 4 elevators and 22 floors. 
+ * The test creates an input file with 15 requests and checks the system properly services all tasks.
+ */
 public class SystemTest {
 
     Thread elevatorOne, elevatorTwo, elevatorThree, elevatorFour, elevatorControllerOne, elevatorControllerTwo, elevatorControllerThree, elevatorControllerFour;
@@ -26,9 +28,15 @@ public class SystemTest {
     Elevator a, b, c, d;
     ControlPanelGUI gui;
     Scheduler scheduler;
-	File TestFolder;
 
 	@Before
+	/*
+	 * setup() performs necessary setup to perform test case. Creates a scheduler instance, 4 elevator instances, 22 floor instances, and the GUI.
+	 * It also creates the input file for the system with 15 generated requests to service.
+	 * 
+	 * Input: None 
+	 * Output: None
+	 */
     public void setup() throws IOException, InterruptedException {
         //create scheduler instance & scheduler thread
         scheduler = new Scheduler();
@@ -37,7 +45,7 @@ public class SystemTest {
         //create Queue of Requests for elevator threads 
         Queue<Request> jobs = new LinkedBlockingQueue<>();
         
-        //Create gui for display
+        //Create gui for displaying 4 elevators
         gui = new ControlPanelGUI(4);
         
         //create 4 elevator threads
@@ -80,13 +88,29 @@ public class SystemTest {
         
         
         //Create CSV file for floor requests
-        Floor.createFloorCSV(22, "FloorCSV", 10);
+        Floor.createFloorCSV(22, "FloorCSV", 15);
 	}
 
 	@Test
+	/*
+	 * receiveAndSendRequests() starts all the threads and runs the system until all generated requests have been sent by a floor thread.
+	 * The floor should complete, the scheduler should send all requests to an elevator, and the elevators should have serviced as many requests
+	 * before the floor threads complete sending requests.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
     public void receiveAndSendRequests() throws InterruptedException {
 		//start all threads
         schedulerThread.start();
+        elevatorControllerOne.start();
+        elevatorOne.start();
+        elevatorControllerTwo.start();
+        elevatorTwo.start();
+        elevatorControllerThree.start();
+        elevatorThree.start();
+        elevatorControllerFour.start();
+        elevatorFour.start();
 		floorOne.start();
         floorTwo.start();
         floorThree.start();
@@ -109,14 +133,6 @@ public class SystemTest {
         floorTwenty.start();
         floorTwentyOne.start();
         floorTwentyTwo.start();
-        elevatorControllerOne.start();
-        elevatorOne.start();
-        elevatorControllerTwo.start();
-        elevatorTwo.start();
-        elevatorControllerThree.start();
-        elevatorThree.start();
-        elevatorControllerFour.start();
-        elevatorFour.start();
         
         //boolean to check for when all floor threads complete
         Boolean floorThreadsFinished = true;
@@ -133,8 +149,9 @@ public class SystemTest {
             		|| floorTwentyTwo.isAlive());
         }
         
-        //assert queue of requests is empty after system finishes
+        //assert scheduler sent all requests after floor threads finish sending
         Assert.assertTrue(scheduler.getQueue().isEmpty()); 
+        //assert elevator and scheduler threads are still active after floor threads finish sending
         Assert.assertTrue(elevatorOne.isAlive());
         Assert.assertTrue(elevatorControllerOne.isAlive());
         Assert.assertTrue(elevatorTwo.isAlive());

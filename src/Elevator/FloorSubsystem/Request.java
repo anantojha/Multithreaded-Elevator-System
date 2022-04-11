@@ -57,9 +57,17 @@ public class Request implements Serializable {
     public int getSourceFloor() {
         return sourceFloor;
     }
-
+    
+    /*
+     * getFaultByte() converts the fault to its byte form representation
+     * 
+     * input: none
+     * output: byte
+     * 
+     */
 	public byte getFaultByte() { return (byte) (faulttype == 'f' ? 1 : faulttype == 't' ? 2 : 0); }
-
+	
+	
 	public boolean getFault() { return fault; }
 	public char getFaultType() { return faulttype; }
 

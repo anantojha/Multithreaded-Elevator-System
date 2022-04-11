@@ -18,6 +18,12 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 import GUI.ControlPanelGUI;
 
+/*
+ * TransientFaultTest tests how the system will react when a transient fault occurs.
+ * The test creates DatagramSocket to imitate scheduler and 2 DatagramPackets (1 normal request, 1 with a transient fault)
+ * The elevator will first receive the normal request then the request with a transient fault.
+ * When a transient fault occurs the elevator should stay at it's current floor, restart the elevator, and continue servicing the request. 
+ */
 public class TransientFaultTest {
 	Thread elevator, elevatorController;
 	Queue<Request> jobs = new LinkedBlockingQueue<>();
@@ -31,8 +37,15 @@ public class TransientFaultTest {
 	ControlPanelGUI gui;
 	
 	@Before
+	/*
+	 * setup() performs necessary setup to perform test case. Creates DatagramSocket to imitate scheduler, 2 DatagramPackets (1 normal request, 1 request with transient fault),
+	 * the GUI, the elevator to test, and the elevator's controller. 
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
 	public void setup() throws IOException, InterruptedException {
-		//Create socket for imitating scheduler and a DatagramPacket with a set request and a request with a hard fault
+		//Create socket for imitating scheduler and a DatagramPacket with a set request (source: 5, destination: 4) and a request with a transient fault (source 9, destination 3)
 		scheduler = new DatagramSocket(2506);
 		InetAddress localHostVar = InetAddress.getLocalHost();
 		job = new DatagramPacket(task, task.length, localHostVar, 2951);	
@@ -46,6 +59,13 @@ public class TransientFaultTest {
 	}
 	
 	@Test
+	/*
+	 * receiveRequests() starts the elevator threads and checks that all messages are properly being sent and received.
+	 * The scheduler first sends the normal request then the request with a hard fault.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
 	public void receiveRequests() throws IOException, InterruptedException {
 		//Start elevator threads
 		elevatorController.start();

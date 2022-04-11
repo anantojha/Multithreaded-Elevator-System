@@ -1,8 +1,6 @@
 package Elevator.FloorSubsystem;
 
 import Elevator.Enums.Direction;
-import Elevator.Enums.FloorStatus;
-import Elevator.Enums.SubSystemMapping;
 import Elevator.Global.PacketHelper;
 import Elevator.Global.SystemConfiguration;
 

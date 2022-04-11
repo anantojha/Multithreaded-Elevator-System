@@ -19,6 +19,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
+/*
+ * PackageHelperTest tests the PackageHelper.java methods that are used in many files of our system for conversion.
+ * The test will create an input file with 1 request and use PackageHelper methods to convert it to byte array or Request format.
+ */
 public class PackageHelperTest {
 	Request request;
 	byte[] task;
@@ -27,6 +31,13 @@ public class PackageHelperTest {
 	File TestFolder;
 	
 	@Before
+	/*
+	 * setup() performs necessary setup to perform test case. Creates a test folder for input file to be stored in, input file with 1 request,
+	 * and reads the input file to get expected output from conversions.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
     public void setup() throws IOException {
         TestFolder = new File("CSV/TestFloorCSV");
         // create test csv folder if one doesn't exist
@@ -63,6 +74,16 @@ public class PackageHelperTest {
     }
 	
 	@Test
+	/*
+	 * changeFormat() tests all PackageHelper methods.
+	 * First converts request into byte array and stores in DatagramPacket for next tests.
+	 * Then converts byte array previously created and converts to Request format.
+	 * Finally converts DatagramPacket previously created and converts to Request format.
+	 * Checks that all conversions are working properly.
+	 * 
+	 * Input: None
+	 * Output: None
+	 */
 	public void changeFormat(){
 		//Test building request packet from request format
 		task = PacketHelper.buildRequestPacket(request);
@@ -83,6 +104,13 @@ public class PackageHelperTest {
 	}
 
 	@After
+	/*
+     * tearDown() cleans up after testing has been completed. 
+     * Removes all created files made for the test.
+     * 
+     * Input: None
+     * Output: None
+     */
 	public void tearDown() {
 		//delete files made for PackageHelperTest.java
 		for (File f: TestFolder.listFiles()) {

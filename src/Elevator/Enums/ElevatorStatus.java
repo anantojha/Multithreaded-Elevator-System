@@ -16,9 +16,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = IDLE;
-			printUpdate(nextState);
-			return nextState;
+			return IDLE;
 		}
 	},
 	/*
@@ -32,9 +30,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState(boolean isFault) {
-			ElevatorStatus nextState = isFault ? FAULT_DETECTED : RUNNING;
-			printUpdate(nextState);
-			return nextState;
+			return isFault ? FAULT_DETECTED : RUNNING;
 		}
 	},
 	/*
@@ -49,9 +45,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = ARRIVED;
-			printUpdate(nextState);
-			return nextState;
+			return ARRIVED;
 		}
 	},
 	/*
@@ -66,9 +60,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = OPEN_DOOR;
-			printUpdate(nextState);
-			return nextState;
+			return OPEN_DOOR;
 		}
 	},
 
@@ -83,9 +75,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = CLOSE_DOOR;
-			printUpdate(nextState);
-			return nextState;
+			return CLOSE_DOOR;
 		}
 	},
 	/*
@@ -99,9 +89,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState(boolean isDestinationReached) {
-			ElevatorStatus nextState = isDestinationReached ? IDLE : RUNNING;
-			printUpdate(nextState);
-			return nextState;
+			return isDestinationReached ? IDLE : RUNNING;
 		}
 	},
 	/*
@@ -115,9 +103,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = RESETTING;
-			printUpdate(nextState);
-			return nextState;
+			return RESETTING;
 		}
 	},
 	/*
@@ -131,9 +117,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = RESUMING;
-			printUpdate(nextState);
-			return nextState;
+			return RESUMING;
 		}
 	},
 	/*
@@ -147,9 +131,7 @@ public enum ElevatorStatus {
 
 		@Override
 		public ElevatorStatus nextState() {
-			ElevatorStatus nextState = RUNNING;
-			printUpdate(nextState);
-			return nextState;
+			return RUNNING;
 		}
 	},
 	/*
@@ -170,9 +152,5 @@ public enum ElevatorStatus {
 	public ElevatorStatus nextState(boolean condition) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	private static void printUpdate(ElevatorStatus toState) {
-		System.out.println("[ State Machine ]: Updating state to " + toState.toString());
 	}
 }

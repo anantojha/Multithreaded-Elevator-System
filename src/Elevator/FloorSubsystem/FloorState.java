@@ -8,6 +8,7 @@ import Elevator.Global.StateMachine;
  * 
  */
 public class FloorState implements StateMachine {
+	private int floorId;
 	private FloorStatus state;
 	private FloorStatus previousState;
 	/*
@@ -17,7 +18,8 @@ public class FloorState implements StateMachine {
 	 * Output: none
 	 * 
 	 */
-	public FloorState() {
+	public FloorState(int id) {
+		this.floorId = id;
 		this.state = FloorStatus.INITIALIZE;
 		this.previousState = null;
 	}
@@ -31,30 +33,9 @@ public class FloorState implements StateMachine {
 	 */
 	@Override
 	public void updateState() {
-		state = determineNextState();
-	}
-
-	/*
-	 * determineNextState() sets the current state based on prior state.
-	 *
-	 * Input: none
-	 * Output: FloorStatus for the next state
-	 *
-	 */
-	public FloorStatus determineNextState(){
-		this.previousState = state;
-		if (previousState == FloorStatus.INITIALIZE){
-			return FloorStatus.PROCESSING;
-		} else if(previousState == FloorStatus.PROCESSING) {
-			return FloorStatus.WAITING;
-		} else if(previousState == FloorStatus.WAITING) {
-			return FloorStatus.SENDING;
-		} else if(previousState == FloorStatus.SENDING) {
-			return FloorStatus.RECEIVING;
-		} else if(previousState == FloorStatus.RECEIVING) {
-			return FloorStatus.WAITING;
-		}
-		return FloorStatus.ERROR;
+		previousState = state;
+		this.state = state.nextState();
+		System.out.println("[ Floor " + floorId + " state machine ]: Updated state to: " + state);
 	}
 
 	/*
@@ -83,7 +64,6 @@ public class FloorState implements StateMachine {
 
 	@Override
 	public void updateState(boolean condition) {
-		// TODO Auto-generated method stub
-		
+		updateState();
 	}
 }

@@ -127,7 +127,7 @@ public class Floor implements Serializable, Runnable{
         this.myFloor = myFloor;
         this.socket = new DatagramSocket(SystemConfiguration.FLOOR_PORT + myFloor);
         localHostVar = InetAddress.getLocalHost();
-        this.state = new FloorState();
+        this.state = new FloorState(myFloor);
     }
 
 
@@ -165,7 +165,7 @@ public class Floor implements Serializable, Runnable{
      */
     public void readCSV() {
         state.updateState();
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
+      
         String fileToRead = "CSV/FloorCSV/floor.csv";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileToRead))) {
@@ -206,13 +206,12 @@ public class Floor implements Serializable, Runnable{
      */
     public void sendRequestToScheduler(Request r) throws IOException {
         state.updateState();
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
         byte[] packet = PacketHelper.buildRequestPacket(r);
-        System.out.println(Thread.currentThread().getName() + ": sending request: " + r);
-        System.out.println(Thread.currentThread().getName() + ": UDP Packet:" + Arrays.toString(packet));
+        print("sending request: " + r);
+        print("UDP Packet:" + Arrays.toString(packet));
         sendPacket = new DatagramPacket(packet, packet.length, localHostVar, SystemConfiguration.SCHEDULER_FLOOR_PORT);
         socket.send(sendPacket);
-        System.out.println(Thread.currentThread().getName() + ": Packet Sent.");
+        print("Packet Sent.");
     }
 
 
@@ -223,12 +222,11 @@ public class Floor implements Serializable, Runnable{
      * Output: None
      */
     public void receiveResponseFromScheduler() throws IOException {
-        state.updateState();
-        System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
+        state.updateState();  
         byte[] packet = new byte[1];
         sendPacket = new DatagramPacket(packet, packet.length);
         socket.receive(sendPacket);
-        System.out.println(Thread.currentThread().getName() + ": Acknowledgement received: " + Arrays.toString(sendPacket.getData()));
+        print("Acknowledgement received: " + Arrays.toString(sendPacket.getData()));
         System.out.println();
     }
 
@@ -244,7 +242,7 @@ public class Floor implements Serializable, Runnable{
     public void sendReceiveRequest() throws IOException, ClassNotFoundException {
         for (Request r: incomingRequests) {
             state.updateState();
-            System.out.println(Thread.currentThread().getName() + ": updated state: " + state.getCurrentState());
+            
             while(true){
                 if(r.getTime().isBefore(LocalDateTime.now()))
                     break;
@@ -269,4 +267,13 @@ public class Floor implements Serializable, Runnable{
             }
         }
     }
+    
+	/*
+	 * The print() method prints a structured output string to console.
+	 * 
+	 * Input: string (String): the string to be printed Output: None
+	 */
+	private void print(String string) {
+		System.out.println("[ " + Thread.currentThread().getName() + " ]: " + string);
+	}
 }

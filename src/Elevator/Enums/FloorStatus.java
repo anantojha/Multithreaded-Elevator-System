@@ -12,6 +12,11 @@ public enum FloorStatus {
 		public String toString() {
 			return "INITIALIZE";
 		}
+		
+		@Override
+		public FloorStatus nextState() {
+			return PROCESSING;
+		}
 	},
 	/*
 	 * PROCESSING represents the state a floor takes when processing the CSV file of requests.
@@ -19,6 +24,10 @@ public enum FloorStatus {
 	PROCESSING {
 		public String toString() {
 			return "PROCESSING";
+		}
+		@Override
+		public FloorStatus nextState() {
+			return WAITING;
 		}
 	},
 	/*
@@ -28,6 +37,10 @@ public enum FloorStatus {
 		public String toString() {
 			return "SENDING";
 		}
+		@Override
+		public FloorStatus nextState() {
+			return RECEIVING;
+		}
 	},
 	/*
 	 * RECEIVING represents the state a floor takes when receiving a response from the Scheduler.
@@ -35,6 +48,10 @@ public enum FloorStatus {
 	RECEIVING {
 		public String toString() {
 			return "RECEIVING";
+		}
+		@Override
+		public FloorStatus nextState() {
+			return WAITING;
 		}
 	},
 	/*
@@ -44,6 +61,10 @@ public enum FloorStatus {
 		public String toString() {
 			return "WAITING";
 		}
+		@Override
+		public FloorStatus nextState() {
+			return SENDING;
+		}
 	},
 	/*
 	 * ERROR represents the state a floor takes when an exception occurs.
@@ -52,5 +73,10 @@ public enum FloorStatus {
 		public String toString() {
 			return "ERROR";
 		}
+	};
+
+	public FloorStatus nextState() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

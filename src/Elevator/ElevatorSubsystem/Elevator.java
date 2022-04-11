@@ -39,7 +39,7 @@ public class Elevator implements Runnable {
 		this.sourceFloor = 1;
 		this.destinationFloor = 1;
 		this.elevatorContext = new ElevatorContext(initialFloor, null);
-		this.state = new ElevatorState();
+		this.state = new ElevatorState(id);
 		this.jobs = jobs;
 		this.gui = gui;
 	}

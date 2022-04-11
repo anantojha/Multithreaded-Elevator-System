@@ -49,16 +49,19 @@ TransientFaultTest.java: UnitTest for system when transient fault occurs.
 
 Documentation: ./Documentation
 README.txt: Describes files in the project, setup instructions, how to run the program, and each group member's work contribution. 
-Class_Diagram_Iteration4.pdf: The UML class diagram for Iteration 4 of Elevator Project.
 Elevator-StateMachine-Diagram.pdf: The UML statemachine diagram of elevator subsystem.
+Elevator_Class_Diagram.pdf: The UML class diagram for elevator subsystem.
 Floor-StateMachine-Diagram.pdf: The UML statemachine diagram of floor subsystem.
+Floor_Class_Diagram.pdf: The UML class diagram for floor subsystem.
 HardFaultSequenceDiagram.pdf: The UML sequence diagram of system when hard fault occurs.
 HardFaultTimingDiagram.pdf: The UML timing diagram of system when hard fault occurs.
 Scheduler-StateMachine-Diagram.pdf: The UML statemachine diagram of scheduler subsystem.
+Scheduler_Class_Diagram.pdf: The UML class diagram for scheduler subsystem.
 Sequence_Diagram.pdf: The UML sequence diagram of system from Iteration 3.
 TimingDiagram.pdf: The UML timing diagram of system for 1 regular request.
 TransientFaultSequenceDiagram.pdf: The UML sequence diagram of system when transient fault occurs.
 TransientFaultTimingDiagram.pdf: The UML timing diagram of system when transient fault occurs.
+UML_Class_Diagram.pdf: The UML class diagram for entire system.
 --------------------------------------------------------------------------------------------------
 Running the program: To run the program, invoke the main function in the following programs in the order: Scheduler.java -> ElevatorController.java -> Floor.java. Each invocation of a program will have a separate output meaning a total of 3 Console Windows will be needed.
 Using Eclipse, import the project -> Open Scheduler.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.

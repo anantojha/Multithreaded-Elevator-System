@@ -87,10 +87,15 @@ public class ControlPanelGUI extends JFrame {
 			r.setBorder(BorderFactory.createTitledBorder("Elevator " + i + " Requests"));
 			r.setBackground(Color.WHITE);
 			JLabel n = new JLabel();
+			//n.setMinimumSize(1, 1);
+			n.setPreferredSize(new Dimension(1,1));
+			n.setSize(1, 1);
+
 			r.add(n);
 			requestsPanel.add(r);
+
+
 		}
-		
 		
 		// Create GUI Data Table
 		
@@ -129,11 +134,12 @@ public class ControlPanelGUI extends JFrame {
 		frame.add(scrollPane, BorderLayout.CENTER);
 
 		elevatorPanel.add(requestsPanel);
+
 		contentPane.add(elevatorPanel);
 		contentPane.add(scrollPane);
 
 		frame.add(contentPane);
-//		frame.pack();
+		//frame.pack();
 		frame.setVisible(true);
 		
 	}

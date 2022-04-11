@@ -13,6 +13,13 @@ public enum FloorStatus {
 			return "INITIALIZE";
 		}
 		
+		/*
+		 * nextState() moves INITALIZE to PROCESSING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public FloorStatus nextState() {
 			return PROCESSING;
@@ -25,6 +32,14 @@ public enum FloorStatus {
 		public String toString() {
 			return "PROCESSING";
 		}
+		
+		/*
+		 * nextState() moves PROCESSING to WAITING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public FloorStatus nextState() {
 			return WAITING;
@@ -37,6 +52,14 @@ public enum FloorStatus {
 		public String toString() {
 			return "SENDING";
 		}
+		
+		/*
+		 * nextState() moves SENDING to RECEIVING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public FloorStatus nextState() {
 			return RECEIVING;
@@ -49,6 +72,14 @@ public enum FloorStatus {
 		public String toString() {
 			return "RECEIVING";
 		}
+		
+		/*
+		 * nextState() moves RECEIVING to WAITING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public FloorStatus nextState() {
 			return WAITING;
@@ -61,6 +92,14 @@ public enum FloorStatus {
 		public String toString() {
 			return "WAITING";
 		}
+		
+		/*
+		 * nextState() moves WAITING to SENDING
+		 * 
+		 * input: none
+		 * output: ElevatorStatus
+		 * 
+		 */
 		@Override
 		public FloorStatus nextState() {
 			return SENDING;

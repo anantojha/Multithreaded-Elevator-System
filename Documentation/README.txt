@@ -88,7 +88,11 @@ Bonita Hout:
 	
 
 Navaty Khara: 
-	
+	Bug fixes
+	Documentation
+	Implemented table GUI 
+	Implemented fault detection and handling
+	GUI Integration between main and table
 
 Tyler Mak: 
 	Created PackageHelper, UDP, & fault tests

@@ -83,18 +83,16 @@ public class ControlPanelGUI extends JFrame {
 
 		for (int i = 1; i < numElevators + 1; i++) {
 			JPanel r = new JPanel();
-			r.setLayout(new GridLayout(4, 1));
-			r.setBorder(BorderFactory.createTitledBorder("Elevator " + i + " Requests"));
+			r.setLayout(new GridLayout(0, 1));
+			r.setBorder(BorderFactory.createTitledBorder("Elevator " + i + " Requests Queue"));
 			r.setBackground(Color.WHITE);
-			JLabel n = new JLabel();
+			JTextArea n = new JTextArea();
 			//n.setMinimumSize(1, 1);
-			n.setPreferredSize(new Dimension(1,1));
-			n.setSize(1, 1);
+			n.setPreferredSize(new Dimension(0,1));
+			n.setSize(0, 1);
 
-			r.add(n);
+			r.add(new JScrollPane(n));
 			requestsPanel.add(r);
-
-
 		}
 		
 		// Create GUI Data Table
@@ -242,14 +240,16 @@ public class ControlPanelGUI extends JFrame {
 	}
 
 	public void updateElevatorQueue(int id, Queue<Request> requests){
-		String text = "<br>";
+		String text = "";
+		int counter = 1;
 
 		for (Request r: requests) {
-			text = text + r.toRequestDisplayString() + "<br><br>";
+			text = text + counter + ": " + r.toRequestDisplayString() + "\n\n";
+			counter++;
 		}
 
 		if(requestsPanel.getComponent(id-1) != null)
-			((JLabel)((JPanel) requestsPanel.getComponent(id-1)).getComponent(0)).setText("<html>" + text + "</html>");
+			((JTextArea)((JScrollPane)((JPanel) requestsPanel.getComponent(id-1)).getComponent(0)).getViewport().getComponent(0)).setText(text);
 
 		frame.repaint();
 	}

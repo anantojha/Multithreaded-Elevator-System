@@ -78,7 +78,7 @@ public class Floor implements Serializable, Runnable{
             int source;
             int destination;
             while (true){
-                int randSource = random.nextInt(numFloors) + 1;
+                int randSource = random.nextInt(2) + 1;
                 int randDestination = random.nextInt(numFloors) + 1;
                 if (randDestination != randSource){
                     source = randSource;

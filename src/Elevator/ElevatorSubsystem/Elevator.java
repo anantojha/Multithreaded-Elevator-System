@@ -65,6 +65,11 @@ public class Elevator implements Runnable {
 			System.out.println();
 
 			while (jobs.isEmpty()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 
 			Request task = jobs.poll();

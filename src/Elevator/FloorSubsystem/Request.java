@@ -103,7 +103,7 @@ public class Request implements Serializable {
 
 	public String toRequestDisplayString(){
 		return "source: " + sourceFloor + " | " +
-				"direction: " + direction + " | " +
+				"direction: " + direction + " |\n    " +
 				"destination: " + destinationFloor + " | " +
 				"fault: " + fault.toString() + " |";
 	}

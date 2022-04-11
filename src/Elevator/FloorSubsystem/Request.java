@@ -101,6 +101,13 @@ public class Request implements Serializable {
 				"fault: " + fault.toString() + " |";
     }
 
+	/*
+	 * toRequestDisplayString() is a method to create a request string for GUI display.
+	 *
+	 * Input: none
+	 * Output: String
+	 *
+	 */
 	public String toRequestDisplayString(){
 		return "source: " + sourceFloor + " | " +
 				"direction: " + direction + " |\n    " +

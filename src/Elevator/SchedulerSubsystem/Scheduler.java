@@ -15,12 +15,17 @@ public class Scheduler implements Runnable {
 
     DatagramPacket receiveFloorPacket, receiveServerPacket, sendReplyPacket;
     DatagramSocket elevatorSocket, floorSocket;
-    private byte[] acknowledgementSignal = {1};
+    private final byte[] acknowledgementSignal = {SystemConfiguration.ACKNOWLEDGEMENT_SIGNAL};
     private Queue<byte[]> tasks;
     private int lastElevator = 1;
 
-    /**
-     * IntermediateHost Constructor for the class.
+    /*
+     * Scheduler constructor, create blocking queue of incoming and outgoing communication data.
+     * Datagram Sockets for initialized for floor and elevator subsystems. Intermediate host.
+     *
+     * input: none
+     * output: none
+     *
      */
     public Scheduler() {
         try {
@@ -35,6 +40,9 @@ public class Scheduler implements Runnable {
 
     /*
      * The elevatorHandle() method is for handling communication with elevator controller.
+     * Initially the scheduler is waiting for an elevator to send a job request signal. Once
+     * the signal is received, a response packet containing task data is sent from the tasks queue.
+     *
      *
      * Input: none
      * Output: none
@@ -90,10 +98,10 @@ public class Scheduler implements Runnable {
         return temp;
     }
 
-
-
     /*
-     * The floorHandle() method is for handling communication with floors.
+     * The floorHandle() method is for handling communication with floors. Initially the scheduler is
+     * waiting for a floor to send an incoming request. When a request is received the floor is send an
+     * acknowledgement signal.
      *
      * Input: none
      * Output: none
@@ -156,6 +164,12 @@ public class Scheduler implements Runnable {
         }
     }
 
+    /*
+     * main() function to start the scheduler. Run First.
+     *
+     * Input: String args[]
+     * Output: Queue of tasks
+     */
     public static void main(String args[]) throws InterruptedException {
         Scheduler c = new Scheduler();
         Thread client = new Thread(c, "Client Thread");

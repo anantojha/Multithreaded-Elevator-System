@@ -210,7 +210,7 @@ public class ControlPanelGUI extends JFrame {
 		table.setModel(tm);
 	}
 
-	public void updateData(int id, String state, String direction, Integer current, Integer source, Integer destination) {
+	public void updateTableData(int id, String state, String direction, Integer current, Integer source, Integer destination) {
 		
 		ev_row.put(id, new Object[] { id, state, direction, current, source, destination });
 		

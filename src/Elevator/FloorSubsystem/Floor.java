@@ -61,8 +61,9 @@ public class Floor implements Serializable, Runnable{
 
 
     /*
-     * createFloorCSV(int floors) creates a csv file for some number of floors specified with the following structure:
-     * [Time, floor, floor button, car button]
+     * createFloorCSV() creates a csv file for some number of floors specified with the following structure:
+     * [Timestamp, source-floor, direction, destination-floor, fault-flag]
+     * Input file is created in the provided folder path
      *
      * Input: 
      * floor(int) : The floor request(s) will be generated for
@@ -113,13 +114,11 @@ public class Floor implements Serializable, Runnable{
         csv.close();
     }
 
-
     /*
-     * A constructor for the Floor class. The constructor initializes the shared data structure and sets what number of floor
-     * the thread is.
+     * A constructor for the Floor class. The constructor initializes floors UDP socket.
      *
      * Input: 
-     * myFloor(int): The floor the thread will represent as (1-10).
+     * myFloor(int): The floor the thread will represent as (FLOOR_PORT + FloorNumber).
      * 
      * Output: none
      *
@@ -134,8 +133,8 @@ public class Floor implements Serializable, Runnable{
 
     /*
      * The run() method is the primary sequence that is run when a thread is active. In this case, the Floor class will
-     * attempt to process all local csv files into incoming requests. These requests are then later sent to the Scheduler
-     * if the given conditions are correct (time).
+     * attempt to process the generated csv input file into incoming requests (list). These requests are then sent to
+     * the Scheduler if the given conditions are correct (RequestTimestamp <= CurrentSystemTimestamp).
      *
      * Input: none
      * Output: none
@@ -235,9 +234,9 @@ public class Floor implements Serializable, Runnable{
 
 
     /*
-     * The sendReceiveRequest() method iterates through ArrayList of requests gotten from csv file earlier read from
-     * and sends the request to the scheduler when the incoming request time is equal to the current time. Once
-     * request is send, an acknowledgement response is received from scheduler.
+     * The sendReceiveRequest() method iterates through ArrayList of requests read from the input file
+     * and sends the request to the scheduler when the incoming request time is equal to or past the current time.
+     * Once request is send, an acknowledgement response is received from scheduler.
      *
      * Input: None
      * Output: None

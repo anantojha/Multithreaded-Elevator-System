@@ -25,10 +25,11 @@ public class ElevatorController implements Runnable {
     private static ControlPanelGUI gui;
     byte[] taskRequest = {95, 1, 95};
     Queue<Request> jobs;
+
     /*
-     * main(String [] args) asks user for elevator id and creates and starts elevator thread.
+     * main(String [] args) initializes the GUI, start the elevator controller and elevator threads
      *
-     * Input: none
+     * Input: String[] args
      * Output: none
      *
      */
@@ -51,31 +52,16 @@ public class ElevatorController implements Runnable {
     }
 
     /*
-     * The askElevatorId() method gets and returns user input for an elevator id.
+     * A constructor for the ElevatorController class initializes UDP socket for communication with scheduler.
      *
-     * Input: none
-     * Output: Returns user input elevator id as String
+     * All elevators start at Floor 1
      *
-     */
-//    public static String askElevatorId() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter Elevator Id: ");
-//        String name = scanner.nextLine();
-//        return name;
-//    }
-
-    /*
-     * A constructor for the Elevator class. The constructor initializes the shared data structure and sets the id
-     * of the Elevator. Each elevator starts from floor 1.
-     *
-     * Input:
-     * id (String): The elevator id previously entered from askElevatorId() method
+     * Input: int id, Queue<Request> jobs
      *
      * Output: none
      *
      */
     public ElevatorController(int id, Queue<Request> jobs) throws IOException {
-        //All elevators start at Floor 1
         this.Id = id;
         this.socket = new DatagramSocket(SystemConfiguration.ELEVATOR_PORT + id);
         socket.setSoTimeout(3000);
@@ -83,6 +69,11 @@ public class ElevatorController implements Runnable {
         this.jobs = jobs;
     }
 
+    /*
+     * Run() for Elevator controller. Handles sending job request signal and receiving task data.
+     * When a task is received, its added to the tasks queue.
+     *
+     */
     @Override
     public void run() {
 
@@ -109,7 +100,7 @@ public class ElevatorController implements Runnable {
     }
 
     /*
-     * The receiveSchedulerTaskPacket() method is for send a request to the scheduler for a task.
+     * The receiveSchedulerTaskPacket() method is for sending a job request to the scheduler for a task.
      *
      * Input: none
      * Output: none

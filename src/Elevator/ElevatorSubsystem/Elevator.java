@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 /*
- * The Elevator class represents the consumer side of the algorithm. It is responsible for accessing the requests sent to the scheduler
- * and fulfilling them given that the correct conditions are met.
+ * The Elevator class is responsible for accessing the tasks queue and servicing outstanding requests.
  * 
  */
 public class Elevator implements Runnable {
@@ -25,9 +24,7 @@ public class Elevator implements Runnable {
 	Queue<Request> jobs;
 
 	/*
-	 * A constructor for the Elevator class. The constructor initializes the shared
-	 * data structure and sets the id of the Elevator. Each elevator starts from
-	 * floor 1.
+	 * A constructor for the Elevator class. Initializes the GUI and state.
 	 *
 	 * Input: id (String): The elevator id previously entered from askElevatorId()
 	 * method
@@ -49,11 +46,11 @@ public class Elevator implements Runnable {
 	}
 
 	/*
-	 * The run() method is the primary sequence that is run when a thread is active.
-	 * In this case, the Elevator class will attempt to send requests to the
-	 * scheduler for a Task and then receive a response from the scheduler.
+	 * The run() method will attempt to access the tasks queue and poll() a request (if one is available). If a
+	 * request is available, the request will be serviced by the elevator.
 	 *
-	 * Input: none Output: none
+	 * Input: none
+	 * Output: none
 	 *
 	 */
 	@Override
@@ -78,13 +75,9 @@ public class Elevator implements Runnable {
 	}
 
 	/*
-	 * move(int targetFloor) method moves elevator from currentFloor to the inputed
-	 * floor
+	 * move() method simulates the movement of the elevator from currentFloor to the target floor
 	 * 
-	 * Input: floor int (serviceRequest.getDestinationFloor() or
-	 * serviceRequest.getSourceFloor()): Floor number that the elevator will moving
-	 * to.
-	 * 
+	 * Input: int targetFloor
 	 * Output: none
 	 * 
 	 */
@@ -118,7 +111,7 @@ public class Elevator implements Runnable {
 				Thread.sleep(1000);
 				gui.updateFloor(id, elevatorContext.getCurrentFloor());
 				gui.updateElevatorQueue(id, jobs);
-				gui.updateData(id, 
+				gui.updateTableData(id,
 						state.getCurrentState(), 
 						elevatorContext.getDirection().toString(), 
 						elevatorContext.getCurrentFloor(), 
@@ -133,6 +126,13 @@ public class Elevator implements Runnable {
 		}
 	}
 
+	/*
+	 * faultDetected() method simulates the detection of a fault which is then followed a resolution (resetting)
+	 *
+	 * Input: Request serviceRequest
+	 * Output: none
+	 *
+	 */
 	public void faultDetected(Request serviceRequest) {
 
 		String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
@@ -165,14 +165,13 @@ public class Elevator implements Runnable {
 			}
 
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	/*
-	 * service(Request serviceRequest) method services the request received from the
-	 * socket
+	 * service() method services a request. Logic for each state an elevator can be in when completing a task.
+	 * Updates UI as the state transitions from one to another.
 	 * 
 	 * Input: serviceRequest(Request): Request that the elevator will be completing.
 	 * 
@@ -290,7 +289,7 @@ public class Elevator implements Runnable {
 				}
 
 				gui.updateElevatorQueue(id, jobs);
-				gui.updateData(id, 
+				gui.updateTableData(id,
 						state.getCurrentState(), 
 						"", 
 						elevatorContext.getCurrentFloor(), 
@@ -313,17 +312,11 @@ public class Elevator implements Runnable {
 		return jobs;
 	}
 	
-	public int getId() {
-		return this.id;
-	}
-	
 	/*
 	 * The print() method prints a structured output string to console.
 	 * 
 	 * Input: string (String): the string to be printed Output: None
 	 */
-	
-
 	private void print(String string) {
 		System.out.println("[ " + Thread.currentThread().getName() + " ]: " + string);
 	}

@@ -12,14 +12,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
+/*
+ * Helper class for data serialization. Used for UDP communication between subsystems.
+ *
+ */
 public class PacketHelper {
+
+
+    /*
+     * Serialize a request object into a byte array. Data is delimited with dashes.
+     *
+     * Serialized data Format:
+     * [dash-delimiter][requestFloor][dash-delimiter][Time][Dash-Delimiter][Direction][Dash-Delimiter][SourceFloor][Dash-Delimiter][DestinationFloor][Dash-Delimiter][FaultFlag][Dash-Delimiter]
+     *
+     * input: Request
+     * output: byte[]
+     *
+     */
     public static byte[] buildRequestPacket(Request request){
         byte[] packet;
         ByteArrayOutputStream buildPacket = new ByteArrayOutputStream();
 
-        // Packet Format:
-        // 18:20:59.090,1,UP,4
-        // [dash-delimiter][requestFloor][dash-delimiter][Time][Dash-Delimiter][Direction][Dash-Delimiter][SourceFloor][Dash-Delimiter][DestinationFloor][Dash-Delimiter][FaultFlag][Dash-Delimiter]
         try {
             buildPacket.write('_');
             buildPacket.write(SubSystemMapping.FLOOR.subSystemId());
@@ -42,6 +56,13 @@ public class PacketHelper {
         return packet;
     }
 
+    /*
+     * Converts a byte array (serialized) back to a request.
+     *
+     * input: byte[]
+     * output: Request
+     *
+     */
     public static Request convertBytesToRequest(byte[] data){
 
         List<Integer> delimitIndices = new ArrayList<>();
@@ -62,6 +83,13 @@ public class PacketHelper {
         return request;
     }
 
+    /*
+     * Converts a DatagramPacket's data (serialized) back to a request.
+     *
+     * input: DatagramPacket
+     * output: Request
+     *
+     */
     public static Request convertPacketToRequest(DatagramPacket packet){
         // [95, 1, 95, 50, 48, 50, 50, 45, 48, 51, 45, 50, 55, 84, 48, 50, 58, 51, 51, 58, 52, 57, 46, 50, 55, 53, 95, 1, 95, 3, 95, 4, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         byte[] data = packet.getData();

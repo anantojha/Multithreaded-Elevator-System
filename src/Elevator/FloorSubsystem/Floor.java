@@ -142,9 +142,8 @@ public class Floor implements Serializable, Runnable {
 		try {
 			state.updateState();
 
-			if (state.getCurrentState() == FloorStatus.PROCESSING.toString()) {
-				readCSV();
-			}
+
+			readCSV();
 			sendReceiveRequest();
 
 			socket.close();
@@ -239,21 +238,17 @@ public class Floor implements Serializable, Runnable {
 	 */
 	public void sendReceiveRequest() throws IOException, ClassNotFoundException {
 		for (Request r : incomingRequests) {
-			boolean receivedResponse = false;
+
 			state.updateState();
 
-			while (!receivedResponse) {
+			
 
-				switch (state.getCurrentState()) {
-
-				case "WAITING":
 					while (true) {
 						if (r.getTime().isBefore(LocalDateTime.now()))
 							break;
 					}
-					state.updateState();
-					break;
-				case "SENDING":
+
+
 					try {
 						sendRequestToScheduler(r);
 						state.updateState();
@@ -261,24 +256,21 @@ public class Floor implements Serializable, Runnable {
 						e.printStackTrace();
 						System.exit(1);
 					}
-					break;
-				case "RECEIVING":
+
 					try {
 						receiveResponseFromScheduler();
-						receivedResponse = true;
+
 					} catch (SocketTimeoutException e) {
 						System.out.println("Client: Receive acknowledgement timed out.");
 						System.out.println();
-						receivedResponse = true;
-						break;
+
+						continue;
 					} catch (IOException e) {
 						e.printStackTrace();
 						System.exit(1);
 					}
-					break;
-				}
-			}
 		}
+
 	}
 
 	/*

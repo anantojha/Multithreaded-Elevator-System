@@ -48,14 +48,15 @@ public class Floor implements Serializable, Runnable{
 
 
     /*
-     * randomTimeDiff() returns a random long value in the range of 5 to 54
-     * 
+     * randomTimeDiff() returns a random long value which is the time interval between
+     * incoming requests.
+     *
      * Input: none
      * Output: none
      * 
      */
     public static long randomTimeDiff(){
-        return random.nextInt(3) + 5;
+        return random.nextInt(3) + SystemConfiguration.FLOOR_REQUEST_TIME;
     }
 
 

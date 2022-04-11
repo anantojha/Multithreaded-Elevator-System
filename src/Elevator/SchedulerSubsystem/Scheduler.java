@@ -33,14 +33,8 @@ public class Scheduler implements Runnable {
         }
     }
 
-
-    private int getEstimateTripTime(Request r){
-        int estimatedTripTime = 100000;
-        return estimatedTripTime;
-    }
-
     /*
-     * The elevatorHandle() method is for handling communication with elevators.
+     * The elevatorHandle() method is for handling communication with elevator controller.
      *
      * Input: none
      * Output: none
@@ -52,39 +46,42 @@ public class Scheduler implements Runnable {
         receiveServerPacket = new DatagramPacket(data, data.length);
         int estimatedTime = 100000;
 
+        System.out.println("Scheduler: Waiting for Elevator Request...\n");
+        try {
+            elevatorSocket.receive(receiveServerPacket);
+        } catch (SocketTimeoutException e) {
+            System.out.println("Scheduler: Fault detected.");
+            System.exit(1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-            System.out.println("Scheduler: Waiting for Elevator Request...\n");
+        if(!tasks.isEmpty()){
             try {
-                elevatorSocket.receive(receiveServerPacket);
-            } catch (SocketTimeoutException e) {
-                System.out.println("Scheduler: Fault detected.");
-                System.exit(1);
+                byte[] taskToSend = tasks.poll();
+                int elevatorChoice = SystemConfiguration.ELEVATOR_PORT + getNextElevator();
+                sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
+                        InetAddress.getLocalHost(), elevatorChoice);
+                System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + InetAddress.getLocalHost() + ":" + elevatorChoice +")...\n");
+                elevatorSocket.send(sendReplyPacket);
+                elevatorSocket.setSoTimeout(estimatedTime);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-                System.exit(1);
             }
-
-            if(!tasks.isEmpty()){
-                try {
-                    byte[] taskToSend = tasks.poll();
-                    int elevatorChoice = SystemConfiguration.ELEVATOR_PORT + getNextElevator();
-                    sendReplyPacket = new DatagramPacket(taskToSend, taskToSend.length,
-                            InetAddress.getLocalHost(), elevatorChoice);
-                    System.out.println("Scheduler: sending task ["+ PacketHelper.convertPacketToRequest(sendReplyPacket) +"] to Elevator  (" + InetAddress.getLocalHost() + ":" + elevatorChoice +")...\n");
-                    elevatorSocket.send(sendReplyPacket);
-                    elevatorSocket.setSoTimeout(estimatedTime);
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
+        }
     }
 
-
+    /*
+     * The getNextElevator() method is routing udp to the next elevator.
+     *
+     * Input: none
+     * Output: none
+     *
+     */
     public int getNextElevator() {
-
         int temp = lastElevator;
         lastElevator++;
         if(temp == SystemConfiguration.ELEVATORS){

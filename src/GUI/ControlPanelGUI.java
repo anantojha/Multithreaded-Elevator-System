@@ -229,7 +229,7 @@ public class ControlPanelGUI extends JFrame {
 	public void initialize(int id, String state) {
 		ev_row.put(id, new Object[] { id, state, "", 1, null, null });
 		data[id - 1] = ev_row.get(id);
-		tm = new DefaultTableModel(data, columnNames);// THIS IS THE ISSUE
+		tm = new DefaultTableModel(data, columnNames);
 		table.setModel(tm);
 	}
 

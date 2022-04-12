@@ -4,6 +4,9 @@ Group: L2-G6
 Members: Lasitha Amuwala Meesthrige, Bonita Hout, Navaty Khara, Tyler Mak, Anant Ojha
 Date: April 11th, 2022
 --------------------------------------------------------------------------------------------------
+Demo Link:	 https://youtu.be/w3qq8DSZHgA 
+Github Link:	 https://github.com/anantojha/SYSC3303-Elevator-Project 
+
 Files in this project:
 elevator_close.jpeg: Image of closed doors elevator for GUI
 elevator_open.jpeg: Image of open doors elevator for GUI
@@ -47,21 +50,30 @@ SchedulerUDPTest.java: UnitTest for scheduler UDP connections with elevator and 
 SystemTest.java: UnitTest for entire system for 4 elevators and 22 floors.
 TransientFaultTest.java: UnitTest for system when transient fault occurs.
 
-Documentation: ./Documentation
+Documentation: 
 README.txt: Describes files in the project, setup instructions, how to run the program, and each group member's work contribution. 
-Elevator-StateMachine-Diagram.pdf: The UML statemachine diagram of elevator subsystem.
+
+Documentation/Class-Diagrams:
 Elevator_Class_Diagram.pdf: The UML class diagram for elevator subsystem.
-Floor-StateMachine-Diagram.pdf: The UML statemachine diagram of floor subsystem.
 Floor_Class_Diagram.pdf: The UML class diagram for floor subsystem.
-HardFaultSequenceDiagram.pdf: The UML sequence diagram of system when hard fault occurs.
-HardFaultTimingDiagram.pdf: The UML timing diagram of system when hard fault occurs.
-Scheduler-StateMachine-Diagram.pdf: The UML statemachine diagram of scheduler subsystem.
 Scheduler_Class_Diagram.pdf: The UML class diagram for scheduler subsystem.
-Sequence_Diagram.pdf: The UML sequence diagram of system from Iteration 3.
-TimingDiagram.pdf: The UML timing diagram of system for 1 regular request.
-TransientFaultSequenceDiagram.pdf: The UML sequence diagram of system when transient fault occurs.
-TransientFaultTimingDiagram.pdf: The UML timing diagram of system when transient fault occurs.
 UML_Class_Diagram.pdf: The UML class diagram for entire system.
+
+Documentation/Sequence-Diagrams:
+HardFaultSequenceDiagram.pdf: The UML sequence diagram of system when hard fault occurs.
+Sequence_Diagram.pdf: The UML sequence diagram of system for entire system.
+TransientFaultSequenceDiagram.pdf: The UML sequence diagram of system when transient fault occurs.
+
+Documentation/State-Diagrams:
+Elevator-StateMachine-Diagram.pdf: The UML statemachine diagram of elevator subsystem.
+Floor-StateMachine-Diagram.pdf: The UML statemachine diagram of floor subsystem.
+Scheduler-StateMachine-Diagram.pdf: The UML statemachine diagram of scheduler subsystem.
+
+Documentation/Timing-Diagrams:
+HardFaultTimingDiagram.pdf: The UML timing diagram of system when hard fault occurs.
+TimingDiagram.pdf: The UML timing diagram of system for 1 regular request.
+TransientFaultTimingDiagram.pdf: The UML timing diagram of system when transient fault occurs.
+
 --------------------------------------------------------------------------------------------------
 Running the program: To run the program, invoke the main function in the following programs in the order: Scheduler.java -> ElevatorController.java -> Floor.java. Each invocation of a program will have a separate output meaning a total of 3 Console Windows will be needed.
 Using Eclipse, import the project -> Open Scheduler.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.

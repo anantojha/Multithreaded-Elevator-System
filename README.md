@@ -9,3 +9,8 @@
   Khara, Navaty <br>
   Mak, Tyler    <br>
   Ojha, Anant   <br>
+  
+  <br><br>
+Demo Link:	   https://youtu.be/w3qq8DSZHgA 
+<br>
+Github Link:	 https://github.com/anantojha/SYSC3303-Elevator-Project 

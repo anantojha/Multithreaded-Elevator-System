@@ -16,11 +16,9 @@ public class ElevatorState implements StateMachine {
 
 	private int elevatorId;
 	private ElevatorStatus state;
-	private ElevatorStatus previousState;
 
 	public ElevatorState(int id) {
 		this.elevatorId = id;
-		this.previousState = null;
 		this.state = ElevatorStatus.INITIALIZE;
 	}
 
@@ -29,7 +27,6 @@ public class ElevatorState implements StateMachine {
 	 */
 	@Override
 	public void updateState() {
-		previousState = state;
 		this.state = state.nextState();
 		System.out.println("[ Elevator " + elevatorId + " State Machine ]: Updating state to " + state.toString());
 	}
@@ -39,7 +36,6 @@ public class ElevatorState implements StateMachine {
 	 */
 	@Override
 	public void updateState(boolean condition) {
-		previousState = state;
 		this.state = state.nextState(condition);
 	}
 
@@ -51,14 +47,5 @@ public class ElevatorState implements StateMachine {
 	@Override
 	public String getCurrentState() {
 		return state.toString();
-	}
-
-	/*
-	 * Returns the previous state
-	 * Output (String) previous state
-	 */
-	@Override
-	public String getPreviousState() {
-		return previousState.toString();
 	}
 }

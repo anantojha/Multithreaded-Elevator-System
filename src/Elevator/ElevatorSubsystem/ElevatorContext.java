@@ -1,7 +1,9 @@
 package Elevator.ElevatorSubsystem;
 
 import Elevator.Enums.Direction;
-
+/*
+ * The ElevatorContext represents the contextual state of the Elevator relative to the Floors.
+ */
 public class ElevatorContext {
     private Integer currentFloor;
     private Direction direction;

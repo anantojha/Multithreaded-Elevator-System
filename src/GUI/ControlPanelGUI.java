@@ -28,8 +28,8 @@ public class ControlPanelGUI extends JFrame {
 	private JPanel contentPane;
 	private JPanel elevatorPanel;
 	private JPanel requestsPanel;
-	private int[] pos = { 785, 750, 715, 680, 645, 610, 575, 540, 505, 470, 435, 400, 365, 330, 295, 260, 225, 190, 155, 120,
-			85, 50 };
+	private int[] pos = { 680, 650, 620, 590, 560, 530, 500, 470, 440, 410, 380, 350, 320, 290, 260, 230, 200, 170, 140, 110,
+			80, 50 };
 	private ImageIcon closeElevatorImage;
 	private ImageIcon openElevatorImage;
 
@@ -126,13 +126,16 @@ public class ControlPanelGUI extends JFrame {
 		table.getTableHeader().setFocusable(false);
 		table.setCellSelectionEnabled(false);
 		table.setEnabled(false);
-		table.setPreferredScrollableViewportSize(new Dimension(100, 100));
+		table.setPreferredScrollableViewportSize(new Dimension(50, 100));
+		
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setMaximumSize(new Dimension(9000, 9000));
 		
 		// Data table 
 		JPanel dataTable = new JPanel();
 		dataTable.setLayout(new BoxLayout(dataTable, BoxLayout.Y_AXIS));
 		dataTable.setBorder(BorderFactory.createTitledBorder("Data Table"));
-		dataTable.add(table);
+		dataTable.add(scrollPane);
 		
 		// Add to the frame
 		elevatorPanel.add(requestsPanel);

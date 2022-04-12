@@ -99,7 +99,8 @@ Lasitha Amuwala Meesthrige:
 	Updates state machine diagrams
 
 Bonita Hout:
-	
+	UML Diagram
+	Final Report
 
 Navaty Khara: 
 	Bug fixes

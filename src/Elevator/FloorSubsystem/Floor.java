@@ -1,6 +1,7 @@
 package Elevator.FloorSubsystem;
 
 import Elevator.Enums.Direction;
+import Elevator.Enums.FloorStatus;
 import Elevator.Global.PacketHelper;
 import Elevator.Global.SystemConfiguration;
 
@@ -140,10 +141,12 @@ public class Floor implements Serializable, Runnable {
 	@Override
 	public void run() {
 		try {
+			// Update state from initial state
 			state.updateState();
 
-
-			readCSV();
+			if (state.getCurrentState() == FloorStatus.PROCESSING.toString()) {
+				readCSV();
+			}
 			sendReceiveRequest();
 
 			socket.close();
@@ -204,13 +207,19 @@ public class Floor implements Serializable, Runnable {
 	 * Input: Request Output: None
 	 */
 	public void sendRequestToScheduler(Request r) throws IOException {
-		// state.updateState();
-		byte[] packet = PacketHelper.buildRequestPacket(r);
-		print("sending request: " + r);
-		print("UDP Packet:" + Arrays.toString(packet));
-		sendPacket = new DatagramPacket(packet, packet.length, localHostVar, SystemConfiguration.SCHEDULER_FLOOR_PORT);
-		socket.send(sendPacket);
-		print("Packet Sent.");
+		try {
+			byte[] packet = PacketHelper.buildRequestPacket(r);
+			print("sending request: " + r);
+			print("UDP Packet:" + Arrays.toString(packet));
+			sendPacket = new DatagramPacket(packet, packet.length, localHostVar,
+					SystemConfiguration.SCHEDULER_FLOOR_PORT);
+			socket.send(sendPacket);
+			print("Packet Sent.");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	/*
@@ -220,12 +229,20 @@ public class Floor implements Serializable, Runnable {
 	 * Input: None Output: None
 	 */
 	public void receiveResponseFromScheduler() throws IOException {
-		// state.updateState();
-		byte[] packet = new byte[1];
-		sendPacket = new DatagramPacket(packet, packet.length);
-		socket.receive(sendPacket);
-		print("Acknowledgement received: " + Arrays.toString(sendPacket.getData()));
-		System.out.println();
+		try {
+			byte[] packet = new byte[1];
+			sendPacket = new DatagramPacket(packet, packet.length);
+			socket.receive(sendPacket);
+			print("Acknowledgement received: " + Arrays.toString(sendPacket.getData()));
+			System.out.println();
+
+		} catch (SocketTimeoutException e) {
+			System.out.println("Client: Receive acknowledgement timed out.");
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	/*
@@ -238,37 +255,32 @@ public class Floor implements Serializable, Runnable {
 	 */
 	public void sendReceiveRequest() throws IOException, ClassNotFoundException {
 		for (Request r : incomingRequests) {
-
 			state.updateState();
 
-			
+			boolean responseRecieved = false;
 
+			while (!responseRecieved) {
+				switch (state.getCurrentState()) {
+				// Handle WAITING state
+				case "WAITING":
 					while (true) {
 						if (r.getTime().isBefore(LocalDateTime.now()))
 							break;
 					}
-
-
-					try {
-						sendRequestToScheduler(r);
-						state.updateState();
-					} catch (IOException e) {
-						e.printStackTrace();
-						System.exit(1);
-					}
-
-					try {
-						receiveResponseFromScheduler();
-
-					} catch (SocketTimeoutException e) {
-						System.out.println("Client: Receive acknowledgement timed out.");
-						System.out.println();
-
-						continue;
-					} catch (IOException e) {
-						e.printStackTrace();
-						System.exit(1);
-					}
+					state.updateState();
+					break;
+				// Handle SENDING state
+				case "SENDING":
+					sendRequestToScheduler(r);
+					state.updateState();
+					break;
+				//handle RECEIVING state
+				case "RECEIVING":
+					responseRecieved = true;
+					receiveResponseFromScheduler();
+					break;
+				}
+			}
 		}
 
 	}

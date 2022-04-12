@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Random;
 
+// make GUI window full screen when running test
+
 /*
  * FloorUDPTest tests the Floor's UDP connection with the scheduler.
  * The test manually creates an input file with 1 request for the floor to send to the scheduler.

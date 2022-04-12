@@ -80,7 +80,7 @@ Using Eclipse, import the project -> Open Scheduler.java -> Right Click in Code 
 Output will be shown on the Console Window, to ensure the Console Window stays focused on Scheduler.java click on 'Pin Console'.
 Create a new Console Window by: Select 'Open Console' -> Select '1 New Console View'.
 Open ElevatorController.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
-Output will be shown on the 2nd Console Window and the GUI, to ensure the 2nd Console Window stays focused on ElevatorController.java click on 'Pin Console'.
+Output will be shown on the 2nd Console Window and the GUI (make full screen), to ensure the 2nd Console Window stays focused on ElevatorController.java click on 'Pin Console'.
 Create a new Console Window by: Select 'Open Console' -> Select '1 New Console View'.
 Open Floor.java -> Right Click in Code Window -> Select 'Run as' -> Select 'Java Application'.
 Output will be shown on the 3rd Console Window, to ensure the 3rd Console Window stays focused on Floor.java click on 'Pin Console'.

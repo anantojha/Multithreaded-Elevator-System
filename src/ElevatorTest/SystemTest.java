@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 
+// make GUI window full screen when running test
+
 /*
  * SystemTest tests the entire system with 4 elevators and 22 floors. 
  * The test creates an input file with 15 requests and checks the system properly services all tasks.

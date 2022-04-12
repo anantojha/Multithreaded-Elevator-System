@@ -16,6 +16,9 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.SchedulerSubsystem.Scheduler;
 import GUI.ControlPanelGUI;
 
+
+// make GUI window full screen when running test
+
 /*
  * SchedulerUDPTest tests the Scheduler's UDP connections with the elevators and floors.
  * The test creates a DatagramSocket to imitate the floor and uses it to send a set task to the scheduler.

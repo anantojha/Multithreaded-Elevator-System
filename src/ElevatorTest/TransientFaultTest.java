@@ -18,6 +18,8 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 import GUI.ControlPanelGUI;
 
+// make GUI window full screen when running test
+
 /*
  * TransientFaultTest tests how the system will react when a transient fault occurs.
  * The test creates DatagramSocket to imitate scheduler and 2 DatagramPackets (1 normal request, 1 with a transient fault)

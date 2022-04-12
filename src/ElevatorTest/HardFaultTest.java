@@ -18,6 +18,8 @@ import Elevator.FloorSubsystem.Request;
 import Elevator.Global.PacketHelper;
 import GUI.ControlPanelGUI;
 
+// make GUI window full screen when running test
+
 /*
  * HardFaultTest tests how the system will react when a hard fault occurs. 
  * The test creates a DatagramSocket to imitate the scheduler and 2 DatagramPackets (1 normal request, 1 with hard fault).

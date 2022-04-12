@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-/**
- * @author Lasitha
- *
+/*
+ * The ControlPanelGUI is responsible for creating the GUI window and updating it.
+ * 
  */
 public class ControlPanelGUI extends JFrame {
 
@@ -43,6 +43,12 @@ public class ControlPanelGUI extends JFrame {
 	private String[] columnNames;
 	JTable table;
 
+
+	/*
+	 * ControlPanelGUI(int) is the constructor for the ControlPanelGui class responsible for intializing
+	 * the proper variables to be used in the GUI construction.
+	 * 
+	 */
 	public ControlPanelGUI(int numElevators) throws InterruptedException {
 		
 		// Create GUI frame
@@ -57,8 +63,8 @@ public class ControlPanelGUI extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		contentPane.setBackground(Color.WHITE);
-		// contentPane.setBorder(BorderFactory.createEmptyBorder(0,0,800,550));
-		// contentPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		
+		//Data structure of the GUI
 
 		statusLabelList = new HashMap<Integer, JLabel>();
 		floorLabelList = new HashMap<Integer, JLabel>();
@@ -67,11 +73,13 @@ public class ControlPanelGUI extends JFrame {
 		elevatorPanel = new JPanel();
 		elevatorPanel.setLayout(new BoxLayout(elevatorPanel, BoxLayout.X_AXIS));
 
+		//Add the elevator graphics
 		closeElevatorImage = new ImageIcon("elevator_close.jpeg");
 		openElevatorImage = new ImageIcon("elevator_open.jpeg");
 		closeElevatorImage = new ImageIcon(closeElevatorImage.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
 		openElevatorImage = new ImageIcon(openElevatorImage.getImage().getScaledInstance(75, 75, Image.SCALE_SMOOTH));
 
+		//Add the elevator panes based on the number of elevator threads
 		for (int i = 1; i < numElevators + 1; i++) {
 			addElevatorPanel(i);
 		}
@@ -80,6 +88,7 @@ public class ControlPanelGUI extends JFrame {
 		requestsPanel.setLayout(new BoxLayout(requestsPanel, BoxLayout.Y_AXIS));
 		requestsPanel.setBackground(Color.WHITE);
 
+		//Add elevator request queue panels
 
 		for (int i = 1; i < numElevators + 1; i++) {
 			JPanel r = new JPanel();
@@ -117,6 +126,7 @@ public class ControlPanelGUI extends JFrame {
             };
    
         };
+        //Disable user interaction with the table
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setFocusable(false);
         table.setCellSelectionEnabled(false);
@@ -126,14 +136,12 @@ public class ControlPanelGUI extends JFrame {
 		dataTable.setBorder(BorderFactory.createTitledBorder("Data Table"));
 		dataTable.setSize(100, 100);
 		
-		//table.setFillsViewportHeight(true);
-		table.setPreferredScrollableViewportSize(new Dimension(100, 100));
+				table.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setMaximumSize(new Dimension(9000, 9000));
 		
-		//frame.add(scrollPane, BorderLayout.CENTER);
-		
+		//Add to the frame
 
 		elevatorPanel.add(requestsPanel);
 
@@ -141,11 +149,17 @@ public class ControlPanelGUI extends JFrame {
 		contentPane.add(scrollPane);
 
 		frame.add(contentPane);
-		//frame.pack();
 		frame.setVisible(true);
 		
 	}
 
+	/*
+	 * addElevatorPanel(int) adds an elevator panel to the GUI
+	 * 
+	 * input: id
+	 * output: none
+	 * 
+	 */
 	public void addElevatorPanel(int id) {
 		JPanel j = new JPanel();
 		j.setLayout(null);
@@ -182,12 +196,14 @@ public class ControlPanelGUI extends JFrame {
 		j.add(label);
 		elevatorPanel.add(j);
 	}
-
-
-	public static void main(String[] args) throws InterruptedException {
-		new ControlPanelGUI(SystemConfiguration.ELEVATORS);
-	}
-
+	
+	/*
+	 * updateFloor(int, int) updates the floors in the GUI and paints it onto the screen
+	 * 
+	 * input: int, int
+	 * output: none
+	 * 
+	 */
 	public void updateFloor(int id, int floor) {
 		floorLabelList.get(id).setText("Floor: " + floor);
 		JLabel doorLabel = doorLabelList.get(id);
@@ -195,6 +211,13 @@ public class ControlPanelGUI extends JFrame {
 		frame.repaint();
 	}
 
+	/*
+	 * updateStatus(int, String) updates the status of an Elevator panel in the GUI
+	 * 
+	 * input: int, String
+	 * output: none
+	 * 
+	 */
 	public void updateStatus(int id, String state) {
 		statusLabelList.get(id).setText(state);
 		if (state == ElevatorStatus.OPEN_DOOR.toString()) {
@@ -206,13 +229,29 @@ public class ControlPanelGUI extends JFrame {
 		}
 		frame.repaint();
 	}
+	
+	/*
+	 * initalize(int, String) initializes an elevator's data to the system and reset the data model used. 
+	 * 
+	 * input: int, String
+	 * output: none
+	 * 
+	 */
 	public void initialize(int id, String state) {
 		ev_row.put(id, new Object[] { id, state, "", 1, null, null });
 		data[id - 1] = ev_row.get(id);
 		tm = new DefaultTableModel(data, columnNames);//THIS IS THE ISSUE
 		table.setModel(tm);
 	}
-
+	
+	/*
+	 * update(int, String, String, Integer, Integer, Integer) adds a new elevator's data to the system and notifies
+	 * that the data has changed. 
+	 * 
+	 * input: int, String, String, Integer, Integer, Integer
+	 * output: none
+	 * 
+	 */
 	public void updateTableData(int id, String state, String direction, Integer current, Integer source, Integer destination) {
 		
 		ev_row.put(id, new Object[] { id, state, direction, current, source, destination });
@@ -223,15 +262,20 @@ public class ControlPanelGUI extends JFrame {
 		// This means that at row 0, elevator 1's information should be there
 		// A better solution would be to implement dynamic searching, but that seems a
 		// bit excessive for our scope
-		// data[id-1] = ev_row.get(id);
 		data[id - 1] = ev_row.get(id);
 		updateTable(id);
 		// Reset the table model
-		//tm = new DefaultTableModel(data, columnNames);//THIS IS THE ISSUE
-		//table.setModel(tm);
 		tm.fireTableDataChanged();
 
 	}
+	
+	/*
+	 * updateTable(int) updates the underlying table data structure.
+	 * 
+	 * input: int
+	 * output: none
+	 * 
+	 */
 	public void updateTable(int id) {
 
 		table.setValueAt(ev_row.get(id)[0], id-1, 0);
@@ -242,7 +286,13 @@ public class ControlPanelGUI extends JFrame {
 		table.setValueAt(ev_row.get(id)[5], id-1, 5);
 
 	}
-
+	/*
+	 * updateElevatorQueue(int, Queue<Request>) adds to the request queue for the GUI
+	 * 
+	 * input: int, Queue<Request>
+	 * output: none
+	 * 
+	 */
 	public void updateElevatorQueue(int id, Queue<Request> requests){
 		String text = "";
 		int counter = 1;
@@ -257,7 +307,14 @@ public class ControlPanelGUI extends JFrame {
 
 		frame.repaint();
 	}
-
+	
+	/*
+	 * print(String str) prints the str
+	 * 
+	 * input: str
+	 * output: none
+	 * 
+	 */
 
 	public void print(String str) {
 		System.out.println(str);

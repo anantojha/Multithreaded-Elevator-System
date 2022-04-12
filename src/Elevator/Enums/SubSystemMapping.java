@@ -6,6 +6,7 @@ package Elevator.Enums;
  */
 public enum SubSystemMapping {
 
+    // Subsytem IDs - Floor = 1, Elevator = 2, Scheduler = 3
     FLOOR(1), ELEVATOR(2), SCHEDULER(3);
 
     private final int subSystemId;

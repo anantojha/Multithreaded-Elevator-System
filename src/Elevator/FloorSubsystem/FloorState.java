@@ -10,7 +10,6 @@ import Elevator.Global.StateMachine;
 public class FloorState implements StateMachine {
 	private int floorId;
 	private FloorStatus state;
-	private FloorStatus previousState;
 	/*
 	 * FloorState() is the constructor of the FloorState class. Default start state for floor -> Initialize.
 	 * 
@@ -21,7 +20,6 @@ public class FloorState implements StateMachine {
 	public FloorState(int id) {
 		this.floorId = id;
 		this.state = FloorStatus.INITIALIZE;
-		this.previousState = null;
 	}
 
 	/*
@@ -33,7 +31,6 @@ public class FloorState implements StateMachine {
 	 */
 	@Override
 	public void updateState() {
-		previousState = state;
 		this.state = state.nextState();
 		System.out.println("[ Floor " + floorId + " state machine ]: Updated state to: " + state);
 	}
@@ -48,18 +45,6 @@ public class FloorState implements StateMachine {
 	@Override
 	public String getCurrentState() {
 		return state.toString();
-	}
-
-	/*
-	 * getPreviousState() gets the previous state.
-	 *
-	 * Input: none
-	 * Output: FloorStatus previousState
-	 *
-	 */
-	@Override
-	public String getPreviousState() {
-		return previousState.toString();
 	}
 
 	/*

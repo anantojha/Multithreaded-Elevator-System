@@ -45,11 +45,11 @@ public class Elevator implements Runnable {
 	}
 
 	/*
-	 * The run() method will attempt to access the tasks queue and poll() a request (if one is available). If a
-	 * request is available, the request will be serviced by the elevator.
+	 * The run() method will attempt to access the tasks queue and poll() a request
+	 * (if one is available). If a request is available, the request will be
+	 * serviced by the elevator.
 	 *
-	 * Input: none
-	 * Output: none
+	 * Input: none Output: none
 	 *
 	 */
 	@Override
@@ -75,10 +75,10 @@ public class Elevator implements Runnable {
 	}
 
 	/*
-	 * move() method simulates the movement of the elevator from currentFloor to the target floor
+	 * move() method simulates the movement of the elevator from currentFloor to the
+	 * target floor
 	 * 
-	 * Input: int targetFloor
-	 * Output: none
+	 * Input: int targetFloor Output: none
 	 * 
 	 */
 	private void move(int targetFloor) {
@@ -111,12 +111,8 @@ public class Elevator implements Runnable {
 				Thread.sleep(1000);
 				gui.updateFloor(id, elevatorContext.getCurrentFloor());
 				gui.updateElevatorQueue(id, jobs);
-				gui.updateTableData(id,
-						state.getCurrentState(), 
-						elevatorContext.getDirection().toString(), 
-						elevatorContext.getCurrentFloor(), 
-						sourceFloor, 
-						destinationFloor);
+				gui.updateTableData(id, state.getCurrentState(), elevatorContext.getDirection().toString(),
+						elevatorContext.getCurrentFloor(), sourceFloor, destinationFloor);
 
 			}
 			print("Arrived at floor: " + elevatorContext.getCurrentFloor());
@@ -127,51 +123,9 @@ public class Elevator implements Runnable {
 	}
 
 	/*
-	 * faultDetected() method simulates the detection of a fault which is then followed a resolution (resetting)
-	 *
-	 * Input: Request serviceRequest
-	 * Output: none
-	 *
-	 */
-	public void faultDetected(Request serviceRequest) {
-
-		String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
-
-		try {
-
-			if (fault.equals("Hard Fault")) {
-				// If a fault has been detected, move to the ground floor
-				move(1);
-
-				System.out.print("Elevator is repairing.");
-				// Repair the elevator
-				for (int i = 0; i < 20; i++) {
-					System.out.print(".");
-					Thread.sleep(1000);
-				}
-				// After some period of time, the elevator is considered repaired
-				System.out.println("Elevator is repaired.");
-				Thread.sleep(1000);
-
-				System.out.println("Resuming Elevator activity.\n");
-				Thread.sleep(1000);
-			} else {
-				System.out.print("Retrying...");
-				for (int i = 0; i < 10; i++) {
-					System.out.print(".");
-					Thread.sleep(1000);
-				}
-				System.out.println();
-			}
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * service() method services a request. Logic for each state an elevator can be in when completing a task.
-	 * Updates UI as the state transitions from one to another.
+	 * service() method services a request. Logic for each state an elevator can be
+	 * in when completing a task. Updates UI as the state transitions from one to
+	 * another.
 	 * 
 	 * Input: serviceRequest(Request): Request that the elevator will be completing.
 	 * 
@@ -185,8 +139,15 @@ public class Elevator implements Runnable {
 
 		try {
 
+			String fault = null;
 			boolean sourceFLoorReached = false;
 			boolean destinationFLoorReached = false;
+			boolean isFault = serviceRequest.getFault();
+			
+			// identify type of fault
+			if (isFault) {
+				fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
+			}
 
 			print("Started servicing " + serviceRequest);
 			this.destinationFloor = serviceRequest.getDestinationFloor();
@@ -200,7 +161,7 @@ public class Elevator implements Runnable {
 				// Handle IDLE state
 				case "IDLE":
 					state.updateState(serviceRequest.getFault());
-					gui.updateStatus(id, state.getCurrentState());
+					gui.updateStatus(id, state.getCurrentState() + (isFault? ": " + fault : ""));
 					gui.updateElevatorQueue(id, jobs);
 					break;
 
@@ -251,50 +212,55 @@ public class Elevator implements Runnable {
 
 				// Handle FAULT_DETECTED state
 				case "FAULT_DETECTED":
-					String fault = serviceRequest.getFaultType() == 'f' ? "Hard Fault" : "Transient Fault";
 					print(fault + " has been detected");
-					faultDetected(serviceRequest);
-					Thread.sleep(2000);
+					print("Beginning Repair");
+					Thread.sleep(3000);
+					// extra time for hard fault
+					if (fault.equals("Hard Fault")) {
+						Thread.sleep(3000);
+					}
 					state.updateState();
-					gui.updateStatus(id, state.getCurrentState());
+					gui.updateStatus(id, state.getCurrentState() + ": " + fault);
 					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle RESETTING state
 				case "RESETTING":
-					// reset elevator
-					print("Resetting");
-					Thread.sleep(2000);
-					//move(1);
+					int resetDuration;
+					// if hard fault reset elevator, if transient retry elevator
+					if (fault.equals("Hard Fault")) {
+						print("Resetting...");
+						move(1);
+						resetDuration = 20;
+					} else {
+						print("Retrying...");
+						resetDuration = 10;
+					}
+
+					// Repair the elevator
+					for (int i = 0; i < resetDuration; i++) {
+						print("Elevator is repairing...");
+						Thread.sleep(1000);
+					}
+
 					state.updateState();
-					gui.updateStatus(id, state.getCurrentState());
+					gui.updateStatus(id, state.getCurrentState() + ": " + fault);
 					gui.updateElevatorQueue(id, jobs);
 					break;
 
 				// Handle RESUMING state
 				case "RESUMING":
-					print("Resuming");
+					print("Elevator is repaired");
 					Thread.sleep(3000);
+					print("Resuming Elevator activity...");
 					state.updateState();
 					gui.updateStatus(id, state.getCurrentState());
 					gui.updateElevatorQueue(id, jobs);
 					break;
-
-				// Handle TERMINATE state
-				case "TERMINATE":
-					break;
-
-				default:
-					break;
 				}
-				//Update GUI 
+				// Update GUI
 				gui.updateElevatorQueue(id, jobs);
-				gui.updateTableData(id,
-						state.getCurrentState(), 
-						"", 
-						elevatorContext.getCurrentFloor(), 
-						null, 
-						null);
+				gui.updateTableData(id, state.getCurrentState(), "", elevatorContext.getCurrentFloor(), null, null);
 			}
 			print("Waiting for next request...");
 		} catch (InterruptedException e) {
@@ -311,7 +277,7 @@ public class Elevator implements Runnable {
 	public Queue<Request> getJobs() {
 		return jobs;
 	}
-	
+
 	/*
 	 * The print() method prints a structured output string to console.
 	 * 

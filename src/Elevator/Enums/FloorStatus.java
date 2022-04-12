@@ -115,7 +115,6 @@ public enum FloorStatus {
 	};
 
 	public FloorStatus nextState() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

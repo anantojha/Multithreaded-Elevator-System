@@ -16,7 +16,13 @@ public class ElevatorStatusTest {
 	Boolean faultDetected;
 	Boolean destinationReached;
 	
+	
 	@Test
+	/*
+	 * test to verify the correct state flow when destination floor is reached
+	 * A fault detected should cause a transition from CLOSE_DOOR to IDLE rather than
+	 * CLOSE_DOOR TO RUNNING
+	 * */
 	public void destinationReached() {
 		state = ElevatorStatus.INITIALIZE;
 		faultDetected = false;
@@ -42,6 +48,11 @@ public class ElevatorStatusTest {
 	}
 	
 	@Test
+	/*
+	 * test to verify the correct state flow when destination floor is not reached yet
+	 * A fault detected should cause a transition from CLOSE_DOOR to RUNNING rather than
+	 * CLOSE_DOOR TO IDLE
+	 * */
 	public void destinationNotReached() {
 		state = ElevatorStatus.INITIALIZE;
 		faultDetected = false;
@@ -68,6 +79,11 @@ public class ElevatorStatusTest {
 	}
 	
 	@Test
+	/*
+	 * test to verify the correct state flow when no fault is detected
+	 * A fault detected should cause a transition from IDLE to RUNNING rather than
+	 * IDLE TO FAULT_DETECTED
+	 * */
 	public void noFaultDetected() {
 		state = ElevatorStatus.INITIALIZE;
 		faultDetected = false;
@@ -80,6 +96,11 @@ public class ElevatorStatusTest {
 	}
 	
 	@Test
+	/*
+	 * test to verify the correct state flow when a fault is detected
+	 * A fault detected should cause a transition from IDLE to FAULT_DETECTED rather than
+	 * IDLE TO RUNNING
+	 * */
 	public void faultDetected() {
 		state = ElevatorStatus.INITIALIZE;
 		faultDetected = true;

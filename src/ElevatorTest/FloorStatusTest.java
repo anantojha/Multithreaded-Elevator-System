@@ -12,6 +12,10 @@ public class FloorStatusTest {
 	FloorStatus state;
 	
 	@Test
+	/*
+	 * test to verify the correct state flow of floor state machine
+	 * 
+	 * */
 	public void test() {
 		state = FloorStatus.INITIALIZE;
 		

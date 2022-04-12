@@ -199,12 +199,10 @@ public enum ElevatorStatus {
 
 	
 	public ElevatorStatus nextState() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public ElevatorStatus nextState(boolean condition) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

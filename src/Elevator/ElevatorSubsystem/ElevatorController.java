@@ -13,6 +13,10 @@ import java.net.SocketTimeoutException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/*
+ * The ElevatorController is a wrapper class for multiple Elevator threads and the GUI.
+ * 
+ */
 
 public class ElevatorController implements Runnable {
     private int Id;

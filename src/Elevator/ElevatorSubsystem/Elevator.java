@@ -42,6 +42,10 @@ public class Elevator implements Runnable {
 		this.state = new ElevatorState(id);
 		this.jobs = jobs;
 		this.gui = gui;
+
+		this.state.updateState();
+		this.gui.initialize(id, state.getCurrentState());
+		this.gui.updateStatus(id, state.getCurrentState());
 	}
 
 	/*
@@ -54,9 +58,6 @@ public class Elevator implements Runnable {
 	 */
 	@Override
 	public void run() {
-		state.updateState();
-		gui.initialize(id, state.getCurrentState());
-		gui.updateStatus(id, state.getCurrentState());
 
 		while (true) {
 			System.out.println();

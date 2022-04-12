@@ -92,9 +92,11 @@ Right click on test file and run as 'JUnit Test'.
 Groupwork Responsibilities:
 	
 Lasitha Amuwala Meesthrige:
-	Implemented main GUI
+	Implemented and designed main GUI
 	Updated and fixed State Machines
 	Created state machine tests
+	Some code clean up
+	Updates state machine diagrams
 
 Bonita Hout:
 	

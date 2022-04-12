@@ -195,15 +195,6 @@ public enum ElevatorStatus {
 		public ElevatorStatus nextState() {
 			return RUNNING;
 		}
-	},
-	/*
-	 * TERMINATE represents the state an elevator takes when the elevator stops
-	 * working.
-	 */
-	TERMINATE {
-		public String toString() {
-			return "TERMINATE";
-		}
 	};
 
 	

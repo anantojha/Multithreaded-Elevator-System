@@ -106,7 +106,6 @@ public class ControlPanelGUI extends JFrame {
 		}
 
 		// Create GUI Data Table
-
 		ev_row = new HashMap<Integer, Object[]>();
 		data = new Object[numElevators][6];
 		tm = new DefaultTableModel(data, columnNames);
@@ -126,21 +125,15 @@ public class ControlPanelGUI extends JFrame {
 		table.getTableHeader().setFocusable(false);
 		table.setCellSelectionEnabled(false);
 		table.setEnabled(false);
-		table.setPreferredScrollableViewportSize(new Dimension(50, 100));
+		table.setPreferredScrollableViewportSize(new Dimension(100, 100));
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setMaximumSize(new Dimension(9000, 9000));
 		
-		// Data table 
-		JPanel dataTable = new JPanel();
-		dataTable.setLayout(new BoxLayout(dataTable, BoxLayout.Y_AXIS));
-		dataTable.setBorder(BorderFactory.createTitledBorder("Data Table"));
-		dataTable.add(scrollPane);
-		
 		// Add to the frame
 		elevatorPanel.add(requestsPanel);
 		contentPane.add(elevatorPanel);
-		contentPane.add(dataTable);
+		contentPane.add(scrollPane);
 
 		frame.add(contentPane);
 		frame.setVisible(true);

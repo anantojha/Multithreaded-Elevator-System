@@ -4,6 +4,9 @@ Group: L2-G6
 Members: Lasitha Amuwala Meesthrige, Bonita Hout, Navaty Khara, Tyler Mak, Anant Ojha
 Date: April 11th, 2022
 --------------------------------------------------------------------------------------------------
+Demo Link:	 https://youtu.be/w3qq8DSZHgA 
+Github Link:	 https://github.com/anantojha/SYSC3303-Elevator-Project 
+
 Files in this project:
 elevator_close.jpeg: Image of closed doors elevator for GUI
 elevator_open.jpeg: Image of open doors elevator for GUI

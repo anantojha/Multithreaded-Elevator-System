@@ -19,7 +19,7 @@ public class Scheduler implements Runnable {
 
     DatagramPacket receiveFloorPacket, receiveServerPacket, sendReplyPacket;
     DatagramSocket elevatorSocket, floorSocket;
-    private final byte[] acknowledgementSignal = {SystemConfiguration.ACKNOWLEDGEMENT_SIGNAL};
+    private final byte[] acknowledgementSignal = {1};
     private Queue<byte[]> tasks;
     private int lastElevator = 1;
 

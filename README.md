@@ -14,3 +14,12 @@
 Demo Link:	   https://youtu.be/w3qq8DSZHgA 
 <br>
 Github Link:	 https://github.com/anantojha/SYSC3303-Elevator-Project 
+
+<br>
+Run Instructions:
+<br>
+1. Run Scheduler.java
+<br>
+2. Run ElevatorController.java (GUI window will open, always set to full screen)
+<br>
+3. Run Floor.java 

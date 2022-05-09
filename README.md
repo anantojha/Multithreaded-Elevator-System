@@ -22,23 +22,26 @@ Demo Link:	   https://youtu.be/w3qq8DSZHgA
 <br>
 
 ### System Diagrams
+<br>
 
-Sequence UML:
+**Sequence Diagram**
 
 <img src="images/image4.png" width="750" height="500">
+<br>
 
-State Machine UML:
+**State Machine Diagram**
 
+<img src="images/image6.png" width="600" height="600">
+<br>
 
-Class UML:
+**Class diagram**
+
 <img src="images/image5.png" width="1000" height="600">
 
 
 <br>
-Run Instructions:
-<br>
+
+### Run Instructions:
 1. Run Scheduler.java
-<br>
 2. Run ElevatorController.java (GUI window will open, always set to full screen)
-<br>
 3. Run Floor.java 

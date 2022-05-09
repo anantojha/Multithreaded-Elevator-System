@@ -25,7 +25,10 @@ Demo Link:	   https://youtu.be/w3qq8DSZHgA
 
 Sequence UML:
 
-<img src="images/image4.png" width="700" height="500">
+<img src="images/image4.png" width="750" height="500">
+
+State Machine UML:
+
 
 Class UML:
 <img src="images/image5.png" width="1000" height="600">
